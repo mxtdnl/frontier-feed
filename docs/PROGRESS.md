@@ -1405,3 +1405,85 @@ A room like the four live classes (observed-human room), moratorium by quarter 1
 - R2: app copy per the revised spec.
 
 **Owner approval (2026-10-16, after review of the R1 pull request).** All five open items approved as proposed, except that youth design codes are labelled `YDC-A`, `YDC-B`… with a `YDC` command and tab (not `CODE`, which clashes with the join code). Spec §5.0, §14 and §15.4 updated to match. Open for R2: the full list of 51 bot firm names. Note for R2/R3: the stored pact `name` is `PACT-A`, `PACT-B`… (spec §9.1). The `YDC-A` label must be a display mapping only, and headlines that fill `{PACT}` must use it, without changing stored data.
+
+## 2026-10-16 — Session R2: FEED app copy
+
+**Done**
+- **Display vocabulary module** `src/ui/vocab.ts`. It is the one place that maps internal names to what people see:
+  - FEED 1–4 show as `CHRONO`, `RANKED`, `AUTOPLAY`, `STREAKS`
+  - cards show as `CLONE` (POACH) and `LAUNCH` (RUSH)
+  - stored pact names show as youth design codes (`PACT-A` → `YDC-A`).
+  - Card IDs, stored pact names, engine values and `params.ts` are unchanged. The `Tag` component applies the code label, so every code tag shows `YDC-A`.
+- **Phone** (`#/play`):
+  - DESK reads FEED, SAFEGUARDS and CARD
+  - the card sheet shows the display labels and the §5.0 meanings
+  - the PACTS tab is now `YDC` (propose, join, leave, preview "You are signing: feed 2 or lower · safeguards 25 or higher", ticket line "▼ Breaks YDC-A: feed 2 or lower.")
+  - notices, the three-step strip and the waiting lines also use the new vocabulary.
+- **Projector** (`#/screen`):
+  - the briefing (§6.6, §14.5)
+  - the status line, the reveal headline ("2 harm stories", "Crackdown imposed / in force") and the top bar `TRANSPARENCY ON/OFF`
+  - board columns `FEED`, `GUARDS`, `EXPOSURE` (mnemonics `GRD`, `EXPO`), the `HARM` tag and the `YDC-A` tags, with a matching key strip
+  - the HARM STORIES block and its cause line ("feed 4 · safeguards 5% · story risk 27%"; general cause "Story risk rises with the feed and falls with safeguards.")
+  - the trust panel rows `AD MARKET`, `HARM STORIES`, `YDC`, `TRANSPARENCY`
+  - commands `YDC` and `HARM` (in place of `PACT` and `INCID`), the HELP list and the command-line hint
+  - F4 and F7 are labelled `YDC` and `TRANSPARENCY`
+  - the audit picker reads "AUDIT · SELECT CODE".
+- **Console, setup and wire** (`#/control`, `#/new`, `#/wire`):
+  - labels, notices and the codes table
+  - CRACKDOWN in the session panel
+  - the setup options "Transparency rule at start" and "audit probability per youth design code"
+  - wire kind labels `HARM`, `YDC`, `TRNSP`, `CRACK`, `CLONE`, `LAUNCH`, `FEED`
+  - the NOT ON THE WIRE lines, and the QUARTER BRIEF with its closing line per spec §14.2
+  - COPY heading "FEED WIRE"
+  - export files `feed-<code>-history.json` and `feed-<code>-data.txt`.
+- **Landing and join:** the regulator line reads "Office of Platform Safety".
+- **Results:**
+  - the vocabulary throughout (panel 6 is `YDC RECORD`, CRACKDOWN marker, FEED 2 / SAFEGUARDS 15 alternative, "whole ad market", ledger `CLONE`, `LAUNCH`, "code kept", "harm stories")
+  - the own-results card.
+- **Bot platforms:** the 51 names approved by the owner at the start of this session replace the FRONTIER list (`BOT_FIRMS`). The `#/kit` fixtures use the first eight; fixture exports that only Session 1 used were removed.
+- **Tests:**
+  - New `tests/ui/vocab.test.ts`: the mappings; card IDs unchanged; no internal word in the briefing, card, command, key, tag-key, status, harm-story, brief, results-panel or code-terms copy; the 51 bot names distinct, 4-letter tickers, no real platform, no banned term.
+  - Existing unit and e2e assertions moved to the new copy.
+- **Screenshots** in `reports/r2-screenshots/`: the board with transparency on (1280×720) and with harm stories (1920×1080), the phone DESK and YDC tab (390×844), and the briefing (1920×1080, and lit-room at 1280×720).
+
+**Tests**
+- `npm run typecheck` passes.
+- `npm test`: 703 passed (was 697; 6 new in `tests/ui/vocab.test.ts`).
+- `npm run build` passes, including `lint:copy` and `lint:design`.
+- End-to-end, all against the emulators and all passing:
+
+  | Suite | Checks |
+  |---|---|
+  | `test:e2e` | 340 |
+  | `test:e2e:incidents` | 566 |
+  | `test:e2e:rehearsal` | 220 |
+  | `test:e2e:scale` | 1424 |
+  | `test:e2e:wire` | 25 |
+  | `test:e2e:hardening` | 44 |
+  | `test:e2e:long` | 137 |
+
+- `test:rules` was not run, because no rules changed.
+- `guide:shots` was not run, because R4 rebuilds the guide. Its selectors were updated to the new copy but are untested.
+
+**Spec deviations and choices made (with reasons)**
+- **Headlines stay FRONTIER until R3, as the spec assigns.** The engine bank and the crackdown headline are unchanged. So are the code and transparency event headlines, which still say `PACT-A`. The wire, the ticker, the phone WIRE tab and the headline line in the HARM STORIES block therefore still read, for example, "BTAG model linked to fraud wave"; the screenshots show this. R3 must fill `{PACT}` with `pactLabel` (in `src/ui/vocab.ts`). The NOT ON THE WIRE matcher already accepts either name. `scripts/e2e.ts` waits for a `PACT-A` headline on the WIRE tab; R3 changes that check.
+- **The debrief prompts are unchanged** (R3, spec §15.5). The current fifth prompt still mentions the AI industry and Ostrom.
+- **R2 and R3 both mention results copy.** I read R2 as the vocabulary on the results screen and R3 as new results copy (the debrief prompts and any rewritten narrative), as stated in the plan.
+- **Briefing wording adjusted to fit, recorded in spec §6.6 and §14.5:**
+  - "reach wins share of attention" became "reach earns share of attention", because "wins" is a §15.3 term and `lint:copy` failed on it.
+  - The SHARE line says "firm" instead of "platform", and the FEED and SAFEGUARDS control lines are short. With the longer wording the CONTROLS panel clipped in lit-room mode at both projector sizes (`test:e2e` failed).
+- **NET CONTRIBUTION header** reads "against every firm at FEED 2, SAFEGUARDS 15 · credit is not money". The full phrase overflowed in lit-room mode (`test:e2e:scale` failed). The legend still says "research credit, not money".
+- **The trust panel says `AD MARKET`**, not the `ADS` in the §14.1 diagram. The FRONTIER code also used the full word (`MARKET`) where the diagram said `MKT`.
+- **"Market effect"** stays as the NET CONTRIBUTION term, because spec §14.4 uses it.
+- **Keyboard shortcuts:** F4 (now `YDC`) keeps Shift+P, so no shortcut changed. Shift+Y would be more memorable; that is the owner's call.
+- **Old commands removed:** `PACT` and `INCID` are no longer accepted, so no command is hidden from HELP.
+- **Kept unchanged:**
+  - the export format id `frontier-export` inside the JSON, because tools read it
+  - the localStorage key (see R1)
+  - the bot policy names on `#/new` (`cautious`, `standard`, `greedy`, `mimic-leader`), which appear only on the facilitator's set-up page.
+- **Import direction:** the orchestrator imports `pactLabel` from `src/ui/vocab.ts` (a pure module) for its audit notices.
+- **Bot names were checked from memory, not by web search.** They avoid major platforms, brands and the smaller social apps I know. A small app with the same name cannot be ruled out.
+
+**Next steps**
+- Owner: review the screenshots and the copy. Decide whether F4 should move from Shift+P to Shift+Y.
+- R3: the headline bank (using `pactLabel` for `{PACT}`), the crackdown headline and its lint exemption, the debrief prompts, and the `PACT-A` wire check in `scripts/e2e.ts`.
