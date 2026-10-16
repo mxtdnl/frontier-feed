@@ -1350,3 +1350,56 @@ A room like the four live classes (observed-human room), moratorium by quarter 1
 - Owner: merge, then on the live site open a pact on a phone (no term ticked; preview; ticket notice) and open WIRE LOG during a rehearsal to see the QUARTER BRIEF.
 - Owner: update the slides deck (six cards and the three new briefing lines).
 - Owner: read the facilitator guide before the next class.
+
+## 2026-10-16 — Session R1: FEED identity and spec
+
+**Origin.** This repository is a copy of FRONTIER (`mxtdnl/frontier`) at commit 3e209ce. It is being reskinned as FEED, a masterclass on social media platforms and the attention economy. The owner's decisions are recorded verbatim in `docs/RESKIN.md`. The engine and every value in `src/engine/params.ts` are unchanged. Everything above this entry describes FRONTIER.
+
+**Done**
+- `docs/RESKIN.md`: the owner's decisions of 2026-10-16, verbatim.
+- `docs/SESSIONS.md`: Sessions R1–R4 added.
+- Firebase: `src/firebase/config.ts` now holds the config for project `frontier-feed-9759d`. `.firebaserc` names the same project (it named `frontier-sim`). Emulators still use `demo-frontier`.
+- Rename to FEED: the package name (`frontier-feed`, also in `package-lock.json`), the page title, the brand block in the top bar (board, phone and results), the landing wordmark, and `CLAUDE.md` (title, description, the non-telegraphing list and the fictional-entities rule).
+- `docs/spec.md`:
+  - new header, and new sections §1, §5 (including a new §5.0 display vocabulary table), §6.6, §9.3 and §15
+  - §14 copy updated throughout
+  - the §3 landing line updated for the wordmark rename.
+- Copy lint (`scripts/lib/copy-rules.ts`): the new non-telegraphing terms (addict*, dark pattern(s), attention economy, externality/externalities, lawsuit(s), mental health crisis). Real platform names are a new `real-platform` rule.
+
+**Tests**
+- `npm run typecheck` passes.
+- `npm test`: 697 passed (was 694; 3 new tests in `tests/ui/lint-rules.test.ts`).
+- `npm run build` passes, including `lint:copy` and `lint:design`.
+- The e2e suites and `test:rules` were not run: no rules, flows or layouts changed. The brand text changed from FRONTIER to FEED (shorter); R2 screenshots will confirm the layout.
+
+**Spec deviations and choices made (with reasons)**
+- **Real platform names apply to the results screen too.** The owner put them on the §15.3 list, which exempts the results screen. The guardrail "no real companies or people anywhere in the app" is stricter, so the lint applies them everywhere.
+- **Platform names are matched in Title case and UPPER case only.** The lint reads source code, and `meta` is an identifier in `Results.tsx` and `Control.tsx`. "X" is not matched (one letter); reviewers check it by eye.
+- **The spec does not name Meta.** It refers to "the case discussed in class", because the guardrail limits the name to the runbook and the guide. `docs/RESKIN.md` names Meta because it is the owner's verbatim record and is not part of the app.
+- **§3** was not on the R1 list. Its landing line was updated because R1 renamed the wordmark. The regulator line under the wordmark still reads "Office of Frontier Systems" until the regulator name is approved (R2).
+- **Kept for now:** the "FRONTIER WIRE" heading in the wire COPY text, the export file names (`frontier-…`), the moratorium headline and its lint exemption, and the localStorage key `frontier.lastSession.v1`.
+  - The first three are copy or headlines for R2 or R3.
+  - Changing the localStorage key would make phones forget their last session; keep it unless the owner wants it changed.
+- **Correction to the R1 plan.** The plan proposed "OPS suspends under-16 accounts…" as the crackdown headline. The owner's decision says the Assembly suspends the accounts, so the proposal now names the Assembly.
+- **Debrief prompt 2.** "If every platform had held level 2, each would have been worth more" is not guaranteed for every firm: the counterfactual (FEED 2, SAFEGUARDS 15, no cards) gives each firm an equal value, and a leading firm can finish above it. The spec (§15.5) records this. R3 should measure how often the claim holds across calibration seeds before the prompt is built.
+
+**Open wording choices for the owner to approve** (all listed in spec §5.0 as "proposed")
+1. **FEED labels:** 1 `CHRONO`, 2 `RANKED`, 3 `AUTOPLAY`, 4 `STREAKS`.
+2. **Regulator:** Office of Platform Safety (`OPS`).
+3. **Firm names:**
+   - Scheme: invented two-syllable platform names with four-letter tickers, none built on a real platform's name, sound or wordplay.
+   - Examples: Corvel (`CRVL`), Pellam (`PLLM`), Tessary (`TSRY`), Ambrel (`AMBL`), Vossel (`VSSL`).
+   - R2 will check every name against major platforms and brands. No check can rule out every small app with the same name.
+   - R2 will present the full list of 51 bot firms for approval before it is built. Fixtures (`HUMN`, `BTC`…) are replaced at the same time.
+4. **Short labels:**
+   - board columns `FEED`, `GUARDS`, `EXPOSURE` (mnemonics `FEED`, `GRD`, `EXPO`)
+   - tag and command `HARM`; codes named `CODE-A`, `CODE-B`, with a `CODE` command and a `CODES` tab
+   - `TRANSPARENCY ON/OFF`; `ADS`; `CRACKDOWN`.
+   - **Issue:** "code" already means the four-letter join code. An alternative is `YDC-A` with a `YDC` tab, which is clearer to the eye but less readable.
+5. **Crackdown headline:** "Assembly suspends under-16 accounts on every platform; ad market collapse follows".
+6. **Harm-story, trust-band and card headlines** (spec §15.4), as the register for the R3 bank.
+
+**Next steps**
+- Owner: approve or amend items 1–6.
+- Owner, before anything goes live: in the Firebase console for project `frontier-feed-9759d`, paste `database.rules.json` into Realtime Database → Rules, enable Email/Password and Anonymous sign-in, and add the facilitator to the allowlist. Follow RUNBOOK section 1 with project `frontier-feed-9759d` in place of `frontier-sim` (the RUNBOOK is rewritten in R4).
+- R2: app copy per the revised spec.
