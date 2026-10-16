@@ -1403,3 +1403,5 @@ A room like the four live classes (observed-human room), moratorium by quarter 1
 - Owner: approve or amend items 1–6.
 - Owner, before anything goes live: in the Firebase console for project `frontier-feed-9759d`, paste `database.rules.json` into Realtime Database → Rules, enable Email/Password and Anonymous sign-in, and add the facilitator to the allowlist. Follow RUNBOOK section 1 with project `frontier-feed-9759d` in place of `frontier-sim` (the RUNBOOK is rewritten in R4).
 - R2: app copy per the revised spec.
+
+**Owner approval (2026-10-16, after review of the R1 pull request).** All five open items approved as proposed, except that youth design codes are labelled `YDC-A`, `YDC-B`… with a `YDC` command and tab (not `CODE`, which clashes with the join code). Spec §5.0, §14 and §15.4 updated to match. Open for R2: the full list of 51 bot firm names. Note for R2/R3: the stored pact `name` is `PACT-A`, `PACT-B`… (spec §9.1). The `YDC-A` label must be a display mapping only, and headlines that fill `{PACT}` must use it, without changing stored data.
