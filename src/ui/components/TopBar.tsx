@@ -6,7 +6,7 @@ export function TopBar({ children, className = '' }: { children: ReactNode; clas
 }
 
 /** The brand block: the one solid amber mark in the bar. */
-export function Brand({ text = 'FRONTIER' }: { text?: string }) {
+export function Brand({ text = 'FEED' }: { text?: string }) {
   return <span className="tb-brand">{text}</span>;
 }
 
