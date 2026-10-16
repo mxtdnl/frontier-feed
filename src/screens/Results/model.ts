@@ -1,8 +1,9 @@
 /** Pure helpers for the results panels (spec §14.4). */
 import { PACT_QUARTER, type ConductLedger, type FinalResults, type FirmContribution, type FirmFinal, type PactFinal, type PactQuarterCode } from '../../engine';
 import { ATTRIBUTION_ALL_MAX, ATTRIBUTION_TOP, tickerLine } from '../../ui/layout';
+import { CARD_LABEL } from '../../ui/vocab';
 
-export const RESULT_PANELS = ['FINAL BOARD', 'TRUST TRACE', 'COUNTERFACTUAL', 'ATTRIBUTION', 'NET CONTRIBUTION', 'PACT RECORD', 'DEBRIEF'] as const;
+export const RESULT_PANELS = ['FINAL BOARD', 'TRUST TRACE', 'COUNTERFACTUAL', 'ATTRIBUTION', 'NET CONTRIBUTION', 'YDC RECORD', 'DEBRIEF'] as const;
 
 /** Spec §15.5. Prompt 3 refers to the NET CONTRIBUTION panel (owner wording, 2026-10-10, Session 18). */
 export const DEBRIEF_PROMPTS: ReadonlyArray<string> = [
@@ -206,18 +207,18 @@ const LEDGER_FOR: ReadonlyArray<readonly [keyof ConductLedger, string]> = [
   ['publish', 'PUBLISH'],
   ['share', 'SHARE'],
   ['restraint', 'restraint'],
-  ['compliant', 'pact kept'],
+  ['compliant', 'code kept'],
 ];
 const LEDGER_AGAINST: ReadonlyArray<readonly [keyof ConductLedger, string]> = [
-  ['poach', 'POACH'],
+  ['poach', CARD_LABEL.POACH],
   ['blitz', 'BLITZ'],
   ['lobby', 'LOBBY'],
-  ['rush', 'RUSH'],
+  ['rush', CARD_LABEL.RUSH],
   ['breaches', 'breaches'],
-  ['incidents', 'incidents'],
+  ['incidents', 'harm stories'],
 ];
 
-/** "▲ PUBLISH 6 · restraint 9  ▼ POACH 2 · BLITZ 3 · breaches 1": counts for the market, then against it. */
+/** "▲ PUBLISH 6 · restraint 9  ▼ CLONE 2 · BLITZ 3 · breaches 1": counts for the ad market, then against it. */
 export function ledgerLine(l: ConductLedger): string {
   const side = (items: ReadonlyArray<readonly [keyof ConductLedger, string]>): string =>
     items

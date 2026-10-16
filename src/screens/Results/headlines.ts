@@ -39,7 +39,7 @@ export function finalBoardHeadline(r: FinalResults): string {
   return `${first} ${second}`;
 }
 
-/** Panel 2: "Trust fell from 72.0 to 45.6 over 14 quarters." plus the moratorium quarter. */
+/** Panel 2: "Trust fell from 72.0 to 45.6 over 14 quarters." plus the crackdown quarter. */
 export function trustHeadline(r: FinalResults): string {
   const q = r.trust.length;
   if (q === 0) return 'No quarter was resolved.';
@@ -48,13 +48,13 @@ export function trustHeadline(r: FinalResults): string {
   const to = fmt(last);
   const over = `over ${q} ${plural(q, 'quarter', 'quarters')}`;
   const move = to === from ? `Trust held at ${to} ${over}.` : `Trust ${last < r.startTrust ? 'fell' : 'rose'} from ${from} to ${to} ${over}.`;
-  return r.collapseRound !== null ? `${move} The moratorium began in ${quarterLabel(r.collapseRound)}.` : move;
+  return r.collapseRound !== null ? `${move} The crackdown began in ${quarterLabel(r.collapseRound)}.` : move;
 }
 
-/** Panel 3: "Holding pace 2 and safety 15 would have left the industry worth 3.2× what it kept." */
+/** Panel 3: "Holding FEED 2 and SAFEGUARDS 15 would have left the industry worth 3.2× what it kept." */
 export function counterfactualHeadline(r: FinalResults, alt: { pace: number; safety: number } = PARAMS.BOT_SUSTAINABLE): string {
   const { actual, counterfactual: alternative } = r.industry;
-  const holding = `pace ${alt.pace} and safety ${alt.safety}`;
+  const holding = `FEED ${alt.pace} and SAFEGUARDS ${alt.safety}`;
   const gap = alternative - actual;
   if (fmt(gap, 0) === '0') return `The industry finished where holding ${holding} would have left it.`;
   if (gap < 0) return `The industry finished ${fmt(-gap, 0)} above what holding ${holding} would have left.`;
@@ -98,7 +98,7 @@ export function contributionHeadline(r: FinalResults): string {
   const c = r.contribution;
   const firms = Object.values(c?.firms ?? {});
   if (!c || firms.length === 0) return 'Net contribution was not computed for this session.';
-  const lead = 'Ranked by value created for the whole market';
+  const lead = 'Ranked by value created for the whole ad market';
   const leader = firms.find((f) => f.valuationRank === 1);
   const rise = [...firms]
     .filter((f) => f.valuationRank - f.rank > 0)
@@ -117,19 +117,19 @@ export function contributionHeadline(r: FinalResults): string {
     const charged = firms.filter((f) => f.moratoriumShare > 0).length;
     out.push(
       m.allocated > 0
-        ? `The moratorium cost ${fmt(m.total, 0)}, charged to the ${charged} ${plural(charged, 'firm', 'firms')} that drew trust down before it.`
-        : `The moratorium cost ${fmt(m.total, 0)}; no firm had drawn trust down before it, so none is charged.`,
+        ? `The crackdown cost ${fmt(m.total, 0)}, charged to the ${charged} ${plural(charged, 'firm', 'firms')} that drew trust down before it.`
+        : `The crackdown cost ${fmt(m.total, 0)}; no firm had drawn trust down before it, so none is charged.`,
     );
   }
   return out.join(' ');
 }
 
-/** Panel 6: "2 pacts formed. Members broke the terms 7 times; 4 breaches were never detected." */
+/** Panel 6: "2 youth design codes formed. Members broke the terms 7 times; 4 breaches were never detected." */
 export function pactHeadline(r: FinalResults): string {
   const n = r.pacts.length;
-  if (n === 0) return 'No pacts were formed.';
+  if (n === 0) return 'No youth design codes were formed.';
   const dissolved = r.pacts.filter((p) => p.status === 'dissolved').length;
-  const formed = `${n} ${plural(n, 'pact', 'pacts')} formed${dissolved > 0 ? `; ${dissolved === n && n > 1 ? 'all' : dissolved} dissolved` : ''}.`;
+  const formed = `${n} ${plural(n, 'youth design code', 'youth design codes')} formed${dissolved > 0 ? `; ${dissolved === n && n > 1 ? 'all' : dissolved} dissolved` : ''}.`;
   const breaches = r.pacts.reduce((a, p) => a + p.detected + p.undetected, 0);
   const hidden = r.pacts.reduce((a, p) => a + p.undetected, 0);
   if (breaches === 0) return `${formed} Every member kept the terms.`;
