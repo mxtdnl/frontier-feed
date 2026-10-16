@@ -40,11 +40,11 @@ const cellsOf = (d: ScreenData, disclosure: boolean, label: string): string[] =>
 describe('disclosure columns on the board (spec §9.3)', () => {
   const snapshot = { a: { pace: 3, safety: 12, expo: PARAMS.DRAW[3], risk: null }, b: { pace: 1, safety: 25, expo: 0.1, risk: null } } as const;
 
-  it('shows PACE, SAFETY and EXPOSURE only while disclosure is on', () => {
+  it('shows FEED, GUARDS and EXPOSURE only while disclosure is on', () => {
     const labels = (on: boolean) => boardColumns(on, false).map((c) => c.label);
-    expect(labels(false)).not.toEqual(expect.arrayContaining(['PACE']));
-    expect(labels(false).some((l) => l === 'SAFETY' || l === 'EXPOSURE')).toBe(false);
-    expect(labels(true)).toEqual(expect.arrayContaining(['PACE', 'SAFETY', 'EXPOSURE']));
+    expect(labels(false)).not.toEqual(expect.arrayContaining(['FEED']));
+    expect(labels(false).some((l) => l === 'GUARDS' || l === 'EXPOSURE')).toBe(false);
+    expect(labels(true)).toEqual(expect.arrayContaining(['FEED', 'GUARDS', 'EXPOSURE']));
   });
 
   it('uses full-word headers where width allows (Session 12), with the Session 13 columns', () => {
@@ -75,18 +75,18 @@ describe('disclosure columns on the board (spec §9.3)', () => {
 
   it('a BREACH tag and a pact tag fit in every mode but lit-room with disclosure on', () => {
     for (const [disc, lit] of [[false, false], [true, false], [false, true]] as const) {
-      expect(boardTagW(disc, lit)).toBeGreaterThanOrEqual(tagWidthCh('BREACH') + tagWidthCh('PACT-A'));
+      expect(boardTagW(disc, lit)).toBeGreaterThanOrEqual(tagWidthCh('BREACH') + tagWidthCh('YDC-A'));
     }
   });
 
   it('with disclosure on, a BREACH tag and a pact tag still fit beside the full-word headers', () => {
-    expect(boardTagW(true, false)).toBeGreaterThanOrEqual(tagWidthCh('BREACH') + tagWidthCh('PACT-A'));
+    expect(boardTagW(true, false)).toBeGreaterThanOrEqual(tagWidthCh('BREACH') + tagWidthCh('YDC-A'));
   });
 
   it('falls back to keyed mnemonics in lit-room mode with disclosure on, keeping room for tags', () => {
     const labels = boardColumns(true, false, true).map((c) => c.label);
-    expect(labels).toEqual(expect.arrayContaining(['SAFE', 'EXPO']));
-    expect(boardMnemonics(true, true).map((m) => m.tag)).toEqual(['SAFE', 'EXPO']);
+    expect(labels).toEqual(expect.arrayContaining(['GRD', 'EXPO']));
+    expect(boardMnemonics(true, true).map((m) => m.tag)).toEqual(['GRD', 'EXPO']);
     expect(boardTagW(true, true)).toBeGreaterThanOrEqual(10);
     expect(boardMnemonics(false, true)).toEqual([]);
   });
@@ -100,13 +100,13 @@ describe('disclosure columns on the board (spec §9.3)', () => {
 
   it('fills them from the round snapshot', () => {
     const d = data({ pub: pub({ disclosure: true }), rounds: { '1': roundNode(), '2': roundNode({ disclosure: { ...snapshot } }) } });
-    expect(cellsOf(d, true, 'PACE')).toEqual(['3', '1']);
-    expect(cellsOf(d, true, 'SAFETY')).toEqual(['12', '25']);
+    expect(cellsOf(d, true, 'FEED')).toEqual(['3', '1']);
+    expect(cellsOf(d, true, 'GUARDS')).toEqual(['12', '25']);
     expect(cellsOf(d, true, 'EXPOSURE')[1]).toBe('0.1');
   });
 
   it('shows dashes until a snapshot has been published, and never reads one while the toggle is off', () => {
-    expect(cellsOf(data({ pub: pub({ disclosure: true }) }), true, 'PACE')).toEqual(['–', '–']);
+    expect(cellsOf(data({ pub: pub({ disclosure: true }) }), true, 'FEED')).toEqual(['–', '–']);
     const published = data({ pub: pub({ disclosure: false }), rounds: { '1': roundNode(), '2': roundNode({ disclosure: { ...snapshot } }) } });
     expect(boardRows(published).every((r) => r.disclosed === null)).toBe(true);
   });

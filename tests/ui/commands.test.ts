@@ -5,7 +5,8 @@ describe('parseCommand', () => {
   it('parses the fixed mnemonics, ignoring case and <GO>', () => {
     expect(parseCommand('board')).toEqual({ kind: 'board' });
     expect(parseCommand('TRST <GO>')).toEqual({ kind: 'trust' });
-    expect(parseCommand(' pact ')).toEqual({ kind: 'pacts' });
+    expect(parseCommand(' ydc ')).toEqual({ kind: 'pacts' });
+    expect(parseCommand('pact').kind).toBe('error');
     expect(parseCommand('Wire')).toEqual({ kind: 'wire' });
     expect(parseCommand('help')).toEqual({ kind: 'help' });
   });
@@ -15,7 +16,7 @@ describe('parseCommand', () => {
     expect(parseCommand('firm firms')).toEqual({ kind: 'firm', ticker: 'FIRMS' });
   });
   it('lists every command in HELP', () => {
-    expect(COMMAND_HELP.map((c) => c.mnemonic)).toEqual(['BOARD', 'TRST', 'PACT', 'WIRE', 'FIRM <TICKER>', 'FIRMS', 'RANKS', 'INCID', 'HELP']);
+    expect(COMMAND_HELP.map((c) => c.mnemonic)).toEqual(['BOARD', 'TRST', 'YDC', 'WIRE', 'FIRM <TICKER>', 'FIRMS', 'RANKS', 'HARM', 'HELP']);
   });
   it('treats empty input as the board', () => {
     expect(parseCommand('   ')).toEqual({ kind: 'board' });

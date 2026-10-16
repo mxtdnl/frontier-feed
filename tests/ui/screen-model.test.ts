@@ -149,9 +149,9 @@ describe('board key strip (Session 12)', () => {
     expect(tagKey([['BOT'], ['BREACH', 'AUTO']], false).map((k) => k.tag)).toEqual(['BREACH', 'AUTO', 'BOT']);
     expect(tagKey([[], []], false)).toEqual([]);
   });
-  it('gives one entry for pact tags and one for a +N count', () => {
-    expect(tagKey([['PACT-A']], false)).toEqual([{ tag: 'PACT-A', text: 'pact member' }]);
-    const k = tagKey([['PACT-B'], ['PACT-A', 'BOT']], true);
-    expect(k.map((x) => x.tag)).toEqual(['BOT', 'PACT-', '+N']);
+  it('gives one entry for code tags and one for a +N count', () => {
+    expect(tagKey([['YDC-A']], false)).toEqual([{ tag: 'YDC-A', text: 'youth design code member' }]);
+    const k = tagKey([['YDC-B'], ['YDC-A', 'BOT']], true);
+    expect(k.map((x) => x.tag)).toEqual(['BOT', 'YDC-', '+N']);
   });
 });

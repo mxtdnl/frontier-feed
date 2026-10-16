@@ -79,7 +79,7 @@ describe('incidentLines', () => {
       disclosure: { f3: { pace: 4, safety: 5, expo: 8.1, risk: 0.2675 }, f2: { pace: 2, safety: 15, expo: 2, risk: null } },
     });
     const [l] = incidentLines(4, r, FIRMS);
-    expect(l?.cause).toBe('pace 4 · safety 5% · incident risk 27%');
+    expect(l?.cause).toBe('feed 4 · safeguards 5% · story risk 27%');
     expect(l?.disclosed).toBe(true);
   });
 
@@ -97,7 +97,7 @@ describe('incidentLines', () => {
   });
 });
 
-describe('the INCIDENTS block', () => {
+describe('the HARM STORIES block', () => {
   const eight = node({ incidents: 8, incidentFirms: ['f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7'] });
 
   it('shows at most 4 incidents, then counts the rest', () => {
@@ -115,24 +115,24 @@ describe('the INCIDENTS block', () => {
     expect(incidentCap(true, true)).toBe(3);
   });
 
-  it('renders "+N more · INCID for the full list" and the general cause once', () => {
+  it('renders "+N more · HARM for the full list" and the general cause once', () => {
     const out = text(createElement(IncidentBlock, { round: 3, lines: incidentLines(3, eight, FIRMS), max: 4 }));
-    expect(out).toContain('+4 more · INCID for the full list');
+    expect(out).toContain('+4 more · HARM for the full list');
     expect(out.split(GENERAL_CAUSE)).toHaveLength(2);
-    expect(out).toContain('INCIDENTS');
+    expect(out).toContain('HARM STORIES');
     expect(out).toContain('▼ ARC');
   });
 
   it('renders each cause with disclosure on and no general cause', () => {
     const r = node({ incidents: 1, incidentFirms: ['f3'], disclosure: { f3: { pace: 3, safety: 10, expo: 4, risk: 0.1 } } });
     const out = text(createElement(IncidentBlock, { round: 3, lines: incidentLines(3, r, FIRMS), max: 4 }));
-    expect(out).toContain('pace 3 · safety 10% · incident risk 10%');
+    expect(out).toContain('feed 3 · safeguards 10% · story risk 10%');
     expect(out).not.toContain(GENERAL_CAUSE);
     expect(out).not.toContain('more');
   });
 });
 
-describe('INCID tag', () => {
+describe('HARM tag', () => {
   const r = node({ incidents: 1, incidentFirms: ['f1'] });
 
   it('marks the firm during the reveal and the next open quarter only', () => {
@@ -163,16 +163,16 @@ describe('INCID tag', () => {
       memberCounts: {},
     };
     const rows = boardRows(d);
-    expect(boardTags(rows[0]!)).toEqual(['BREACH', 'INCID', 'INSOLV']);
+    expect(boardTags(rows[0]!)).toEqual(['BREACH', 'HARM', 'INSOLV']);
     expect(boardTags(rows[1]!)).toEqual([]);
-    expect(tagKey([boardTags(rows[0]!)], false).map((k) => k.tag)).toEqual(['BREACH', 'INCID', 'INSOLV']);
+    expect(tagKey([boardTags(rows[0]!)], false).map((k) => k.tag)).toEqual(['BREACH', 'HARM', 'INSOLV']);
   });
 });
 
-describe('INCID view', () => {
+describe('HARM view', () => {
   it('parses as a command', () => {
-    expect(parseCommand('incid')).toEqual({ kind: 'incid' });
-    expect(parseCommand('INCID <GO>')).toEqual({ kind: 'incid' });
+    expect(parseCommand('harm')).toEqual({ kind: 'incid' });
+    expect(parseCommand('HARM <GO>')).toEqual({ kind: 'incid' });
   });
 
   it('lists every incident of the session, newest quarter first, with the three parts', () => {
@@ -187,13 +187,13 @@ describe('INCID view', () => {
     const out = text(createElement(IncidentsView, { data: d }));
     expect(out).toContain('Q3 Y1');
     expect(out).toContain('Q1 Y1');
-    expect(out).toContain('pace 4 · safety 0% · incident risk 30%');
+    expect(out).toContain('feed 4 · safeguards 0% · story risk 30%');
     expect(out).toContain(GENERAL_CAUSE);
     expect(out).toContain('3 in total');
   });
 
   it('says so when there are no incidents', () => {
     const d = { rounds: { '1': node() }, firms: FIRMS } as unknown as ScreenData;
-    expect(text(createElement(IncidentsView, { data: d }))).toContain('No incidents yet.');
+    expect(text(createElement(IncidentsView, { data: d }))).toContain('No harm stories yet.');
   });
 });

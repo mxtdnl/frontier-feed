@@ -80,9 +80,9 @@ describe('exposure meter', () => {
 
 describe('pact terms symbols', () => {
   it('writes pace and safety as symbols', () => {
-    expect(termsShort({ maxPace: 2, minSafety: 15 })).toBe('pace ≤ 2 · safety ≥ 15%');
-    expect(termsShort({ maxPace: 3, minSafety: null })).toBe('pace ≤ 3');
-    expect(termsShort({ maxPace: null, minSafety: 5 })).toBe('safety ≥ 5%');
+    expect(termsShort({ maxPace: 2, minSafety: 15 })).toBe('feed ≤ 2 · safeguards ≥ 15%');
+    expect(termsShort({ maxPace: 3, minSafety: null })).toBe('feed ≤ 3');
+    expect(termsShort({ maxPace: null, minSafety: 5 })).toBe('safeguards ≥ 5%');
     expect(termsParts({ maxPace: null, minSafety: null })).toEqual([]);
   });
 });

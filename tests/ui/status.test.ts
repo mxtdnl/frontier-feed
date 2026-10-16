@@ -25,16 +25,16 @@ const PHASES: Phase[] = ['lobby', 'briefing', 'open', 'resolving', 'reveal', 'su
 
 describe('reveal headline (Session 12)', () => {
   it('summarises the quarter as in the spec example', () => {
-    expect(revealHeadline(reveal())).toBe('Q3 Y2 resolved · Trust ▼5.9 to 45.6 · BTC takes 1st · 2 incidents.');
+    expect(revealHeadline(reveal())).toBe('Q3 Y2 resolved · Trust ▼5.9 to 45.6 · BTC takes 1st · 2 harm stories.');
   });
   it('reports a rise with ▲ and a held lead', () => {
-    expect(revealHeadline(reveal({ T: 60, prevT: 57.9, leaders: ['HUMN'], incidents: 1 }))).toBe('Q3 Y2 resolved · Trust ▲2.1 to 60.0 · HUMN holds 1st · 1 incident.');
+    expect(revealHeadline(reveal({ T: 60, prevT: 57.9, leaders: ['HUMN'], incidents: 1 }))).toBe('Q3 Y2 resolved · Trust ▲2.1 to 60.0 · HUMN holds 1st · 1 harm story.');
   });
   it('says unchanged when trust moves less than the shown precision', () => {
     expect(revealHeadline(reveal({ T: 50.02, prevT: 50 }))).toContain('Trust unchanged at 50.0');
   });
   it('reports no incidents', () => {
-    expect(revealHeadline(reveal({ incidents: 0 }))).toContain('No incidents');
+    expect(revealHeadline(reveal({ incidents: 0 }))).toContain('No harm stories');
   });
   it('names every firm tied for 1st, in ticker order', () => {
     expect(revealHeadline(reveal({ leaders: ['HUMN', 'BTC'] }))).toContain('BTC and HUMN tie for 1st');
@@ -47,17 +47,17 @@ describe('reveal headline (Session 12)', () => {
     expect(revealHeadline(reveal({ round: 1, prevLeaders: [] }))).toMatch(/^Q1 Y1 resolved · .* · BTC takes 1st/);
   });
   it('omits the leader when no firm has a result', () => {
-    expect(revealHeadline(reveal({ leaders: [] }))).toBe('Q3 Y2 resolved · Trust ▼5.9 to 45.6 · 2 incidents.');
+    expect(revealHeadline(reveal({ leaders: [] }))).toBe('Q3 Y2 resolved · Trust ▼5.9 to 45.6 · 2 harm stories.');
   });
   it('marks the moratorium quarter and the quarters after it', () => {
-    expect(revealHeadline(reveal({ collapseRound: 7 }))).toContain('Moratorium imposed');
-    expect(revealHeadline(reveal({ round: 8, collapseRound: 7 }))).toContain('Moratorium in force');
+    expect(revealHeadline(reveal({ collapseRound: 7 }))).toContain('Crackdown imposed');
+    expect(revealHeadline(reveal({ round: 8, collapseRound: 7 }))).toContain('Crackdown in force');
   });
 });
 
 describe('status sentence (Session 12)', () => {
   it('open quarter: what to do and the time left', () => {
-    expect(statusSentence(input())).toBe('Q3 Y2 · Decisions open. Set pace, safety and a card, then commit. 01:42 left.');
+    expect(statusSentence(input())).toBe('Q3 Y2 · Decisions open. Set feed, safeguards and a card, then commit. 01:42 left.');
   });
   it('open quarter with the time up', () => {
     expect(statusSentence(input({ leftMs: 0 }))).toBe('Q3 Y2 · Time is up. Decisions are closed and the quarter resolves next.');
@@ -66,13 +66,13 @@ describe('status sentence (Session 12)', () => {
     expect(statusSentence(input({ paused: true, leftMs: 65_000 }))).toBe('Q3 Y2 · Timer paused at 01:05. Decisions resume when the timer restarts.');
   });
   it('moratorium in force while decisions are open', () => {
-    expect(statusSentence(input({ collapsed: true }))).toContain('Moratorium in force.');
+    expect(statusSentence(input({ collapsed: true }))).toContain('Crackdown in force.');
   });
   it('lobby, briefing, resolving, summit and ended', () => {
     expect(statusSentence(input({ phase: 'lobby', round: 0 }))).toMatch(/^Lobby · .*form or join a firm\.$/);
     expect(statusSentence(input({ phase: 'briefing', round: 0 }))).toMatch(/^Briefing · .*Quarter 1 opens/);
     expect(statusSentence(input({ phase: 'resolving' }))).toBe('Q3 Y2 · Decisions closed. The quarter is resolving.');
-    expect(statusSentence(input({ phase: 'summit' }))).toMatch(/^Q3 Y2 · Industry summit in session\. Propose, join or leave pacts now\./);
+    expect(statusSentence(input({ phase: 'summit' }))).toMatch(/^Q3 Y2 · Industry summit in session\. Propose, join or leave youth design codes now\./);
     expect(statusSentence(input({ phase: 'ended', resolved: 14 }))).toBe('Session ended after 14 quarters. Results follow on the results screen.');
     expect(statusSentence(input({ phase: 'ended', resolved: 1 }))).toContain('after 1 quarter.');
     expect(statusSentence(input({ phase: 'ended', resolved: 0 }))).toBe('Session ended. Results follow on the results screen.');
