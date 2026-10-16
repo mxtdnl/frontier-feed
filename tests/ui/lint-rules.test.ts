@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MORATORIUM_HEADLINE, findViolations } from '../../scripts/lib/copy-rules';
+import { MORATORIUM_HEADLINE, REAL_PLATFORMS, findViolations } from '../../scripts/lib/copy-rules';
 import { findForbiddenCss, findHex } from '../../scripts/lib/design-rules';
 
 const strict = { allowNonTelegraphing: false };
@@ -13,6 +13,23 @@ describe('copy rules', () => {
   it('flags every §15.3 term outside the results screen', () => {
     const terms = ['commons', 'tragedy', 'sustainable', 'sustainability', 'cooperate', 'cooperation', 'collective', 'shared resource', 'tipping point', 'threshold', 'collapse', 'game', 'player', 'score', 'win', 'level'];
     for (const t of terms) expect(findViolations(`<p>${t}</p>`, strict).length, t).toBeGreaterThan(0);
+  });
+  it('flags the FEED reskin §15.3 terms outside the results screen', () => {
+    const terms = ['addictive', 'addiction', 'dark pattern', 'dark patterns', 'attention economy', 'externality', 'externalities', 'lawsuit', 'lawsuits', 'mental health crisis'];
+    for (const t of terms) expect(findViolations(`<p>${t}</p>`, strict).length, t).toBeGreaterThan(0);
+    for (const t of terms) expect(findViolations(`<p>${t}</p>`, results), t).toEqual([]);
+  });
+  it('flags real platform names everywhere, the results screen included', () => {
+    for (const n of REAL_PLATFORMS) {
+      for (const t of [n, n.toUpperCase()]) {
+        expect(findViolations(`<p>${t} feed</p>`, strict)[0]?.rule, t).toBe('real-platform');
+        expect(findViolations(`<p>${t} feed</p>`, results)[0]?.rule, t).toBe('real-platform');
+      }
+    }
+  });
+  it('does not flag lower-case identifiers that share a platform name', () => {
+    expect(findViolations('const meta = metaSub.data; meta?.settings', strict)).toEqual([]);
+    expect(findViolations('Metadata Metaphor', strict)).toEqual([]);
   });
   it('allows §15.3 terms on the results screen only', () => {
     expect(findViolations('<p>sustainable path</p>', results)).toEqual([]);
