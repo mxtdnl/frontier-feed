@@ -1,7 +1,9 @@
-# FRONTIER — specification v1.0
+# FEED — specification v1.0
 
-Working title. Terminal mnemonic: `FRNT`.
-A multiplayer classroom simulation in which teams run competing AI companies over quarterly rounds. The design goal is a tragedy-of-the-commons collapse that students cause themselves and recognise afterwards.
+Terminal mnemonic: `FEED`.
+A multiplayer classroom simulation in which teams run competing fictional social platforms over quarterly rounds, competing for share of attention in an ad market. The design goal is a tragedy-of-the-commons collapse that students cause themselves and recognise afterwards.
+
+FEED is a reskin of FRONTIER (copied from `mxtdnl/frontier` at commit 3e209ce) for a masterclass on social media platforms and the attention economy. The owner's reskin decisions are in `docs/RESKIN.md`. The engine, every value in `src/engine/params.ts`, card IDs, database paths and code identifiers are unchanged; only names, copy, documents and the Firebase project change. The display vocabulary is set in §5.0.
 
 Owner: Max Neal (BSc PEP, Hult International Business School).
 Status: build-ready. Sections marked **[TUNABLE]** may be changed only through the calibration process in §8.
@@ -10,14 +12,16 @@ Status: build-ready. Sections marked **[TUNABLE]** may be changed only through t
 
 ## 1. Purpose and learning objectives
 
+The session is a masterclass on social media platforms and the attention economy, taught through psychology, economics and politics. In the facilitator materials only (`docs/RUNBOOK.md` and the facilitator guide), it is built around the lawsuits against a real platform company, described there as allegations, not established findings. The app itself names no real company, platform or person (§15.4).
+
 By the end of a session, students should be able to:
 
-1. Explain how individually rational competition can destroy a shared resource that every competitor depends on (Hardin 1968; Ostrom 1990).
-2. Distinguish private returns from shared costs, i.e. a negative externality.
-3. Evaluate why non-binding agreements fail under competitive pressure, and how monitoring, disclosure and graduated sanctions change behaviour (Ostrom's design principles).
-4. Connect the dynamics to the real debate on AI safety racing (Armstrong, Bostrom & Shulman 2016).
+1. **Economics.** Explain how individually rational competition for attention can destroy a shared resource, public trust in social platforms, that every competitor depends on (Hardin 1968; Ostrom 1990). Distinguish private returns from shared costs, i.e. a negative externality.
+2. **Psychology.** Describe how engagement design (ranked feeds, autoplay, infinite scroll, streaks, variable rewards and late-night notifications) acts on users, young users in particular, and why firms adopt it in response to rivals.
+3. **Politics.** Evaluate why voluntary design codes fail under competitive pressure, how monitoring, transparency and graduated sanctions change behaviour (Ostrom's design principles), and why regulators may act late and bluntly.
+4. Connect the dynamics to the real debate on platform design and harm to young users, including the case discussed in class.
 
-**Non-telegraphing rule.** Nothing a participant sees before the results screen may name or hint at the lesson. The banned vocabulary is listed in §15.3. The game presents itself as a competitive business simulation.
+**Non-telegraphing rule.** Nothing a participant sees before the results screen may name or hint at the lesson. The banned vocabulary is listed in §15.3. The app presents itself as a competitive business simulation.
 
 ---
 
@@ -43,7 +47,7 @@ The app is a single-page app using hash routing. It is built to one `index.html`
 
 | Route | Who | Auth | Purpose |
 |---|---|---|---|
-| `#/` | Anyone | — | Landing: the FRONTIER wordmark with the Office of Frontier Systems line beneath, a four-cell code field with a button of the same width, and "Facilitator sign-in" |
+| `#/` | Anyone | — | Landing: the FEED wordmark with the regulator's name (§15.4) beneath, a four-cell code field with a button of the same width, and "Facilitator sign-in" |
 | `#/j/:code` | Participants | Anonymous | Join flow: game code, then found or join a firm |
 | `#/play/:gameId` | Participants | Anonymous + membership | Control centre (mobile-first, responsive to desktop) |
 | `#/screen/:gameId` | Facilitator | Email/password + facilitator allowlist | Projected board, with facilitator keyboard controls |
@@ -93,38 +97,79 @@ LOBBY → BRIEFING → OPEN(1) → RESOLVING(1) → REVEAL(1) → OPEN(2) → �
 
 ## 5. Decisions
 
+### 5.0 Display vocabulary (FEED reskin, owner decisions 2026-10-16)
+
+FEED keeps FRONTIER's engine, data model and code identifiers. Only what people see changes. §6–§13 keep the internal names (pace, safety, capability, incident, pact, disclosure, moratorium); this table maps each one to what participants, the projector, the console and the results see. Status **approved** means the owner set the wording in `docs/RESKIN.md`; **proposed** means it awaits owner approval (listed in `docs/PROGRESS.md`, R1) and must not be built until approved.
+
+| Internal name (code, database, §6–§13) | Display | Mnemonic or short label | Status |
+|---|---|---|---|
+| App | FEED | `FEED` | approved |
+| Firm | a fictional social platform; UI word "firm" or "platform" | — | approved |
+| Pace 1–4 | FEED, the engagement design setting | `FEED` | approved |
+| Pace 1 | chronological feed | `CHRONO` | proposed |
+| Pace 2 | ranked feed | `RANKED` | proposed |
+| Pace 3 | autoplay and infinite scroll | `AUTOPLAY` | proposed |
+| Pace 4 | streaks, variable rewards and late-night notifications | `STREAKS` | proposed |
+| Safety spend 0–30 | SAFEGUARDS (time-limit prompts, age checks, quiet hours, moderation) | `GUARDS` column, `GRD` mnemonic | name approved; short labels proposed |
+| Capability | REACH | `REACH` | approved |
+| Market share | SHARE OF ATTENTION | `SHARE` column | approved |
+| Market, market size | AD MARKET | `ADS` | name approved; mnemonic proposed |
+| Public trust | PUBLIC TRUST (trust in social platforms) | `TRST` | approved |
+| Incident | harm story: leaked internal research, whistleblower testimony, investigations into harm to teenagers | `HARM` tag and command | name approved; mnemonic proposed |
+| Pact | voluntary youth design code (maximum FEED, minimum SAFEGUARDS) | `CODE-A`, `CODE-B`…; `CODE` command; `CODES` tab | name approved; labels proposed |
+| Disclosure | platform transparency rule (researcher data access) | `TRANSPARENCY ON` / `OFF` | name approved; label proposed |
+| Moratorium | regulatory crackdown: the Assembly suspends accounts for under-16s on every platform | `CRACKDOWN` | event approved; label proposed |
+| Regulator (OFS) | Office of Platform Safety | `OPS` | proposed |
+| Legislature, pollster | the Assembly, Halden Research | — | approved (unchanged) |
+| Bot firm names and tickers | fictional platforms that do not resemble real ones | 4-letter tickers | proposed (R2) |
+
+Card display labels (internal IDs unchanged; approved):
+
+| Card ID | Display label | Display meaning |
+|---|---|---|
+| `POACH` | `CLONE` | Copy a rival's feature |
+| `PUBLISH` | `PUBLISH` | Release internal wellbeing research |
+| `LOBBY` | `LOBBY` | Lobby the Assembly |
+| `BLITZ` | `BLITZ` | Influencer campaign |
+| `SHARE` | `SHARE` | Release safety tooling to the industry |
+| `RUSH` | `LAUNCH` | Ship a new engagement feature |
+
+**"level" stays banned** in participant and projector UI (§15.3). The UI says "FEED 2" or "FEED 2 or lower", never "feed level". The word may appear on the results screen (debrief prompts, §15.5).
+
 ### 5.1 The three inputs per firm per quarter
 
-| Input | Control | Values | Default if missing |
-|---|---|---|---|
-| Deployment pace | 4-segment selector | 1 Cautious, 2 Standard, 3 Aggressive, 4 Breakneck | Previous quarter's value; round 1 → 2 |
-| Safety spend | Slider | Integer 0–30 (% of reference budget) | Previous quarter's value; round 1 → 10 |
-| Action card | Optional picker | `NONE`, `POACH`, `PUBLISH`, `LOBBY`, `BLITZ`, `SHARE`, `RUSH` | `NONE` |
+| Input (display) | Internal | Control | Values | Default if missing |
+|---|---|---|---|---|
+| FEED | pace | 4-segment selector | 1 `CHRONO`, 2 `RANKED`, 3 `AUTOPLAY`, 4 `STREAKS` | Previous quarter's value; round 1 → 2 |
+| SAFEGUARDS | safety | Slider | Integer 0–30 (% of reference budget) | Previous quarter's value; round 1 → 10 |
+| CARD | card | Optional picker | `NONE`, `CLONE`, `PUBLISH`, `LOBBY`, `BLITZ`, `SHARE`, `LAUNCH` (IDs `NONE`, `POACH`, `PUBLISH`, `LOBBY`, `BLITZ`, `SHARE`, `RUSH`) | `NONE` |
 
 Firms commit with a single button. They can change and recommit until the deadline. The board shows a ✓ beside committed firms and `AUTO` beside firms that received defaults.
 
 ### 5.2 Action cards **[TUNABLE costs and effects]**
 
-| Card | Cost (cash) | Effect | Constraint |
+Effects are unchanged from FRONTIER; only the display wording changes. Card IDs are the internal names.
+
+| Card ID (display) | Cost (cash) | Effect | Constraint |
 |---|---|---|---|
-| `POACH` Poach talent | 15 | You +3 capability; the target firm −3 capability (floor 10) | Requires a target firm; not the same target two rounds running |
-| `PUBLISH` Publish safety research | 10 | Public trust +0.25 per card at resolution, scaled by firm count (× 8/N); your incident probability ×0.5 this quarter | — |
-| `LOBBY` Lobby regulators | 10 | Exempt from pact fines detected this quarter (the violation is still recorded); public trust −0.5 | — |
-| `BLITZ` Marketing blitz | 15 | Your effective capability ×1.2 in the share calculation this quarter only | — |
-| `SHARE` Share safety tooling | 15 | Every firm's incident probability, yours included, ×0.75 this quarter. Each `SHARE` played multiplies again (two cards: ×0.75²). Stacks with `PUBLISH` | — |
-| `RUSH` Rush a release | 0 | You +4 capability (permanent, like `POACH`). Your trust draw d_i ×1.5 and your incident probability ×1.5 this quarter | — |
+| `POACH` (`CLONE`: copy a rival's feature) | 15 | You +3 reach; the target firm −3 reach (floor 10) | Requires a target firm; not the same target two rounds running |
+| `PUBLISH` (release internal wellbeing research) | 10 | Public trust +0.25 per card at resolution, scaled by firm count (× 8/N); your harm-story probability ×0.5 this quarter | — |
+| `LOBBY` (lobby the Assembly) | 10 | Exempt from code fines detected this quarter (the violation is still recorded); public trust −0.5 | — |
+| `BLITZ` (influencer campaign) | 15 | Your effective reach ×1.2 in the share-of-attention calculation this quarter only | — |
+| `SHARE` (release safety tooling to the industry) | 15 | Every firm's harm-story probability, yours included, ×0.75 this quarter. Each `SHARE` played multiplies again (two cards: ×0.75²). Stacks with `PUBLISH` | — |
+| `RUSH` (`LAUNCH`: ship a new engagement feature) | 0 | You +4 reach (permanent, like `POACH`). Your trust draw d_i ×1.5 and your harm-story probability ×1.5 this quarter | — |
 
 A firm may not play the same card in consecutive quarters. Insolvent firms (§6.7) cannot play cards.
 
-Owner decisions 2026-10-08/09 (Session 17): PUBLISH's trust effect falls from a flat +1.0 to 0.25 × 8/N per card; `SHARE` and `RUSH` added. `SHARE` stacks per card. `RUSH`'s multipliers were proposed as draw ×2 and incident ×1.5; the owner first raised the incident multiplier to ×2 (×3 measured alongside), then set both to ×1.5 (2026-10-10) because at ×2 one firm alone could trigger the moratorium in 20–33% of sessions at 6 firms (REVIEW M1). The results conduct ledger (Session 18, §10) counts `PUBLISH` and `SHARE` as for the market, `POACH`, `BLITZ`, `LOBBY` and `RUSH` as against it; BLITZ, POACH and RUSH also count as rivalry taken.
+Owner decisions 2026-10-08/09 (Session 17, FRONTIER; internal names): PUBLISH's trust effect falls from a flat +1.0 to 0.25 × 8/N per card; `SHARE` and `RUSH` added. `SHARE` stacks per card. `RUSH`'s multipliers were proposed as draw ×2 and incident ×1.5; the owner first raised the incident multiplier to ×2 (×3 measured alongside), then set both to ×1.5 (2026-10-10) because at ×2 one firm alone could trigger the moratorium in 20–33% of sessions at 6 firms (REVIEW M1). The results conduct ledger (Session 18, §10) counts `PUBLISH` and `SHARE` as for the market, `POACH`, `BLITZ`, `LOBBY` and `RUSH` as against it; BLITZ, POACH and RUSH also count as rivalry taken.
 
-### 5.3 Pacts (participant side)
+### 5.3 Youth design codes (pacts; participant side)
 
-- Any firm may propose a pact during `open` or `summit`.
-- Terms are a maximum pace (1–4 or none) and/or a minimum safety level (0–30 or none). Meeting a term exactly is compliant: pace equal to the maximum, safety equal to the minimum.
-- Other firms join from the PACTS tab and may leave at any time.
+- Any firm may propose a voluntary youth design code during `open` or `summit`.
+- Terms are a maximum FEED (1–4 or none) and/or a minimum SAFEGUARDS (0–30 or none). Meeting a term exactly is compliant: FEED equal to the maximum, SAFEGUARDS equal to the minimum.
+- Other firms join from the CODES tab and may leave at any time.
 - Joining and leaving are public and generate wire headlines.
-- Mechanics are in §9.
+- Mechanics are in §9 (internal name: pact).
 
 ### 5.4 Facilitator settings (at `#/new`, editable until round 1)
 
@@ -134,8 +179,8 @@ Owner decisions 2026-10-08/09 (Session 17): PUBLISH's trust effect falls from a 
 | Round timer | 120 s |
 | Auto-resolve at deadline | Off (submissions lock; facilitator presses F9) |
 | End mode | `random` 10–14 |
-| Disclosure at start | Off |
-| Automatic audit probability per pact per quarter | 0.25 |
+| Transparency rule at start (internal: disclosure) | Off |
+| Automatic audit probability per code (pact) per quarter | 0.25 |
 | Bot firms | 0 (each bot has a policy: `cautious`, `standard`, `greedy`, `mimic-leader`) |
 | Reveal threshold on results screen | Off |
 | Lit-room display mode | Off |
@@ -263,18 +308,20 @@ They never see τ, endRound, other firms' cash, capability, pace or safety (unle
 
 ### 6.6 What the briefing tells participants (truthfully)
 
-- Total market revenue tracks public trust.
-- Trust recovers when pressure eases.
-- Pace builds capability faster, and capability wins market share.
-- Safety spend costs money and lowers your public exposure and incident risk.
-- Valuation reflects cash plus capability, priced by the market.
-- Every cost comes out of cash, and cash counts in full in your valuation.
-- A firm whose cash falls too far below zero becomes insolvent: it is held at Cautious pace and cannot play cards.
-- A firm that falls behind on capability loses market share.
-  (The last three lines: owner wording 2026-10-12, Session 19. The briefing does not say that a slow firm goes bankrupt: that is false in the current model, `reports/observer-feedback-2026-10-12.md` section 3.)
-- Cards: one line each (§14.5). The `SHARE` line says it protects every firm; the `RUSH` line says it raises your exposure and incident risk.
+Display vocabulary per §5.0. Each line states the same mechanism as the FRONTIER line it replaces.
 
-The briefing does not mention any threshold.
+- Total market revenue tracks public trust. (Kept verbatim, owner decision 2026-10-16.)
+- Trust recovers when pressure eases.
+- A higher FEED builds reach faster, and reach wins share of attention.
+- Safeguards cost money and lower your public exposure and the risk of a harm story.
+- Valuation reflects cash plus reach, priced by the ad market.
+- Every cost comes out of cash, and cash counts in full in your valuation.
+- A firm whose cash falls too far below zero becomes insolvent: it is held at FEED 1 and cannot play cards.
+- A firm that falls behind on reach loses share of attention.
+  (The last three lines: owner wording 2026-10-12, Session 19, with the §5.0 vocabulary. The briefing does not say that a slow firm goes bankrupt: that is false in the current model, `reports/observer-feedback-2026-10-12.md` section 3.)
+- Cards: one line each (§14.5). The `SHARE` line says it protects every firm; the `LAUNCH` line says it raises your exposure and harm-story risk.
+
+The briefing does not mention any threshold, and it does not describe the crackdown or when it comes.
 
 ### 6.7 Insolvency
 
@@ -376,13 +423,15 @@ Fines leave the economy. `LOBBY` in the quarter of detection waives the fine but
 
 **Publication.** Detected violations become public wire headlines and a `BREACH` flag on the board for 2 rounds. Undetected violations are revealed only on the results screen.
 
-### 9.3 Disclosure toggle
+### 9.3 Transparency rule toggle (internal: disclosure)
 
-- The facilitator toggles it with F7 at any phase.
-- While it is on, each resolution publishes `{pace, safety, d_i}` per firm for that round, and the board gains `PACE`, `SAFE` and `EXPO` columns. For a firm that had an incident it also publishes `risk`, the firm's incident probability q_i that quarter with every card multiplier applied (§6.3 step 5), for the incident cause line (§14.1; owner decision 2026-10-10, Session 18).
+The display name is the platform transparency rule (researcher data access); the code, database paths and settings keep the name `disclosure`.
+
+- The facilitator toggles it with F7 (or Shift+D) at any phase.
+- While it is on, each resolution publishes `{pace, safety, d_i}` per firm for that round, and the board gains `FEED`, `GUARDS` and `EXPOSURE` columns (mnemonics `FEED`, `GRD`, `EXPO`). For a firm that had a harm story it also publishes `risk`, the firm's incident probability q_i that quarter with every card multiplier applied (§6.3 step 5), for the harm-story cause line (§14.1; owner decision 2026-10-10, Session 18).
 - While it is off, those columns are absent and the data is written only to the facilitator-only path.
-- Toggling produces a wire headline: "Assembly passes frontier disclosure rule" / "Disclosure rule suspended".
-- The toggle state is always visible in the board status line.
+- Toggling produces a wire headline: "Assembly passes platform transparency rule; researchers gain data access" / "Transparency rule suspended".
+- The toggle state is always visible in the board status line (`TRANSPARENCY ON` or `TRANSPARENCY OFF`).
 
 ---
 
@@ -498,52 +547,54 @@ The facilitator's client runs resolution. There are no Cloud Functions, so the p
 
 ## 14. Screens
 
+All copy in this section uses the display vocabulary of §5.0. Internal names appear only where they name code, database paths or data fields.
+
 ### 14.1 Projector board (`#/screen`) — 16:9, target 1920×1080, must also work at 1280×720
 
 The layout is built on a monospace character grid (§16.2). Regions:
 
 ```
-┌ TOP BAR (dark panel, 2 px amber rule): FRONTIER │ Q3 Y2 │ [OPEN] │ 6/8 COMMITTED │ DISCLOSURE OFF │    T-01:47 ┐
-├ STATUS LINE: Q3 Y2 · Decisions open. Set pace, safety and a card, then commit. 01:47 left. ───────────────────┤
+┌ TOP BAR (dark panel, 2 px amber rule): FEED │ Q3 Y2 │ [OPEN] │ 6/8 COMMITTED │ TRANSPARENCY OFF │  T-01:47 ┐
+├ STATUS LINE: Q3 Y2 · Decisions open. Set feed, safeguards and a card, then commit. 01:47 left. ──────────────┤
 ├ BOARD (left ~62%) ─────────────────────────────────┬ TRUST (right ~38%) ───────────────────────────────┤
 │ VALUE SHARE [HUMN 30% │ BTC 22% │ …]  2 below zero │ PUBLIC TRUST                                      │
 │ # MOVE FIRM SHARE PROFIT VALUE CHANGE ✓ bar trend  │ Total market revenue tracks public trust.         │
-│ rows… (BREACH / INCID / INSOLV / AUTO / BOT tags)  │ INCIDENTS block in place of the chart after reveal │
-│ [PACE SAFETY EXPOSURE columns if disclosure on]    │ 61.8  ▼6.3 since last quarter   (large numerals)  │
-│ key strip: only the tags on screen                 │ line chart + change strip │ MKT │ INCID │ PACTS │ DISCLOSURE │
-├ WIRE  Q3 Y2 ▼ incident headline · Q3 Y2 headline … (scrolling; static list if reduced motion) ───────────────┤
+│ rows… (BREACH / HARM / INSOLV / AUTO / BOT tags)   │ HARM STORIES block in place of chart after reveal │
+│ [FEED GUARDS EXPOSURE cols if transparency on]     │ 61.8  ▼6.3 since last quarter   (large numerals)  │
+│ key strip: only the tags on screen                 │ line chart + change strip │ ADS │ HARM │ CODES │ TRANSPARENCY │
+├ WIRE  Q3 Y2 ▼ harm story headline · Q3 Y2 headline … (scrolling; static list if reduced motion) ───────────────┤
 └ F-KEY BAR: only the keys that act on this screen; the next expected action is the one solid key ──────────────┘
 ```
 
 **Top bar** (Session 12; owner approval 2026-10-03, UI audit). A `--panel` bar with a 2 px `--signal` bottom rule. From the left:
-- the brand block `FRONTIER` in solid `--signal` with `--signal-ink` text;
+- the brand block `FEED` in solid `--signal` with `--signal-ink` text;
 - the quarter;
 - the phase as a status block, each phase distinct and always carrying its word (colours in §16.1);
-- the commit count while decisions are open, the firm count in the lobby, and `DISCLOSURE ON` or `DISCLOSURE OFF`;
+- the commit count while decisions are open, the firm count in the lobby, and `TRANSPARENCY ON` or `TRANSPARENCY OFF` (R2 checks that the longer label fits at 1280×720);
 - the latest facilitator notice;
 - the countdown, right-aligned, 1.5× size, in `--signal`. `PAUSED` follows it while the timer is frozen.
 
 The results screen and the phone use the same bar (brand block, position or quarter, phase block, countdown).
 
-**Status line.** One sentence directly under the projector top bar, written from the phase, saying what is happening and what firms do now, e.g. "Q3 Y2 · Decisions open. Set pace, safety and a card, then commit. 01:42 left." During reveal it is the **reveal headline**, a summary of the quarter from the data: "Q3 Y2 resolved · Trust ▼5.9 to 45.6 · BTC takes 1st · 2 incidents." It never uses hidden values.
+**Status line.** One sentence directly under the projector top bar, written from the phase, saying what is happening and what firms do now, e.g. "Q3 Y2 · Decisions open. Set feed, safeguards and a card, then commit. 01:42 left." During reveal it is the **reveal headline**, a summary of the quarter from the data: "Q3 Y2 resolved · Trust ▼5.9 to 45.6 · BTC takes 1st · 2 harm stories." It never uses hidden values.
 
-**F-key bar.** Key caps are outlined in `--signal-dim`. The next expected action is the one solid key (F9 in lobby, briefing, open, reveal and after the end; F8 during a summit; none while resolving). Keys that do nothing on the current screen are hidden: view keys while their view is showing or in lobby and briefing, F6 without an active pact or outside open, reveal and summit, F8 outside open, reveal and summit, F10 before quarter 1 and after the end, F7 after the end, F9 while resolving or in a summit. The results screen shows only F9 and F2.
+**F-key bar.** Key caps are outlined in `--signal-dim`. The next expected action is the one solid key (F9 in lobby, briefing, open, reveal and after the end; F8 during a summit; none while resolving). Keys that do nothing on the current screen are hidden: view keys while their view is showing or in lobby and briefing, F6 without an active code or outside open, reveal and summit, F8 outside open, reveal and summit, F10 before quarter 1 and after the end, F7 after the end, F9 while resolving or in a summit. The results screen shows only F9 and F2.
 
-**Ticker.** A 2ch gap after the `WIRE` label; each item starts with its quarter; items are coloured by headline kind (`--down` with ▼ for incidents, breaches, insolvency and the moratorium; `--up` for clean audits; `--wire` otherwise).
+**Ticker.** A 2ch gap after the `WIRE` label; each item starts with its quarter; items are coloured by headline kind (`--down` with ▼ for harm stories, breaches, insolvency and the crackdown; `--up` for clean audits; `--wire` otherwise).
 
-**Board readability.** Row rules in `--grid` and an alternate-row fill in `--raise`; panel titles in `--text` at weight 600; column headers in `--dim` on a `--raise` header row; full-word column headers where width allows (CHANGE, PACE, SAFETY, EXPOSURE). A key strip at the foot of the board explains only the tags and marks on screen: one line after a one-line gap, wrapping into the gap row when the entries need more (Session 13).
+**Board readability.** Row rules in `--grid` and an alternate-row fill in `--raise`; panel titles in `--text` at weight 600; column headers in `--dim` on a `--raise` header row; full-word column headers where width allows (CHANGE, FEED, GUARDS, EXPOSURE). A key strip at the foot of the board explains only the tags and marks on screen: one line after a one-line gap, wrapping into the gap row when the entries need more (Session 13).
 
 **Firm performance on the board** (Session 13; owner approval 2026-10-03, UI audit section 06; column set by owner decision 2026-10-05).
 - **Value share strip** across the top of the board, one line plus half a line of space, so the two-line row capacities below are unchanged. Each firm with a valuation above zero gets a segment as wide as its share of the positive total, in rank order. Segments are `--wire`, faded by rank in five steps by mixing with `--panel` (never below 64 %, so the black text on them stays above 4.5:1), and separated by a 1 px `--base` gap. A segment wide enough to hold them shows the ticker and the whole percentage (`HUMN 30%`); narrower segments show nothing. Firms at or below zero have no segment; the caption at the right end counts the firms below zero ("2 below zero"). When no firm is above zero the strip reads "No firm above zero". The strip covers every firm, not only the page shown.
 - **Rows**, in order: `#` rank; `MOVE`, places gained or lost since last quarter (▲ or ▼ with a number, `–` for none); `FIRM`; `SHARE`; `PROFIT`; `VALUE`; `CHANGE`; the commit mark (a solid `--up` box carrying a black ✓ when the firm has committed this quarter, a dim `–` otherwise; the header is a ✓ and the key strip explains it); a **valuation bar** drawn from a visible zero line on one scale shared by every firm (positive in `--wire` to the right, negative in `--down` to the left); a **trend line** of the last 14 quarters (opening value included while fewer have resolved) on one y-scale shared by every row, with a dim zero line, drawn in `--wire`, or `--down` when the latest value is below zero; then the tags.
-- **Widths** (ch). The fixed columns take 48 (3 + 5 + 7 + 7 + 8 + 8 + 8 + 2), plus 21 with disclosure on (PACE 5, SAFETY 7, EXPOSURE 9) or 16 with the mnemonics. At least 15 ch stay for tags (two tags) except in lit-room mode with disclosure on. What is left goes to the bar (6–12) and the trend line (8–14):
+- **Widths** (ch). The fixed columns take 48 (3 + 5 + 7 + 7 + 8 + 8 + 8 + 2), plus 21 with transparency on (FEED 5, GUARDS 7, EXPOSURE 9) or 16 with the mnemonics. At least 15 ch stay for tags (two tags) except in lit-room mode with transparency on. What is left goes to the bar (6–12) and the trend line (8–14):
 
 | Mode | Bar | Trend line | Tags |
 |---|---|---|---|
-| Standard, disclosure off | 12 | 14 | 16 |
-| Standard, disclosure on | 6 | none | 15 |
-| Lit-room, disclosure off | 6 | 8 | 15 |
-| Lit-room, disclosure on (SAFE, EXPO) | none | none | 13 |
+| Standard, transparency off | 12 | 14 | 16 |
+| Standard, transparency on | 6 | none | 15 |
+| Lit-room, transparency off | 6 | 8 | 15 |
+| Lit-room, transparency on (GRD, EXPO) | none | none | 13 |
 
 The trend for every firm is on the `FIRMS` view, which is never cut.
 
@@ -552,16 +603,16 @@ The trend for every firm is on the `FIRMS` view, which is never cut.
 - Mnemonics followed by Enter, shown as `<GO>`:
   - `BOARD`
   - `TRST`: full-screen trust history
-  - `PACT`: pact table with members and terms
+  - `CODE`: youth design code table with members and terms
   - `WIRE`: full headline log
   - `FIRM <TICKER>`: a public firm profile with share and valuation history
   - `FIRMS`: small multiples of every firm's valuation (Session 13)
   - `RANKS`: rank by quarter for every firm (Session 13)
-  - `INCID`: every incident of the session by quarter, newest first, each with its headline, effect and cause; the list scrolls inside the panel (Session 18)
+  - `HARM`: every harm story of the session by quarter, newest first, each with its headline, effect and cause; the list scrolls inside the panel (Session 18)
   - `HELP`: lists every command above and every key
 - Esc returns to the board.
 - F-keys mirror these.
-- Every F-key action also has a letter alternative, because laptops often need Fn: Shift+A advance, Shift+S summit, Shift+D disclosure, Shift+E end.
+- Every F-key action also has a letter alternative, because laptops often need Fn: Shift+A advance, Shift+S summit, Shift+D transparency rule, Shift+E end.
 - Never bind F5, F11 or F12.
 
 **Board rows by firm count** (Session 10; the projector is a fixed character grid, 150 × 36 or 130 × 32 in lit-room mode, so these hold at 1280×720 and 1920×1080 alike):
@@ -575,7 +626,7 @@ The trend for every firm is on the `FIRMS` view, which is never cut.
   - Each reveal returns to page 1.
   - Above the page, separated by a rule, pinned rows show firms that are not on the current page: the leader, then the firm with the largest rank change of 3 places or more. Pinned rows use the two-line slots the page leaves free: 2 as standard, 1 under the summit banner, none in lit-room mode. Pinned rows keep their real rank number.
 
-**Board tags** stay on one line, in priority order: `BREACH`, `INCID`, `INSOLV`, `AUTO`, `BOT`, then pact tags. `INCID` (Session 18) marks a firm that had an incident in the latest resolved quarter, during that quarter's reveal and the following open phase. Tags that do not fit the column show as a dim `+N` (most often in lit-room mode with disclosure on), so a row never grows past its height (Session 10).
+**Board tags** stay on one line, in priority order: `BREACH`, `HARM`, `INSOLV`, `AUTO`, `BOT`, then code tags. `HARM` (Session 18) marks a firm that had a harm story in the latest resolved quarter, during that quarter's reveal and the following open phase. Tags that do not fit the column show as a dim `+N` (most often in lit-room mode with transparency on), so a row never grows past its height (Session 10).
 
 **Lobby state.**
 - A large join code.
@@ -584,7 +635,7 @@ The trend for every firm is on the `FIRMS` view, which is never cut.
 - Numbered join steps: 1 scan or enter the code, 2 form or join a firm, 3 wait for the briefing.
 - Firms appearing live with member counts. Up to 16 firms: one table (ticker, name, member count). Above 16: compact cells (ticker and member count, `BOT` for a bot firm) in min(4, ceil(N / 16)) columns, filled down each column. The code, QR code and URL stay visible.
 
-**Long member lists** (PACT view, audit picker, summit and results): a list of more than 12 tickers shows the first 10 and `+N more`. Member cells wrap rather than clip. Beside the board at a summit, the pact table omits the AUDIT column so the members have room.
+**Long member lists** (CODE view, audit picker, summit and results): a list of more than 12 tickers shows the first 10 and `+N more`. Member cells wrap rather than clip. Beside the board at a summit, the code table omits the AUDIT column so the members have room.
 
 **`FIRMS` view** (Session 13). Small multiples: one card per firm in rank order. Each card shows the rank, the ticker, the value (in `--down` with a − sign below zero), the change since last quarter, and a line chart of the valuation by quarter from the opening value. Every card uses the same y-scale (zero-based, nice steps), with gridlines at the steps (the step is stated in the panel heading), a dotted zero line, a hollow square at the peak (when the peak is not the latest value) and a solid square at the latest value. The line is `--wire`, or `--down` when the latest value is below zero. Up to 9 firms: a 3 × 3 grid; up to 16: 4 × 4. Only the rows the first page needs are drawn, so the cards fill the panel (12 firms: 4 × 3). Above 16 the view pages like the board (§14.1): 16 cards per page in rank order, `PAGE 2/4` in the heading, an instant cut every 8 s, held while the command line is focused and for 30 s after a key press.
 
@@ -592,40 +643,40 @@ The trend for every firm is on the `FIRMS` view, which is never cut.
 
 **Reveal state.** One orchestrated motion moment, described in §16.5.
 
-**Incidents** (Session 18; owner decisions 2026-10-10). When the reveal sequence ends, an `INCIDENTS` block appears instantly in the PUBLIC TRUST panel, in place of the trust chart, for the rest of the reveal; the chart returns when the next quarter opens. The board rows never move. The block is built from `rounds/{r}/incidentFirms`, so it never depends on the headline cap. Each incident, in firm creation order:
-- ▼, the ticker and the incident's wire headline (the first incident template when the cap left the incident out);
-- the effect: "trust −1.2 · BTC revenue −15% this quarter" (the trust cost per incident is INC_TRUST × 8/N, shown as a number);
-- the cause: with disclosure on at that resolution, "pace 4 · safety 5% · incident risk 27%" from `rounds/{r}/disclosure` (the risk is the stored q_i, with PUBLISH, RUSH and SHARE applied); with disclosure off, no pace, safety or risk, and the general cause "Incident risk rises with pace and falls with safety spend." once at the foot of the block.
+**Harm stories** (internal: incidents; Session 18; owner decisions 2026-10-10). When the reveal sequence ends, a `HARM STORIES` block appears instantly in the PUBLIC TRUST panel, in place of the trust chart, for the rest of the reveal; the chart returns when the next quarter opens. The board rows never move. The block is built from `rounds/{r}/incidentFirms`, so it never depends on the headline cap. Each harm story, in firm creation order:
+- ▼, the ticker and the harm story's wire headline (the first harm-story template when the cap left it out);
+- the effect: "trust −1.2 · BTC revenue −15% this quarter" (the trust cost per harm story is INC_TRUST × 8/N, shown as a number);
+- the cause: with transparency on at that resolution, "feed 4 · safeguards 5% · story risk 27%" from `rounds/{r}/disclosure` (the risk is the stored q_i, with PUBLISH, LAUNCH and SHARE applied); with transparency off, no feed, safeguards or risk, and the general cause "Story risk rises with the feed and falls with safeguards." once at the foot of the block.
 
-At most 4 incidents (3 in lit-room mode with disclosure on), then "+N more · INCID for the full list". With no incidents the block is absent. It fits at 1280×720 and 1920×1080 for 4 to 50 firms.
+At most 4 harm stories (3 in lit-room mode with transparency on), then "+N more · HARM for the full list". With no harm stories the block is absent. It fits at 1280×720 and 1920×1080 for 4 to 50 firms.
 
 ### 14.2 Facilitator console (`#/control`)
 
 Panels:
 - **Game**: phase, round, timer controls (+30 s, −30 s, pause), endRound and τ shown masked until held.
 - **Firms**: a row of presence dots per firm (one dot per member device, filled when online), committed ✓, decision received time, AUTO forecast, bot policy.
-- **Pacts**: terms, members, unaudited violation counts (private), Audit button.
-- **Controls**: grouped by consequence (Session 15). ROUTINE: timer (+30 s, −30 s, pause). SESSION FLOW: F6 audit, F7 disclosure, F8 summit, F9 advance. IRREVERSIBLE: END and TAU, in a group outlined in `--down`. A NEXT line names the expected key for the current phase (for example "NEXT · F9 opens quarter 1"). The control strip carries the same grouping.
+- **Codes** (pacts): terms, members, unaudited violation counts (private), Audit button.
+- **Controls**: grouped by consequence (Session 15). ROUTINE: timer (+30 s, −30 s, pause). SESSION FLOW: F6 audit, F7 transparency, F8 summit, F9 advance. IRREVERSIBLE: END and TAU, in a group outlined in `--down`. A NEXT line names the expected key for the current phase (for example "NEXT · F9 opens quarter 1"). The control strip carries the same grouping.
 - **Export**: JSON and DATA lines.
 - **Danger**: remove a firm, lock joins, delete the game.
 
 Scale rules (Session 10):
-- A control strip stays fixed at the top of the window and is never scrolled away. It holds the F6 AUDIT, F7 DISCLOSURE, F8 SUMMIT, F9 ADVANCE and F10 END buttons, the phase, the quarter, the commit count and the latest notice.
+- A control strip stays fixed at the top of the window and is never scrolled away. It holds the F6 AUDIT, F7 TRANSPARENCY, F8 SUMMIT, F9 ADVANCE and F10 END buttons, the phase, the quarter, the commit count and the latest notice.
 - The Firms panel is a compact table that scrolls inside the panel, at most 20 rows tall.
 - The table can be sorted by firm (creation order), commit status or devices online.
 - Two filters: NOT COMMITTED (open quarter only) and OFFLINE (no device online; bot firms excluded).
 - The session's mode and firm limit are shown in the Game panel.
 
 **Wire screen** (`#/wire/:gameId`, Session 18). A facilitator-only page, opened from the `WIRE LOG` link in the console header (a new tab). It only reads.
-- **Log:** every wire entry of the session, grouped by quarter: the round headlines (`rounds/{r}/headlines`, timed by `rounds/{r}/resolvedAt`) and the pact and disclosure events (`wire`). Entries before quarter 1 are under `PRE`. Each line: quarter, time, kind (a short label such as `INCID`, `PACT`, `BLITZ`) and text, coloured by kind as on the ticker (§14.1), with ▼ or ▲ beside alarm and clean-audit kinds. Within a quarter the lines run in the order they happened: events while the quarter was open, its headlines at resolution, then events during its reveal. Headlines resolved before Session 18 carry no time (`--:--:--`).
+- **Log:** every wire entry of the session, grouped by quarter: the round headlines (`rounds/{r}/headlines`, timed by `rounds/{r}/resolvedAt`) and the code and transparency events (`wire`). Entries before quarter 1 are under `PRE`. Each line: quarter, time, kind (a short label such as `HARM`, `CODE`, `BLITZ`) and text, coloured by kind as on the ticker (§14.1), with ▼ or ▲ beside alarm and clean-audit kinds. Within a quarter the lines run in the order they happened: events while the quarter was open, its headlines at resolution, then events during its reveal. Headlines resolved before Session 18 carry no time (`--:--:--`).
 - **Quarter selector:** ◄ ► buttons and the arrow keys step one quarter; a quarter number field (0 is `PRE`); `ALL` shows every quarter, newest first. It opens on the current quarter, and every earlier quarter stays available. (The selector uses ◄ ►, because `lint:copy` treats ◀ ▶ as emoji.)
-- **NOT ON THE WIRE · facilitator only:** below each resolved quarter's entries, the events of that quarter that no headline reports, built from `engine.history`: incidents (with pace and safety), cards played (with the POACH target), audits and insolvencies. It is never rendered on `#/screen` or `#/play` (an import-graph test).
+- **NOT ON THE WIRE · facilitator only:** below each resolved quarter's entries, the events of that quarter that no headline reports, built from `engine.history`: harm stories (with feed and safeguards), cards played (with the CLONE target), audits and insolvencies. It is never rendered on `#/screen` or `#/play` (an import-graph test).
 - **QUARTER BRIEF · facilitator only** (Session 19): at the top of each resolved quarter, in plain sentences built from `engine.history` by the pure engine function `trustBreakdown` (`src/engine/trust.ts`) and `src/screens/Wire/brief.ts`:
-  - the trust change and its §6.3 step 6–7 terms, which sum to the stored dT: recovery (R_eff × T × (1 − T/100) with R_eff as at the start of the quarter), draw (−Σ draw), incidents (−INC_TRUST × 8/N each, with the firms), PUBLISH (+PUBLISH_TRUST × 8/N each) and LOBBY (−LOBBY_TRUST each) with the firms, the clamp to [0, 100] when it acted, and in the moratorium quarter the drop actually applied (−BACKLASH, or less when T was below BACKLASH)
-  - the three largest draws, with each firm's rank after the quarter, pace and safety (ties in creation order)
+  - the trust change and its §6.3 step 6–7 terms, which sum to the stored dT: recovery (R_eff × T × (1 − T/100) with R_eff as at the start of the quarter), draw (−Σ draw), harm stories (−INC_TRUST × 8/N each, with the firms), PUBLISH (+PUBLISH_TRUST × 8/N each) and LOBBY (−LOBBY_TRUST each) with the firms, the clamp to [0, 100] when it acted, and in the crackdown quarter the drop actually applied (−BACKLASH, or less when T was below BACKLASH)
+  - the three largest draws, with each firm's rank after the quarter, feed and safeguards (ties in creation order)
   - the cards of the top half (rank ≤ ceil(N/2)) and the bottom half of the board in rank order, each marked ▲ or ▼ by its conduct ledger side (§10), plus breaches found by audit that quarter (▼)
-  - "Every trust loss this quarter came from firms’ own pace, safety, cards and incidents."
-  It shows pace, safety and cards even while disclosure is off, never τ or the end round, and is never rendered on `#/screen`, `#/play` or `#/results` (import-graph test).
+  - "Every trust loss this quarter came from firms’ own feed design, safeguards, cards and harm stories."
+  It shows feed, safeguards and cards even while the transparency rule is off, never τ or the end round, and is never rendered on `#/screen`, `#/play` or `#/results` (import-graph test).
 - **`COPY`:** copies the selected quarter, or all of them, as plain text for the debrief, the QUARTER BRIEF and the facilitator section included.
 - **Scale:** with 50 firms and 30 quarters the list scrolls inside its panel and renders `ALL` within 2 s (`npm run test:e2e:wire`).
 
@@ -635,19 +686,19 @@ Scale rules (Session 10):
 - Bottom tab bar on mobile, left rail on desktop. The active tab has a 2 px `--signal` top border (left border on the desktop rail) and `--signal` text on `--raise`, not a solid block. Tabs:
   - **DESK**: the decisions
   - **BOOK**: own P&L history and "against the field": a zero-based valuation chart with every other firm as a thin dim line, the own firm in `--signal` with its value tag, a dotted zero line, a key, and a sentence such as "Rank 1 of 9. Highest valuation for 13 quarters running." (or "Up 2 places since last quarter." / "Down 1 place since last quarter." / "Same place as last quarter."). The chart and the sentence use only `rounds/*/results` (valuations and ranks every signed-in user may read, §13); no other firm's private data
-  - **PACTS**: propose, join, leave, terms, members. The propose form opens with no term ticked, so a firm chooses each term it signs, and a preview above SIGN reads "You are signing: pace 2 or lower · safety 25 or higher" (owner decision 2026-10-12, Session 19)
+  - **CODES** (pacts): propose, join, leave, terms, members. The propose form opens with no term ticked, so a firm chooses each term it signs, and a preview above SIGN reads "You are signing: feed 2 or lower · safeguards 25 or higher" (owner decision 2026-10-12, Session 19)
   - **WIRE**: the feed
-- **Three-step strip** (lobby, briefing and quarter 1 only): `1 DECIDE → 2 COMMIT → 3 REVEAL`, one line each: "Set pace, safety and an optional card." / "Press COMMIT. Edit until the timer ends." / "Results appear for every firm at once."
+- **Three-step strip** (lobby, briefing and quarter 1 only): `1 DECIDE → 2 COMMIT → 3 REVEAL`, one line each: "Set feed, safeguards and an optional card." / "Press COMMIT. Edit until the timer ends." / "Results appear for every firm at once."
 - DESK contents, in order:
-  - **PACE**: 4 segments, ≥ 44 px targets. The selected segment is a `--raise` fill with a 3 px `--signal` bottom border (drawn as a border), not a solid block.
-  - **SAFETY · share of reference budget**: slider plus numeric stepper, with `0%` and `30%` printed at the ends.
-  - **CARD**: the picker trigger, with the selected card's one-line effect (`CARD_INFO`) under the card name. The card rules (no repeat in consecutive quarters, POACH target, insolvency) are printed inside the card sheet, not on the desk. The target list gains a ticker filter above 8 targets and scrolls inside the sheet.
-  - **Decision ticket**: a 1 px bordered block directly above COMMIT holding *Estimated cost this quarter* and *Public exposure* as a four-step meter (LOW, MED, HIGH, SEVERE, filled up to the current step) plus the label word. When the pace and safety on the ticket would break the terms of an active pact the firm belongs to, the ticket adds one line per pact, e.g. "▼ Breaks PACT-A: pace 2 or lower.", computed with the engine's `breaches()` (equality is compliant) and with the pace the engine will apply (Cautious when insolvent). The line never blocks COMMIT and is not shown for a pact the firm has left or been expelled from (Session 19). At 360×640 the ticket and the COMMIT bar are both inside the viewport without scrolling; the TEAM panel sits below them.
+  - **FEED**: 4 segments labelled `CHRONO`, `RANKED`, `AUTOPLAY`, `STREAKS` with the numbers 1–4, ≥ 44 px targets. The selected segment is a `--raise` fill with a 3 px `--signal` bottom border (drawn as a border), not a solid block.
+  - **SAFEGUARDS · share of reference budget**: slider plus numeric stepper, with `0%` and `30%` printed at the ends.
+  - **CARD**: the picker trigger, with the selected card's one-line effect (`CARD_INFO`) under the card name. The card rules (no repeat in consecutive quarters, CLONE target, insolvency) are printed inside the card sheet, not on the desk. The target list gains a ticker filter above 8 targets and scrolls inside the sheet.
+  - **Decision ticket**: a 1 px bordered block directly above COMMIT holding *Estimated cost this quarter* and *Public exposure* as a four-step meter (LOW, MED, HIGH, SEVERE, filled up to the current step) plus the label word. When the FEED and SAFEGUARDS on the ticket would break the terms of an active code the firm belongs to, the ticket adds one line per code, e.g. "▼ Breaks CODE-A: feed 2 or lower.", computed with the engine's `breaches()` (equality is compliant) and with the pace the engine will apply (FEED 1 when insolvent). The line never blocks COMMIT and is not shown for a code the firm has left or been expelled from (Session 19). At 360×640 the ticket and the COMMIT bar are both inside the viewport without scrolling; the TEAM panel sits below them.
   - **Commit bar**: before commit, the signal COMMIT button, full width. After commit, a full-width status bar: "COMMITTED 14:02:31 · edit until close", plus the committing device's label for teammates. When the draft differs from the committed decision the bar reads "CHANGES NOT COMMITTED" with a RECOMMIT button. Locked and offline states keep the bar and state why.
-- Reveal state: opens with one result sentence ("You ranked 2nd of 9, ▲1. Profit 57.7."; variants: "▼2", "unchanged", quarter 1 with no movement, negative profit "Loss 12.4."), then the figures (revenue, costs, profit, Δshare, valuation, rank), then notices as lines with a 2 px left rule coloured by kind (card dropped, incident, insolvency and breach in `--down`; audits and clean outcomes in `--dim`), then the headlines.
-- Summit state: one banner (the banner is the only notice of the summit; the PACTS tab adds none), with the PACTS tab auto-selected. Pact terms read "pace ≤ 2 · safety ≥ 15%" (either part alone when only one is set).
+- Reveal state: opens with one result sentence ("You ranked 2nd of 9, ▲1. Profit 57.7."; variants: "▼2", "unchanged", quarter 1 with no movement, negative profit "Loss 12.4."), then the figures (revenue, costs, profit, Δshare, valuation, rank), then notices as lines with a 2 px left rule coloured by kind (card dropped, harm story, insolvency and breach in `--down`; audits and clean outcomes in `--dim`), then the headlines.
+- Summit state: one banner (the banner is the only notice of the summit; the CODES tab adds none), with the CODES tab auto-selected. Code terms read "feed ≤ 2 · safeguards ≥ 15%" (either part alone when only one is set).
 - `ended`: the own-firm results card (§14.4) and a "Watch the board" note.
-- PACTS member lists follow the long-list rule (§14.1); `+N more` is a button that shows the full list.
+- CODES member lists follow the long-list rule (§14.1); `+N more` is a button that shows the full list.
 
 **Join flow by mode** (`#/j/:code`):
 - Team mode: "Found a firm" and "Join a firm" (with the firm's PIN), as before.
@@ -658,7 +709,7 @@ Scale rules (Session 10):
 On the projector the facilitator steps through seven panels with F9 (NET CONTRIBUTION added as panel 5 in Session 18):
 
 1. **FINAL BOARD**: ranked by final valuation. A dumbbell per firm from peak (hollow square) to final (solid square) on one axis that includes zero; final value and drop from peak on the right; final values below zero in `--down` with a − sign.
-2. **TRUST TRACE**: full history as a `LineChart`. The collapse quarter is a labelled vertical marker. The τ line, with a hatched band below it, appears only if the "Reveal threshold" setting is on.
+2. **TRUST TRACE**: full history as a `LineChart`. The crackdown quarter is a labelled vertical marker. The τ line, with a hatched band below it, appears only if the "Reveal threshold" setting is on.
 3. **COUNTERFACTUAL**: three headline figures (INDUSTRY VALUE, ALTERNATIVE, VALUE LOST or VALUE ADDED, §10); actual and alternative trust paths, each labelled at its end, with the gap hatched; per-firm comparison on a zero-based axis (actual bar from zero, alternative as a marker).
 4. **ATTRIBUTION**: a butterfly chart per firm: share of damage extending left in `--down`, share of value extending right in `--signal`, ticker in the middle, values at the bar ends. Negative-total rule in §10.
 
@@ -669,22 +720,22 @@ Series are labelled on the chart; no abbreviations (SUST, ACT, DEPL) or prose le
 - COUNTERFACTUAL: the three figures and the trust paths stay as above; the per-firm comparison scrolls inside its column, with its heading and axis kept in view.
 - Scrolling: mouse wheel or trackpad, or the arrow keys, Page Up, Page Down, Home and End on the results page. Each panel opens at the top.
 - ATTRIBUTION: up to 24 firms, one row per firm. Above 24, the 12 firms with the largest share of damage, then one `OTHERS` row with the combined shares of the rest; the heading states how many firms it combines. The `OTHERS` row shows its two shares as figures without bars, below a rule, so the axis serves the listed firms.
-- PACT RECORD: member lists follow the long-list rule (§14.1).
-5. **NET CONTRIBUTION** (Session 18): value created for the whole market (§10).
-   - The headline, written from the data: "Ranked by value created for the whole market, HUMN falls from 1st to 8th and ARCN rises from 9th to 2nd." (the valuation leader's move, then the largest rise; "HUMN holds 1st and …" when the leader keeps 1st; "every firm keeps its place." when no rank changes). A second sentence when every net contribution is below zero, and one for the moratorium cost and how many firms it is charged to.
+- CODE RECORD: member lists follow the long-list rule (§14.1).
+5. **NET CONTRIBUTION** (Session 18): value created for the whole ad market (§10).
+   - The headline, written from the data: "Ranked by value created for the whole ad market, HUMN falls from 1st to 8th and ARCN rises from 9th to 2nd." (the valuation leader's move, then the largest rise; "HUMN holds 1st and …" when the leader keeps 1st; "every firm keeps its place." when no rank changes). A second sentence when every net contribution is below zero, and one for the crackdown cost and how many firms it is charged to.
    - Left: a slope chart from rank by valuation to rank by net contribution. Firms that move 3 places or more are drawn thick, ▲ in `--up` or ▼ in `--down`, with the move beside the label; the rest are dim. Labels never overlap: the leader, then the largest moves, then the rest where they fit.
-   - Right, per firm in rank of net contribution: on one zero-based axis, a bar from 0 to the final valuation, then the market effect (▲ in `--up` or ▼ in `--down`), the research credit (an amber outline, labelled "research credit, not money", never merged into valuation), the rivalry taken (a red outline, shown with a − sign), and a square at the net contribution; the same figures as numbers; under each firm its conduct ledger, e.g. "▲ PUBLISH 6 · restraint 9  ▼ POACH 2 · BLITZ 3 · breaches 1".
+   - Right, per firm in rank of net contribution: on one zero-based axis, a bar from 0 to the final valuation, then the market effect (▲ in `--up` or ▼ in `--down`), the research credit (an amber outline, labelled "research credit, not money", never merged into valuation), the rivalry taken (a red outline, shown with a − sign), and a square at the net contribution; the same figures as numbers; under each firm its conduct ledger, e.g. "▲ PUBLISH 6 · restraint 9  ▼ CLONE 2 · BLITZ 3 · breaches 1".
    - Many firms, as ATTRIBUTION: up to 24 firms every firm; above, the 12 firms whose rank changed most, then one `OTHERS` row with the sums of the rest as figures without bars (the axis serves the listed firms). The slope chart always shows every firm. The list scrolls like FINAL BOARD.
-6. **PACT RECORD**: terms, members, detected vs undetected violations (now revealed).
+6. **CODE RECORD**: terms, members, detected vs undetected violations (now revealed).
 7. **DEBRIEF**: the five prompts in §15.5.
 
 Participants see their own firm's card: final rank, valuation actual vs counterfactual, cumulative exposure share, undetected violations of their own, and (Session 18) their net contribution with its parts, their rank by net contribution, their research credit (labelled "not money") and their conduct ledger.
 
 ### 14.5 Briefing (projector, one screen)
 
-A terse market primer covering §6.6, the three controls, cards (one line each), how commits work, and that the timer is shown. It contains no numbers that reveal parameters.
+A terse ad-market primer covering §6.6, the three controls, cards (one line each), how commits work, and that the timer is shown. It contains no numbers that reveal parameters.
 
-Card lines (Session 17 adds the last two): POACH "Take capability from a named rival."; PUBLISH "Release safety research."; LOBBY "Press regulators on fines."; BLITZ "Run a marketing push."; SHARE "Give every firm your safety tooling."; RUSH "Ship early. More capability, more exposure and incident risk."
+Card lines (display labels; IDs in §5.2): CLONE "Copy a named rival's feature. Take reach from them."; PUBLISH "Release internal wellbeing research."; LOBBY "Lobby the Assembly on fines."; BLITZ "Run an influencer campaign."; SHARE "Give every platform your safety tooling."; LAUNCH "Ship a new engagement feature. More reach, more exposure and harm-story risk."
 
 ---
 
@@ -692,12 +743,13 @@ Card lines (Session 17 adds the last two): POACH "Take capability from a named r
 
 ### 15.1 Voice
 
-The voice is that of a financial terminal and a wire service:
+The voice is that of a financial terminal and a wire service covering the platform industry:
 - Terse, declarative, present tense.
-- Labels are short uppercase mnemonics that work as genuine terminal codes: `VAL`, `MKT`, `EXPO`, `TRST`. They are not tracked-out eyebrows.
+- Labels are short uppercase mnemonics that work as genuine terminal codes: `VAL`, `ADS`, `EXPO`, `TRST`. They are not tracked-out eyebrows.
 - Headlines and body copy are in sentence case.
 - Numbers carry the message.
 - No exclamation marks. No second-person cheerleading. No emoji.
+- Display vocabulary follows §5.0.
 
 ### 15.2 Banned everywhere
 
@@ -707,54 +759,64 @@ The voice is that of a financial terminal and a wire service:
 
 The results screen, including the NET CONTRIBUTION panel and its copy (Session 18), may use these words; nothing before it may.
 
+"commons", "tragedy", "sustainable", "sustainability", "cooperate", "cooperation", "collective", "shared resource", "tipping point", "threshold", "collapse" (the word may appear only in the crackdown event headline), "game", "player", "score", "win", "level".
 
-"commons", "tragedy", "sustainable", "sustainability", "cooperate", "cooperation", "collective", "shared resource", "tipping point", "threshold", "collapse" (the word may appear only in the moratorium event headline), "game", "player", "score", "win", "level". Use "firm", "board", "valuation", "quarter" and "market" instead.
+FEED reskin additions (owner decision 2026-10-16): "addictive", "addiction", "dark pattern", "attention economy", "externality", "lawsuit", "mental health crisis", and the names of real platforms.
+
+Use "firm" or "platform", "board", "valuation", "quarter" and "ad market" instead. Write "FEED 2", never "feed level" (§5.0).
+
+**Real platform names** are also banned on the results screen, because the app names no real company anywhere (`docs/RESKIN.md`, guardrails). Only the facilitator runbook and guide may name the real company in the case discussed, and only as allegations. `lint:copy` (`scripts/lib/copy-rules.ts`) checks, in Title case and UPPER case: Meta, Facebook, Instagram, WhatsApp, Threads, TikTok, Snapchat, YouTube, Twitter, Reddit, Pinterest, Tumblr, Twitch, LinkedIn, Discord. Lower case is not checked, because source code uses words such as `meta` as identifiers. "X" is not checked, because a single letter cannot be matched without false hits; reviewers check it by eye.
 
 ### 15.4 Wire headline bank (template engine; seeded choice via the `headline` stream)
 
+The bank below sets the register and the required events. Session R3 replaces the FRONTIER bank in `src/engine/headlines.ts` with at least 40 templates in this register, with tests; until then the app runs the FRONTIER bank. Headlines never name a real company, platform or person, never use the §15.3 words (except "collapse" in the crackdown headline), and describe harm stories as reports, testimony and investigations, not as established findings.
+
 **Fictional entities**
-- Regulator: *Office of Frontier Systems (OFS)*
+- Regulator: *Office of Platform Safety (OPS)* (proposed, §5.0; replaces the Office of Frontier Systems)
 - Legislature: *the Assembly*
 - Pollster: *Halden Research*
-- Never use real companies or people.
+- Platforms: the firms' own names and tickers only
+- Never use real companies, platforms or people.
 
 **Trust bands** (one when the band changes, otherwise 30% chance per round):
-- ≥ 80: "Halden poll: public broadly optimistic on AI products"
-- 70–80: "Consumer groups question pace of model releases"
-- 60–70: "Halden poll: majority now uneasy about frontier AI"
-- 50–60: "Assembly members table AI licensing bill"
-- 40–50: "OFS signals review of emergency powers"
-- < 40: "OFS chair: 'all options on the table'"
+- ≥ 80: "Halden poll: parents broadly relaxed about teen screen time"
+- 70–80: "Parent groups question late-night notifications"
+- 60–70: "Halden poll: majority now uneasy about social platforms"
+- 50–60: "Assembly members table youth online safety bill"
+- 40–50: "OPS signals review of age-check powers"
+- < 40: "OPS chair: 'all options on the table'"
 
 **Events** (`{FIRM}` is the ticker):
 - Rank change: "{FIRM} overtakes {FIRM2} on valuation"
-- Pace 4: "{FIRM} accelerates release schedule" (only when disclosure is on; otherwise "Unnamed lab accelerates release schedule, sources say")
-- Incident: "Service outage traced to {FIRM} model", "{FIRM} model linked to fraud wave", "Data leak hits {FIRM} enterprise clients"
-- Incident cause lines (projector block and `INCID`, Session 18): with disclosure on, "pace {P} · safety {S}% · incident risk {Q}%"; with disclosure off, "Incident risk rises with pace and falls with safety spend."
-- PUBLISH: "{FIRM} publishes evaluation results"
-- LOBBY: "{FIRM} expands policy team in capital"
-- POACH: "{FIRM} hires senior researchers from {TARGET}"
-- BLITZ: "{FIRM} launches global ad campaign"
+- FEED 4 (pace 4): "{FIRM} adds streaks and late-night notifications" (only when the transparency rule is on; otherwise "Unnamed platform adds streak rewards, sources say")
+- Harm story (incident): "Leaked {FIRM} research on teen users circulates in the Assembly", "Former {FIRM} engineer testifies on harm to teenagers", "OPS opens investigation into {FIRM} over harm to teenagers"
+- Harm-story cause lines (projector block and `HARM`, Session 18): with transparency on, "feed {P} · safeguards {S}% · story risk {Q}%"; with transparency off, "Story risk rises with the feed and falls with safeguards."
+- PUBLISH: "{FIRM} publishes internal wellbeing research"
+- LOBBY: "{FIRM} expands lobbying team at the Assembly"
+- CLONE (POACH): "{FIRM} copies {TARGET} feature"
+- BLITZ: "{FIRM} signs influencers for global campaign"
 - SHARE: "{FIRM} releases safety tooling to the industry"
-- RUSH: "{FIRM} ships model ahead of evaluation schedule"
-- Pact formed / joined / left: "{FIRMS} sign voluntary release accord {PACT}", "{FIRM} joins {PACT}", "{FIRM} withdraws from {PACT}"
+- LAUNCH (RUSH): "{FIRM} ships new engagement feature ahead of review"
+- Code formed / joined / left: "{FIRMS} sign voluntary youth design code {PACT}", "{FIRM} joins {PACT}", "{FIRM} withdraws from {PACT}"
 - Audit clean: "Audit of {PACT} finds full compliance"
 - Breach: "Audit finds {FIRM} breached {PACT} terms; fine levied"
-- Disclosure on / off: "Assembly passes frontier disclosure rule" / "Disclosure rule suspended"
+- Transparency rule on / off: "Assembly passes platform transparency rule; researchers gain data access" / "Transparency rule suspended"
 - Insolvency: "{FIRM} enters administration talks"
-- Collapse (only here): "OFS imposes moratorium on frontier deployments; markets collapse"
-- Moratorium rounds: "Moratorium extended; sector valuations slide"
+- Crackdown (moratorium; the only use of "collapse"): "Assembly suspends under-16 accounts on every platform; ad market collapse follows" (proposed). The lint exemption in `scripts/lib/copy-rules.ts` (`MORATORIUM_HEADLINE`) moves to the approved wording in R3.
+- Crackdown rounds: "Under-16 suspension extended; platform valuations slide"
 - Final round reveal: "Markets close for the period"
-
-Calibration builds will extend the bank to at least 40 templates in the same register.
 
 ### 15.5 Debrief prompts (results panel 7)
 
-1. When did your firm first notice trust falling, and what did you change?
-2. Which pacts held and which broke? Was the difference monitoring, sanctions or trust?
-3. Compare your share of the damage with your share of the value. Ranked by net contribution, where does your firm fall? Is that outcome fair, and who should pay? (Owner wording 2026-10-10, Session 18.)
-4. Would disclosure from quarter 1 have changed your decisions? Why?
-5. Where does this pattern appear in the real AI industry, and which of Ostrom's design principles would you add to the market?
+Owner wording 2026-10-16 (`docs/RESKIN.md`); built in R3.
+
+1. Psychology: Which FEED level did you run, and what did that mean for a 14-year-old user? Did you choose it because of users or because of rivals?
+2. Economics: If every platform had held level 2, each would have been worth more. Why would no single firm hold back alone? Compare your share of the damage with your share of the value.
+3. Politics: The crackdown came only after damage built up past a hidden line. Why did the Assembly act late, and what did LOBBY buy you?
+4. Accountability: Which codes held: audits, fines or reputation? Would transparency from quarter 1 have changed your decisions?
+5. Reality check: Here the ad market tracked public trust every quarter. In the case discussed today, did it? If not, what replaces that signal: courts, regulation or design codes?
+
+**Note on prompt 2.** The COUNTERFACTUAL (§10) is the matching comparison: every firm at FEED 2 with SAFEGUARDS 15, no cards and no codes, with one per-firm value equal across firms. In a given session a leading firm's actual valuation can exceed that per-firm value, so "each would have been worth more" is not guaranteed for every firm. The facilitator should check the session's COUNTERFACTUAL panel before reading the prompt aloud. R3 reports to the owner how often the claim holds for every firm across calibration seeds.
 
 ---
 
