@@ -1,0 +1,309 @@
+# FRONTIER facilitator runbook
+
+Plain-English guide for running a class session. Nothing here needs a terminal.
+
+- **Live site:** https://mxtdnl.github.io/frontier/
+- **Facilitator pages** (sign-in needed): `#/new` creates a session, `#/screen/…` is the projector, `#/control/…` is your private console, `#/results/…` is the results sequence.
+- **Participant page:** `#/j/CODE`, or type the four-letter code on the landing page.
+
+A session runs in one of two modes, chosen on `#/new`:
+- **Team mode:** 2 to 16 firms, each with 1 to 5 devices (teams of people share a firm).
+- **Multiplayer mode:** 2 to 50 firms, one person each.
+
+A typical session is 8 to 14 quarters (35 to 60 minutes) plus a 20 to 30 minute debrief.
+
+---
+
+## What the session teaches (facilitators only)
+
+Read this section before your first class. Do not show it to participants, and do not read any of it aloud before the results screen. Sources are given in brackets: `docs/spec.md` (the spec), `src/engine/params.ts` (the numbers), and the reports in `reports/`.
+
+### The four learning objectives (spec §1)
+
+By the end of the session, students should be able to:
+1. Explain how competition that makes sense for each firm can destroy something every firm depends on. Here that is public trust, which sets the size of the whole market.
+2. Tell private gains from shared costs. A firm keeps all of what its pace earns, but every firm pays for the trust it uses up (a negative externality).
+3. Judge why voluntary agreements (pacts) fail under competitive pressure, and how monitoring (audits), disclosure and graduated sanctions (fines that grow with each breach) change behaviour. These are Elinor Ostrom's design principles.
+4. Connect this to the real debate about racing to deploy AI without enough safety work.
+
+### What the room is told, and what the session is built to show
+
+**What the room is told.** FRONTIER is a competitive business simulation. Each firm runs an AI company and is ranked by valuation. The briefing says only true things (spec §6.6):
+- Total market revenue tracks public trust.
+- Trust recovers when pressure eases.
+- Pace builds capability faster, and capability wins market share.
+- Safety spend costs money and lowers public exposure and incident risk.
+- Valuation reflects cash plus capability, priced by the market.
+- Every cost comes out of cash, and cash counts in full in your valuation.
+- A firm whose cash falls too far below zero becomes insolvent: it is held at Cautious pace and cannot play cards.
+- A firm that falls behind on capability loses market share.
+
+**What it is built to show.** Faster pace wins a firm more capability, and so more market share, and the firm keeps all of that gain. Every firm's pace also draws down public trust, a single pool that every firm shares. When trust falls, the whole market shrinks for everyone. One firm's draw moves trust by only about 1/N of the total, so for each firm on its own, racing looks worth it (spec §6.3 step 4). If trust falls below a hidden level, the regulator (OFS) imposes a moratorium: the market drops to 15% of its size, cash and capability are written down, and trust recovers at a quarter of its normal rate (`params.ts`: MORATORIUM_M 0.15, MORATORIUM_R 0.25).
+
+### What not to say before the results screen
+
+- **Never tell the room that the goal is public trust,** or that the firms should protect it together. A warned room plays differently, and the lesson is lost (spec §1, "non-telegraphing").
+- **Do not use these words** while the session is running: commons, tragedy, sustainable, sustainability, cooperate, cooperation, collective, shared resource, tipping point, threshold, collapse, game, player, score, win, level (spec §15.3). Say "firm", "board", "valuation", "quarter" and "market" instead.
+- **Do not hint that a hidden level exists,** or say when the session ends. The app never shows either.
+- **Do not label conduct as good or bad.** Report what happened ("HUMN played POACH"), not what it means.
+- If a team asks "what are we trying to do?", the true answer is: "maximise your firm's valuation."
+
+### Why aggressive firms lead the board, and why the room copies them
+
+- **Pace pays the firm.** Capability gain per quarter is 2, 4, 7 and 11 at paces 1 to 4. Market share is in proportion to the square of capability (`params.ts`: CAP_GAIN, ALPHA 2.0). Breakneck pace costs more cash per quarter (48 against 20 at Standard), but the extra share pays for it while trust holds.
+- **The cost is shared.** Pace 3 draws about five times as much trust as pace 2 (`params.ts`: DRAW 0.25 against 1.2). That loss shrinks every firm's revenue, not only the racer's.
+- **The board rewards it.** If the other firms stay restrained (pace 2, safety 15), one firm's best plan is pace 4 with no safety spend, alternating POACH and BLITZ. At 8 firms its valuation over quarters 10–14 is about 2,100, against about 630 for a restrained firm (median of 100 seeds; `reports/strategy-audit.md`, section 1).
+- **The room copies the leaders.** Observers of the October 2026 classes reported that teams copied the firms at the top of the board (`reports/observer-feedback-2026-10-12.md`, section 1). This is an observation from live classes, not a property of the model. Whether a given room copies its leaders depends on the room.
+
+### True statements you can rely on
+
+Every statement below comes from the spec, `params.ts` or a committed report. Statements marked "depends on the room" are measured results, not guarantees.
+- **Equal is compliant.** A firm that meets a pact's minimum safety exactly, or plays exactly at its maximum pace, keeps the pact (spec §5.3; `src/engine/pacts.ts`).
+- **Spending counts.** Every unit of cash spent (compute, safety, cards, fines) is one unit less valuation. Valuation is cash plus capability priced by trust (spec §6.3 step 13).
+- **A slow firm does not go bankrupt in a calm room.** In a scratch run of 8 firms over 14 quarters, a firm at pace 1 never became insolvent while its rivals stayed calm (`reports/observer-feedback-2026-10-12.md`, section 3). Do not tell the room that "playing it safe" leads to bankruptcy. It is false in the current model.
+- **After a moratorium most firms become insolvent,** and the slowest firm keeps the most value (same report, section 3). Depends on the room.
+- **No single strategy wins in every room.** The best plan depends on what the other firms do (`reports/strategy-audit.md`, section 1). In a room where every firm races, every strategy ends near or below zero.
+- **Restraint by everyone beats the race.** If every firm plays pace 2 with safety 15, the room never reaches the moratorium, even over 30 quarters (section 4 below, "When to expect the moratorium").
+- **One firm alone rarely triggers the moratorium at 6 firms or more.** By quarter 14 it happens in 2.4% of sessions at 6 firms and never at 8 (`reports/strategy-audit.md`, section 4). With 4 firms it happens in 80–91% of sessions, which is why at least 6 firms are needed.
+- **Every trust loss comes from the firms.** There are no market-wide shocks. Every incident is drawn for a firm from its own pace, safety and cards, and its trust cost falls on every firm (spec §6.3 step 5; observer report, section 2). A quarter in which every firm loses is the shared trust shrinking, not bad luck. The QUARTER BRIEF on `#/wire` shows where each quarter's loss came from.
+- **Breaking a pact pays, even after fines.** In the strategy audit (8 firms, automatic audits at 0.25), a firm that breaks a pace-2 pact at pace 4 with BLITZ ends at about 1,450 after fines, against about 630 for a firm that keeps it (`reports/strategy-audit.md`, section 3). Audits and fines narrow the gap; they do not close it.
+
+### How the results panels turn the board around
+
+1. **FINAL BOARD.** The ranking the room has been chasing, by valuation, with each firm's peak. Leaders who peaked early show the largest drops.
+2. **TRUST TRACE.** Trust quarter by quarter. Red squares mark quarters that lost 5 or more points, and the moratorium is marked if it happened. The room sees that its own decisions moved the line.
+3. **COUNTERFACTUAL.** The same room replayed with every firm at pace 2 and safety 15, with the same luck. The VALUE LOST figure is what the race cost the whole industry.
+4. **ATTRIBUTION.** Each firm's share of the trust damage against its share of the value. Ask whether the firms with the largest share of the damage also kept the largest share of the value.
+5. **NET CONTRIBUTION.** This is the turning point. Firms are re-ranked by what they added to the whole market: valuation, plus or minus what their decisions did to trust, plus a research credit for PUBLISH, minus value taken from rivals. In the four October 2026 live rooms, the valuation leader fell to between 5th and 9th (`docs/SESSIONS.md`, Session 18). Depends on the room: in a calm room with no moratorium, an aggressive firm can still rank high (`reports/observer-feedback-2026-10-12.md`, section 3, finding 4).
+6. **PACT RECORD.** Breaches no audit caught are revealed. The room sees how much the pacts relied on monitoring.
+7. **DEBRIEF.** Five prompts. From here on you may name the lesson and use every word listed above.
+
+---
+
+## 1. One-time Firebase set-up
+
+1. Open the Firebase console, project **frontier-sim**.
+2. **Authentication → Sign-in method:** both **Anonymous** and **Email/Password** must show *Enabled*. If Anonymous is off, participants see "Anonymous sign-in is switched off for this project" and cannot join.
+3. **Authentication → Users → Add user:** create your facilitator email and password. Copy the **User UID** shown in the list.
+4. **Realtime Database → Data:** add a top-level node `facilitators`. Under it add a child named with your UID and set its value to `true` (the boolean, not the text "true"). Without this, sign-in works but the app says the account is not on the facilitator list, and it shows the UID it needs.
+5. **Realtime Database → Rules:** paste the full contents of `database.rules.json` from the repository (each pull request that changes the rules lists the new text), then click **Publish**. Re-do this whenever a pull request says the rules changed.
+
+## 2. Pre-class checklist
+
+Do this the day before, then again 15 minutes before class.
+
+- [ ] Open https://mxtdnl.github.io/frontier/ on the projector laptop. The landing page shows a "Session code" box.
+- [ ] Sign in at `#/new` with your facilitator email. If you see "not on the facilitator allowlist", repeat set-up step 4.
+- [ ] Run a **solo rehearsal** (section 8) at least once with the same laptop and projector. It takes about 10 minutes.
+- [ ] Projector set to 1280×720 or 1920×1080, browser full-screen (F11 is for the browser, not the app). Zoom 100%.
+- [ ] Second device for the console: your own laptop or phone, signed in with the same account.
+- [ ] Phone on the room Wi-Fi opens the site and reaches the landing page.
+- [ ] Decide the settings (section 3) and write the end rule down. The app never shows participants how many quarters there are.
+- [ ] Keep the debrief prompts (section 7) ready. They appear on results panel 7.
+- [ ] Browser: use a private window or a different browser for any device that will play as a firm. A browser signed in as the facilitator cannot also be a participant.
+
+## 3. Create a session
+
+1. Open `#/new` and sign in.
+2. Choose settings, then press **Create session**:
+
+| Setting | What it does | Suggested |
+|---|---|---|
+| Mode | **Team mode**: up to 16 firms, teams share a firm. **Multiplayer mode**: up to 50 firms, one person each. The mode name shows only on `#/new` and the console. | Team for teams of 3 to 5; Multiplayer when each person plays alone |
+| Round timer (s) | Time to decide each quarter. You can add or remove 30 s later. | 120 |
+| Auto-resolve at deadline | Resolves by itself when the timer ends. Off means you press F9. | Off for the first class |
+| End mode | *Random within a range*: hidden end between the two numbers. *Fixed quarter*: you choose the end. *Manual*: runs until you press END, or quarter 30. | Random, 10 to 14 |
+| Disclosure at start | Shows each firm's pace, safety and exposure on the board from the start. | Off |
+| Automatic audit probability | Chance each pact is audited by itself each quarter. | 0.25 |
+| Reveal TAU line on results screen | Draws the hidden collapse line on the trust trace at the end. | Off until the debrief decision |
+| Lit-room display mode | Slightly larger type and stronger rules and secondary text, for a bright room. | As needed |
+| Seed | Random, or a fixed number to replay the same market. | Random |
+| Bot firms | Computer-run firms (labelled BOT) for small classes and rehearsal. **Add 10 mixed** adds ten at once with mixed policies. Bots count towards the mode's firm limit. | 0 to 4 |
+
+3. The projector page opens (`#/screen/…`) showing the **join code**, a QR code and the address. Leave it on the projector.
+4. On the second device open `#/control/<same session id>`. The address of the projector page contains the id; replace `screen` with `control`.
+
+## 4. Running the session
+
+**Lobby.** Teams scan the QR code or type the code. One person founds the firm (name, ticker, PIN). Teammates join with the PIN. Firm names appear on the projector with a member count. Wait until every team shows. You need at least 2 firms (bots count).
+
+- **Multiplayer mode:** each person presses **Found your firm**. The PIN they are shown lets them rejoin from another phone (**Rejoin your firm with its PIN**) if theirs dies. Nothing stops a second phone joining someone's firm with their PIN, so tell the room to keep PINs to themselves.
+- **Above 16 firms** the lobby lists firms in up to 4 columns: ticker and devices joined, or BOT.
+
+- **Use at least 6 firms.** One firm playing flat out (pace 4, safety 0) and rushing releases (the RUSH card every other quarter) can trigger the moratorium on its own. By quarter 14 this happens in 8 or 9 sessions in 10 with 4 firms, 2 or 3 in 10 with 5 firms, 1 or 2 in 100 with 6 firms and never with 8. If the session runs on to quarter 30, it happens in most sessions with 6 firms and in up to 4 in 10 with 8 (Session 9 review, finding M1; re-measured in Session 17). Add bot firms on `#/new` to reach 6 if the class is small, and use a fixed 14-quarter end with fewer than 8 firms.
+- **Check the console's FIRMS panel before the briefing.** A firm whose PRESENCE reads *none* has no devices: its founder founded or joined another firm. Press **REMOVE** on that row twice within 3 seconds. Otherwise it plays on AUTO defaults all session. REMOVE works only in the lobby.
+- **Press LOCK JOINS** (DANGER panel) as soon as every team has formed. This stops anyone founding extra firms or trying more PINs (Session 9 review, findings H1 and H2). **REOPEN JOINS** undoes it while you are still in the lobby.
+
+**Briefing.** Press **F9**. This locks firm creation: nobody new can join after this point. A new device cannot be added later; a team that missed the lobby must be added by starting a new session. Read the briefing aloud.
+
+**Each quarter.**
+1. Press **F9** (or **Shift+A**) to open the quarter. The timer starts.
+2. Watch the COMMITTED count in the top bar and the board heading; on the board a green box with a tick marks each firm that has committed. Teams can change their decision until the timer ends.
+3. Press **F9** to resolve. Teams that did not commit get the default decision and are marked AUTO. The board reveals the new results.
+4. Press **F9** again for the next quarter.
+
+**Reading the projector (Session 12).** The top bar shows the quarter, the phase as a coloured block with its word, the commit count, disclosure, and the countdown on the right. The line under it says in one sentence what is happening and what teams should do; after each reveal it summarises the quarter (trust change, who is 1st, incidents). The bar at the bottom shows only the keys that do something right now; the solid key is the one you most likely want next (usually **F9**, **F8** during a summit). Hidden keys still work if pressed. To type a command (`TRST`, `FIRM BTC`, `HELP`), just start typing: the command line appears in the top bar.
+
+**What a team sees on the phone (Session 15).**
+- The header has the firm's ticker, the quarter, the phase and, largest of all, the countdown on the right. Cash and last profit sit beneath it.
+- In the lobby, the briefing and quarter 1, the DESK opens with a three-step strip: DECIDE, COMMIT, REVEAL, one line each.
+- The DESK shows PACE (the chosen segment has an amber underline), SAFETY with 0% and 30% at the ends, and CARD with the chosen card's one-line effect under its name. The card rules are inside the card sheet.
+- Directly above the COMMIT button sits a bordered ticket with the estimated cost and a four-step exposure meter with its word (LOW, MED, HIGH, SEVERE). Ticket and button stay on screen on a small phone.
+- After COMMIT the button becomes a green bar, "COMMITTED 14:02:31 · edit until close", with the device initials. If the team changes a setting the bar reads "CHANGES NOT COMMITTED" and a RECOMMIT button appears. After the timer ends the bar says the desk is locked.
+- At the reveal, the card opens with one sentence ("You ranked 2nd of 9, ▲1. Profit 57.7."), then the figures, then notices with a coloured rule on the left (red for something that went against the firm).
+- During a summit one banner is shown. Pact terms read "pace ≤ 2 · safety ≥ 15%".
+
+**Board pages (above 16 firms).** The board shows 10 firms at a time and turns to the next page every 8 seconds; the heading reads `PAGE 2/5`. Above the page, the leader and the firm that moved most (3 places or more) stay pinned. Rotation holds for 30 seconds after you press any key, and while you type a command. Each reveal starts on page 1. Use `FIRM <TICKER>` for any one firm's history.
+
+**Firm performance (Session 13).** Across the top of the board, the VALUE SHARE strip shows each firm's share of the total value of firms above zero; the caption counts firms below zero. Each row shows MOVE (places gained ▲ or lost ▼ since last quarter), a valuation bar from zero (red to the left when below zero) and, when there is room, a TREND line of the last 14 quarters on one scale for every firm. With disclosure on the trend line is left out to make room. Type `FIRMS` for one small chart per firm on the same scale (pages of 16 above 16 firms, turning every 8 seconds), and `RANKS` for every firm's rank by quarter with the leader in amber and the biggest faller in red. Esc returns to the board.
+
+**Summit.** Press **F8** during an open quarter or a reveal. The timer pauses and decisions are refused ("Industry summit in session"). Teams can propose, join and leave pacts. Press **F8** again to return.
+
+**Audit.** Press **F6** (**Shift+F**), then the number of the pact. The audit runs when the quarter resolves. The result appears in the wire, on the board as a BREACH tag, and on the console.
+
+**Disclosure.** **F7** (**Shift+D**) turns the PACE, SAFETY and EXPOSURE columns on or off. In lit-room mode they are headed SAFE and EXPO, explained in the key strip under the board. They fill in at the next resolution.
+
+**Collapse.** When trust falls below the hidden line, the reveal shows the moratorium headline. Press **F9** to continue under the moratorium or **F10** to end.
+
+**When to expect the moratorium (Session 17 calibration, 200 sessions per row and class size from 4 to 50 firms).**
+
+| How the room plays | Moratorium |
+|---|---|
+| Every firm racing (pace 3 or 4, little safety) | Around quarter 5 (usually quarters 4 to 5) |
+| Half the firms racing, half restrained | Around quarter 10 (usually 8 to 11); by quarter 14 in every session measured |
+| A class like the four live rooms of October 2026 (racing on and off, moderate safety, many cards) | By quarter 14 in about half of sessions at 4 to 20 firms (45–57%), more often in very large rooms (64% at 30 firms, 94% at 50); median quarter 13 to 16 |
+| A third of the firms racing | Sometimes within 14 quarters (1–59% of sessions, depending on class size) |
+| Every firm restrained (pace 2, safety 15) or on the defaults | Never, even over 30 quarters |
+
+- **Safety helps less than before.** Since Session 17 a room where every firm plays Aggressive (pace 3) with the maximum safety (30) still reaches the moratorium in about 45% of sessions. Before, it never did.
+- **Cards.** PUBLISH now adds much less trust (0.25 per card at 8 firms, scaled by class size). Two cards are new: **SHARE** (costs 15; lowers every firm's incident risk that quarter) and **RUSH** (free; +4 capability, but that quarter the firm's trust draw and its incident risk are each 1.5 times as high). The briefing shows one line for each.
+- With the default hidden end (quarter 10 to 14), a half-racing room can end a quarter or two before its moratorium. If you want every session to run long enough to see it, set **End mode** to **Fixed quarter** with 14 on `#/new`.
+- Trust recovers slowly once the room eases off: about 1 to 1.5 points a quarter. A room that has fallen far rarely climbs back within a session.
+
+**Ending.** The session ends by itself at the hidden end quarter, or after quarter 30. Press **F10** twice within 3 seconds to end early. If you press it during an open quarter, that quarter is discarded.
+
+### Key map
+
+| Key | Alternative | Action |
+|---|---|---|
+| F2 | Shift+B | Board |
+| F3 | Shift+T | Trust history |
+| F4 | Shift+P | Pacts |
+| F6 | Shift+F | Audit a pact |
+| F7 | Shift+D | Disclosure on or off |
+| F8 | Shift+S | Summit in or out |
+| F9 | Shift+A | Advance: lobby → briefing → quarter → resolve → reveal → next quarter. After the session ends, opens and steps the results. |
+| F10 | Shift+E | End the session (press twice within 3 s) |
+| Esc | | Back to the board |
+
+Type in the command line at the top of the projector, then press Enter: `BOARD`, `TRST`, `PACT`, `WIRE`, `FIRM <TICKER>`, `FIRMS`, `RANKS`, `INCID`, `HELP`. F1, F5, F11 and F12 do nothing in the app, so the browser keeps them.
+
+**Incidents** (Session 18). When the reveal ends, the right-hand panel lists the quarter's incidents in place of the trust chart: each firm hit, its headline, the effect ("trust −1.2 · BTC revenue −15% this quarter") and the cause. With disclosure on, the cause names the firm's pace, safety and incident risk; with disclosure off, it says only "Incident risk rises with pace and falls with safety spend." The firm's row carries a red **INCID** tag until the next quarter resolves. More than 4 incidents: "+N more"; type `INCID` for every incident of the session.
+
+If a key press shows "Working on the last key. Press again in a moment.", the previous action is still finishing. Wait a second and press again.
+
+### The console (`#/control/…`)
+
+- **Control strip** at the top stays in view however far you scroll. Its buttons are grouped by what they do:
+  - **ROUTINE:** **−30 s**, **+30 s**, **Pause** and **Resume**. Safe to press at any time.
+  - **SESSION FLOW:** **F6 AUDIT**, **F7 DISCLOSURE**, **F8 SUMMIT**, **F9 ADVANCE**. The key you are expected to press next is the solid one.
+  - **IRREVERSIBLE** (red outline): **F10 END**, and the **END** and **TAU** buttons that show the hidden end quarter and TAU only while you hold them down. Use them privately. Never show the console on the projector.
+  - A **NEXT** line under the groups names the key to press and why, for example "NEXT · F9 resolves quarter 3. 2 of 5 firms have committed; the rest take their defaults."
+  - The phase, quarter, commit count and latest message sit above the groups.
+- **Session panel:** phase, quarter, trust, timer and the **MODE** with its firm limit.
+- **Firms panel:** who is online (a row of dots, one per device, filled when online; **ON** shows devices online out of joined), who has committed, when, AUTO forecast, bot policy. In the lobby each row also has **REMOVE** (press twice within 3 s). The table scrolls inside the panel. **SORT** by **FIRM**, **CMT** (firms still to commit first) or **ONLINE** (fewest online first). **SHOW** **NOT COMMITTED** (during an open quarter) or **OFFLINE** (human firms with no device online).
+- **LOCK JOINS / REOPEN JOINS** (DANGER panel, lobby only): closes or reopens joining before the briefing.
+- **Pacts panel:** unaudited counts, an **AUDIT** button per pact, audit outcomes.
+- **Export:** **DOWNLOAD HISTORY (.json)** and **DOWNLOAD DATA LINES (.txt)**. Download both before you delete the session.
+- **WIRE LOG** (link at the top of the console, opens a new tab; Session 18): every headline and pact or disclosure event of the session, by quarter. Use **◄ ►** or the arrow keys to change quarter, type a quarter number and press **GO**, or press **ALL**. Under each resolved quarter, **NOT ON THE WIRE** lists what the headlines left out (incidents, cards, audits, firms entering administration); it is for you only and never appears on the projector or phones. **COPY** puts the selected quarter (or all) on the clipboard as plain text for the debrief. The address is `#/wire/<session id>`, the same id as `#/control/…`.
+- **DELETE SESSION:** press it, type the four-letter code, then press **CONFIRM DELETE**. It cannot be undone.
+
+## 5. If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| The projector page was refreshed or the laptop slept | Reload the page and sign in if asked. The quarter, countdown and committed ticks come back from the database. Nothing is lost. |
+| Two windows open for the same session | Safe. Pressing F9 in both resolves a quarter once. The second press is refused. |
+| Console says **Resolution incomplete — retry** | The quarter did not finish writing. Press **Retry resolution** once. Nothing was written, so no results are half-saved. |
+| Results do not appear after the session ends | The console shows "Results are not written yet". Press **Retry results**. Check the connection. |
+| A team says "Joining is closed" | Joining closes at the briefing. A team that missed the lobby cannot be added to a running session. A returning device that was already in a firm can always reconnect. |
+| A team's phone shows "Offline. Reconnecting automatically." | It reconnects by itself. Their last commit is kept. Committing is paused until the connection returns; they can recommit afterwards if the timer is still running. |
+| A phone clock is wrong | Not a problem. The countdown and the deadline use the server clock. |
+| A team did not commit in time | They receive the default decision, marked AUTO, and the quarter proceeds. |
+| You pressed END by mistake | A single press only arms it for 3 seconds. A second press ends the session and cannot be undone. |
+| The wrong person is on the facilitator list | Remove their UID under `facilitators` in the Realtime Database data tab. |
+| A firm you do not recognise, or an unexpected device in a firm, appears in the lobby | Press **REMOVE** on that firm. If a device appears in the wrong firm, remove the firm and ask the team to found it again with a new PIN. Then press **LOCK JOINS**. |
+| More firms formed than the mode allows (16 in team mode, 50 in multiplayer mode), so F9 refuses to start | Press **REMOVE** on the extra firms (start with those whose PRESENCE reads *none*). The mode cannot be changed after creation; create a new multiplayer session if a team session is too small. |
+| In multiplayer mode, someone's phone died | On another phone they open the site, type the code, press **Rejoin your firm with its PIN**, pick their ticker and enter the PIN they were shown when they founded it. |
+| A phone says "Another device is joining this firm. Wait a few seconds and try again." | Several teammates joined the same firm in the same second; each join takes its turn, one per second. Ask them to press **Join the firm** again. If it keeps happening, press **LOCK JOINS** once every team has formed. |
+| A wrong PIN always shows "Another device is joining this firm" after about 10 seconds | The Firebase rules are older than the app. Paste the current `database.rules.json` (set-up step 5). |
+| A team cannot join with the PIN | Check that they chose the right firm. The PIN is shown on the founding phone and on its DESK tab. |
+| "Anonymous sign-in is switched off for this project" on a phone | Anonymous sign-in is off. See set-up step 2. |
+| The board lags behind after a network drop | Wait a few seconds. If a tick stays missing, reload the console. Committed ticks need one open projector or console window. |
+| Anything else | Reload the page. If a quarter is stuck in RESOLVING, use Retry. If the database is unreachable, pause the class and check the Firebase status page. |
+
+Never ask a participant to read out a hidden value. The projector and the participants' phones never show τ, the end quarter or unaudited violations.
+
+## 6. After the last quarter
+
+1. When the session ends, press **F9** on the projector to open the results.
+2. Download both exports from the console, **before** deleting anything.
+3. Participants see their own results card on their phones. It opens with one sentence, such as "You finished 2nd of 9, 12.5% below your peak.", then shows rank, valuation compared with the sustainable path, their share of the damage and of the value as two short bars, and their own undetected violations.
+
+## 7. Debrief flow
+
+Allow 20 to 30 minutes. On the projector, press **F9** to step forward and **Esc** to step back. The step is saved, so a reload returns to the same panel.
+
+Every panel opens with one bold sentence that states its main point, written from the session's data (for example "Trust fell from 72.0 to 45.6 over 14 quarters."). Read it out, then ask the room to discuss.
+
+With about 20 firms or more, two panels hold a list that scrolls inside the panel (the heading and the axis stay in view):
+- **FINAL BOARD**: every firm in rank order.
+- **COUNTERFACTUAL**: the per-firm comparison on the right.
+- Scroll with the mouse wheel or trackpad, or with **↓ ↑**, **Page Down**, **Page Up**, **Home** and **End**. F9 and Esc still move between panels.
+- **ATTRIBUTION**: above 24 firms, the 12 firms with the largest share of the damage, then one **OTHERS** line that adds up the rest.
+- **NET CONTRIBUTION**: above 24 firms, the 12 firms whose rank changed most, then one **OTHERS** line that adds up the rest; the slope chart on the left always shows every firm.
+
+1. **FINAL BOARD.** Who finished first? Each firm has a line from its peak (hollow square) to its final valuation (solid square); red squares finished below zero. Ask which teams peaked early.
+2. **TRUST TRACE.** Point at the labelled MORATORIUM line if there was one, and at the red squares (quarters that lost 5 or more trust). If you want the hidden threshold shown (a dashed red line with a hatched band below it), it must have been switched on at creation.
+3. **COUNTERFACTUAL.** Three figures: the industry's actual value, the ALTERNATIVE (every firm at pace 2, safety 15) and the VALUE LOST between them. If the industry finished below zero, no percentage is shown. The hatched area on the chart is the trust lost. Ask whether any single firm could have prevented it.
+4. **ATTRIBUTION.** Each firm's share of the damage (red, to the left) against its share of the value (amber, to the right). If no firm finished above zero, the right side says so. This is the fairness conversation.
+5. **NET CONTRIBUTION.** The firms re-ranked by the value they created for the whole market, not only for themselves. On the left, a line runs from each firm's rank by valuation to its rank by net contribution; firms that moved 3 places or more are thick (green ▲ rose, red ▼ fell). On the right, each firm's net contribution is built up on one axis: its valuation (blue), plus or minus what its decisions did to every firm's revenue through trust, against pace 2 and safety 15 with no cards (green ▲ or red ▼), plus a research credit for each PUBLISH card (amber outline, labelled "not money": it never changed anyone's cash), minus the value it took from rivals with BLITZ, POACH and RUSH (red outline). A moratorium's cost is charged to the firms that had drawn trust down before it. Under each firm, its conduct: ▲ what it did for the market, ▼ what it did against it. Ask the firm that led on valuation where it now sits, and why.
+6. **PACT RECORD.** Violations that no audit caught are now shown. Under the table, each pact has a row of quarter cells per firm: a solid red cell is a breach an audit found, a red outline is a breach no audit found, a dim dot is a quarter that kept the terms, and a blank cell is a quarter in which the firm was not bound (before it joined, after it left or was expelled, or after the pact dissolved). Firms that left are marked "former". Ask what the pacts did and did not achieve.
+7. **DEBRIEF.** Five prompts, shown on screen:
+   1. When did your firm first notice trust falling, and what did you change?
+   2. Which pacts held and which broke? Was the difference monitoring, sanctions or trust?
+   3. Compare your share of the damage with your share of the value. Ranked by net contribution, where does your firm fall? Is that outcome fair, and who should pay?
+   4. Would disclosure from quarter 1 have changed your decisions? Why?
+   5. Where does this pattern appear in the real AI industry, and which of Ostrom's design principles would you add to the market?
+
+The results screen is the only screen where the app's wording may name the commons problem directly. Use that vocabulary freely once you reach it.
+
+## 8. Solo rehearsal with bot firms (on the live site)
+
+The computers in the cloud cannot reach the live database, so a live rehearsal uses the **in-app bot firms**. You need only your laptop, and optionally your phone.
+
+1. Sign in at `#/new`.
+2. Set **Round timer** to 30, **Auto-resolve at deadline** on, **Fixed quarter** 6, **Fixed, for rehearsal** seed 7 (the same market every time).
+3. Under **BOT FIRMS** press **Add bot firm** six times. Give them different policies (cautious, standard, greedy, mimic-leader).
+4. Press **Create session**. On your phone, in a private browser tab, open the site, type the code and found a firm named Test Works with ticker TEST.
+5. On the laptop press **F9** (briefing), **F9** (quarter 1). Commit a decision on the phone. Watch the board: all bots count as committed.
+6. During a quarter, press **F8** (summit) and back, **F7** (disclosure) and **F6** (audit) once you have proposed a pact on the phone's PACTS tab.
+7. Let auto-resolve run through the quarters. When the session ends, press **F9** to step through the seven results panels and check the card on the phone.
+8. On the console download both exports, then **DELETE SESSION**.
+
+What to check: the countdown is the same on laptop and phone; the board is readable from the back of the room; your phone's result card appears at each reveal; the results panels fit the screen.
+
+## 9. Running 40 to 50 people
+
+- **Teams of 3 to 5** (10 to 16 firms): use **team mode**. A test with 16 firms on 50 devices ran 14 quarters without errors (`reports/scale-run.md`).
+- **One person each** (up to 50 firms): use **multiplayer mode**. A test with 50 firms on 50 devices ran 14 quarters without errors. A large room reaches the moratorium on the same timetable as a small class: if half the people race, expect it around quarter 10, and by quarter 14 in every session measured. A room that plays like the October 2026 live classes reaches it more often at 30–50 people (64–94% by quarter 14) than at 10 (about 50%) (see "When to expect the moratorium" in section 4; `docs/CALIBRATION.md`, Session 17).
+- **Connection limit (check before the class).** Every open browser tab holds one live connection to the database: about 50 phones plus the projector and the console. The free (Spark) plan has a limit on simultaneous connections. This was **not verified** in Session 10 because the Firebase documentation could not be reached from the build environment. The limit is believed to be 100, but that has not been checked. To check it, open https://firebase.google.com/pricing and find the Realtime Database limit on simultaneous connections for the plan your project is on (the Firebase console shows which plan the project uses). The exact console clicks were not checked in Session 10.
+- Ask participants to keep one tab open each. A second tab, or a laptop and a phone at the same time, counts twice.
+
+## 10. Where the technical details are
+
+- **Facilitator guide (PDF, facilitators only):** `docs/facilitator-guide/FRONTIER-facilitator-guide.pdf`, a step-by-step walkthrough with screenshots. Rebuilt with `npm run guide:pdf`; screenshots with `npm run guide:shots`.
+- Full rules and numbers: `docs/spec.md`.
+- What each build session did, and what is still open: `docs/PROGRESS.md`.
+- How the market was tuned: `docs/CALIBRATION.md` and `reports/calibration.md`.
+- Automated checks (developer commands, run in Claude Code): `npm test`, `npm run test:rules`, `npm run test:e2e`, `npm run test:e2e:rehearsal`, `npm run test:e2e:long`, `npm run test:e2e:hardening`, `npm run test:a11y`, `npm run audit:build`.

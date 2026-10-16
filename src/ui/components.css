@@ -1,0 +1,1885 @@
+/* Component styles. Colours come from tokens only. */
+
+/* ---------- Glyphs drawn as shapes (the typeface carries no triangles or check) ---------- */
+.glyph {
+  display: inline-block;
+  width: 1ch;
+  height: 1ch;
+  vertical-align: -0.1ch;
+  background: currentColor;
+}
+.glyph-up {
+  clip-path: polygon(50% 10%, 95% 90%, 5% 90%);
+}
+.glyph-down {
+  clip-path: polygon(5% 10%, 95% 10%, 50% 90%);
+}
+.glyph-check {
+  clip-path: polygon(0% 55%, 12% 43%, 38% 68%, 88% 12%, 100% 25%, 38% 95%);
+}
+
+/* ---------- TopBar (spec §14.1, §16.1) ---------- */
+.topbar {
+  position: relative;
+  background: var(--panel);
+  color: var(--text);
+  display: flex;
+  align-items: stretch;
+  gap: 0 2ch;
+  padding: 0 1ch 0 0;
+  height: 2lh;
+  border-bottom: 2px solid var(--signal);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.topbar > * {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.topbar .grow {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.topbar .sep {
+  font-weight: 400;
+  color: var(--dim);
+}
+.topbar-notice {
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: clip;
+}
+.tb-brand {
+  background: var(--signal);
+  color: var(--signal-ink);
+  padding: 0 1ch;
+}
+.tb-clock {
+  margin-left: auto;
+  font-size: 1.5em;
+  line-height: 1;
+  color: var(--signal);
+}
+.tb-clock .tb-paused {
+  font-size: 0.67em;
+  margin-left: 1ch;
+  color: var(--dim);
+}
+/* Phase blocks (spec §16.1): each phase distinct, always with its word. */
+.phase {
+  padding: 0 1ch;
+  margin: 0.25lh 0;
+  border: 2px solid transparent;
+}
+.phase-lobby {
+  border-color: var(--dim);
+  color: var(--text);
+}
+.phase-briefing {
+  border-color: var(--text);
+  color: var(--text);
+}
+.phase-open {
+  background: var(--up);
+  border-color: var(--up);
+  color: var(--signal-ink);
+}
+.phase-resolving {
+  border-color: var(--signal-dim);
+  color: var(--signal);
+}
+.phase-reveal {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--signal-ink);
+}
+.phase-summit {
+  background: var(--wire);
+  border-color: var(--wire);
+  color: var(--signal-ink);
+}
+.phase-ended {
+  background: var(--dim);
+  border-color: var(--dim);
+  color: var(--signal-ink);
+}
+/* Phone header: the same bar, allowed to wrap on a narrow screen. */
+.topbar.topbar-play {
+  height: auto;
+  min-height: 2lh;
+  flex-wrap: wrap;
+}
+
+/* ---------- Status line (spec §14.1) ---------- */
+.status-line {
+  height: 100%;
+  padding: 0 1ch;
+  background: var(--base);
+  border-bottom: var(--rule-w) solid var(--rule);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- CommandLine: shown only while the facilitator types (spec §14.1) ---------- */
+.cmd {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+}
+.topbar .cmd:not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.cmd-input {
+  width: 22ch;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--rule-w) solid var(--signal);
+  color: var(--text);
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0;
+  caret-color: var(--signal);
+}
+.cmd-input:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+.cmd .cmd-go {
+  border: 0;
+  padding: 0;
+  color: var(--signal);
+}
+
+/* ---------- FKeyBar ---------- */
+.fkeys {
+  display: flex;
+  align-items: center;
+  gap: 0 2ch;
+  padding: 0 1ch;
+  height: 2lh;
+  background: var(--panel);
+  border-top: var(--rule-w) solid var(--rule);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.fkey {
+  border: 0;
+  padding: 0;
+  display: inline-flex;
+  gap: 1ch;
+  color: var(--dim);
+}
+/* Outlined key caps; the next expected action is the one solid key (spec §14.1). */
+.fkey .k {
+  border: var(--rule-w) solid var(--signal-dim);
+  color: var(--signal);
+  padding: 0 1ch;
+}
+.fkey.is-primary {
+  color: var(--text);
+}
+.fkey.is-primary .k {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  font-weight: 600;
+}
+
+/* ---------- Panel ---------- */
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--panel);
+  border: var(--rule-w) solid var(--rule);
+}
+.panel + .panel {
+  margin-left: calc(var(--rule-w) * -1);
+}
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 2ch;
+  padding: 0 1ch;
+  color: var(--text);
+  font-weight: 600;
+  border-bottom: var(--rule-w) solid var(--rule);
+  white-space: nowrap;
+}
+.panel-title > span + span {
+  color: var(--dim);
+  font-weight: 400;
+}
+.panel-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  padding: 0 1ch;
+  overflow: hidden;
+}
+.panel-body.pad {
+  padding-top: 1lh;
+  padding-bottom: 1lh;
+}
+
+/* ---------- DataTable ---------- */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.tbl th,
+.tbl td {
+  padding: 0 1ch 0 0;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  font-weight: 400;
+}
+.tbl th {
+  color: var(--dim);
+  background: var(--raise);
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+/* Row rules and alternate-row fill (spec §14.1, Session 12). */
+.tbl td {
+  border-bottom: var(--rule-w) solid var(--grid);
+}
+.tbl tbody tr:nth-child(even) td {
+  background: var(--raise);
+}
+.tbl .num {
+  text-align: right;
+  padding-right: 1ch;
+}
+/* The row rule sits inside the row's own height, so the board capacity rules (§14.1) hold. */
+.tbl.tall td {
+  height: calc(2lh - var(--rule-w));
+}
+/* Paged board: a stronger rule under the pinned rows. */
+.tbl tr.pin-last td {
+  border-bottom-color: var(--rule);
+}
+.tbl tr.own td {
+  color: var(--signal);
+  font-weight: 600;
+}
+.tbl td.tags {
+  white-space: normal;
+  line-height: var(--lh);
+}
+.wrap-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 2ch;
+}
+.tbl td.tags-line {
+  white-space: nowrap;
+}
+
+/* ---------- Delta ---------- */
+.delta.pos {
+  color: var(--up);
+}
+.delta.neg {
+  color: var(--down);
+}
+.delta.zero {
+  color: var(--dim);
+}
+
+/* ---------- Tag ---------- */
+.tag {
+  display: inline-block;
+  border: var(--rule-w) solid currentColor;
+  padding: 0 0.5ch;
+  margin-right: 1ch;
+  line-height: 1.2;
+  font-size: 0.85em;
+  vertical-align: 0.05em;
+}
+.tag-bot {
+  color: var(--wire);
+}
+.tag-auto {
+  color: var(--dim);
+}
+.tag-breach,
+.tag-incid,
+.tag-insolv {
+  color: var(--down);
+}
+/* Amber budget (§16.1): pact tags are amber text in a dim amber outline, never a fill. */
+.tag-pact {
+  color: var(--signal);
+  border-color: var(--signal-dim);
+}
+
+/* ---------- PresenceDot ---------- */
+.presence {
+  display: inline-block;
+  width: 1ch;
+  height: 1ch;
+  border: var(--rule-w) solid var(--dim);
+  vertical-align: -0.1ch;
+}
+.presence.on {
+  background: var(--up);
+  border-color: var(--up);
+}
+
+/* ---------- LineChart / HBar (spec §16.3) ---------- */
+.lchart {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+.lchart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dim);
+  border: var(--rule-w) solid var(--rule);
+}
+.lc {
+  display: block;
+  overflow: visible;
+}
+.lc text {
+  fill: var(--dim);
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.lc .lc-grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+.lc .lc-tick {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.lc .lc-zero,
+.lc .lc-tick-major {
+  stroke: var(--dim);
+  stroke-width: 1;
+}
+.lc .lc-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+}
+.lc .lc-s-signal {
+  stroke: var(--signal);
+}
+.lc .lc-s-wire {
+  stroke: var(--wire);
+}
+.lc .lc-s-dim {
+  stroke: var(--dim);
+}
+.lc .lc-s-down {
+  stroke: var(--down);
+}
+.lc .lc-f-signal {
+  fill: var(--signal);
+}
+.lc .lc-f-wire {
+  fill: var(--wire);
+}
+.lc .lc-f-dim {
+  fill: var(--dim);
+}
+.lc .lc-f-down {
+  fill: var(--down);
+}
+.lc .lc-f-up {
+  fill: var(--up);
+}
+.lc .lc-pt-open {
+  fill: var(--base);
+  stroke: var(--dim);
+  stroke-width: 1.5;
+}
+.lc .lc-tag-text {
+  fill: var(--signal-ink);
+  font-weight: 600;
+}
+.lc .lc-ref {
+  stroke: var(--down);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+}
+.lc .lc-ref-label,
+.lc .lc-drop,
+.lc .lc-t-down {
+  fill: var(--down);
+}
+.lc .lc-t-up {
+  fill: var(--up);
+}
+.lc .lc-t-signal {
+  fill: var(--signal);
+}
+.lc .lc-t-wire {
+  fill: var(--wire);
+}
+.lc .lc-t-dim {
+  fill: var(--dim);
+}
+.lc .lc-mark {
+  stroke: var(--text);
+  stroke-width: 1;
+}
+.lc .lc-mark-label,
+.lc .lc-strong {
+  fill: var(--text);
+}
+.lc .lc-name {
+  font-weight: 600;
+}
+.lc .lc-hatch {
+  stroke: var(--signal-dim);
+  stroke-width: 1;
+}
+.lc .lc-hatch-down {
+  stroke: var(--down);
+  stroke-width: 1;
+}
+.lc .lc-pt-hollow {
+  fill: var(--base);
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+.lc .lc-row-line {
+  stroke-width: 2;
+}
+.lc .lc-row-line.is-signal {
+  stroke: var(--signal);
+}
+.lc .lc-row-line.is-down {
+  stroke: var(--down);
+}
+
+.hbar {
+  display: grid;
+  grid-template-columns: var(--hbar-label, 8ch) minmax(0, 1fr) var(--hbar-text, 10ch);
+  column-gap: 1ch;
+  align-items: center;
+}
+.hbar-track {
+  position: relative;
+  height: 1lh;
+  background: var(--base);
+  border: var(--rule-w) solid var(--rule);
+}
+.hbar-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--wire);
+}
+.hbar-fill.t-signal {
+  background: var(--signal);
+}
+.hbar-fill.t-signal-outline {
+  background: transparent;
+  border: 2px solid var(--signal);
+}
+.hbar-fill.t-dim {
+  background: var(--dim);
+}
+.hbar-fill.t-down {
+  background: var(--down);
+}
+.hbar-zero {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--dim);
+}
+.hbar-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--text);
+}
+.hbar-marker.m-wire {
+  width: 4px;
+  margin-left: -2px;
+  background: var(--wire);
+}
+.hbar-text {
+  text-align: right;
+  white-space: nowrap;
+}
+.hbar-text.neg {
+  color: var(--down);
+}
+
+/* ---------- Ticker ---------- */
+.ticker {
+  display: flex;
+  align-items: stretch;
+  background: var(--panel);
+  border-top: var(--rule-w) solid var(--rule);
+  min-height: 1lh;
+  overflow: hidden;
+}
+.ticker-label {
+  background: var(--wire);
+  color: var(--signal-ink);
+  padding: 0 1ch;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ticker-window {
+  flex: 1;
+  min-width: 0;
+  margin-left: 2ch;
+  overflow: hidden;
+  color: var(--wire);
+}
+.ticker-q {
+  color: var(--dim);
+  margin-right: 1ch;
+}
+.ticker-sep {
+  color: var(--dim);
+  margin: 0 2ch;
+}
+.ticker-run {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-scroll var(--ticker-duration, 120s) linear infinite;
+}
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-static {
+  list-style: none;
+  margin: 0;
+  padding: 0 1ch 0 2ch;
+  color: var(--wire);
+}
+.ticker-static li {
+  white-space: nowrap;
+  overflow: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-run {
+    animation: none;
+  }
+}
+
+/* ---------- Segmented4 ---------- */
+.seg {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.seg button {
+  min-height: 44px;
+  border-color: var(--rule);
+  margin-left: calc(var(--rule-w) * -1);
+  padding: 0 0.5ch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--panel);
+}
+.seg button:first-child {
+  margin-left: 0;
+}
+/* Selected: raised fill with a signal bottom border, not a solid block (spec §14.3). */
+.seg button {
+  border-bottom-width: 3px;
+}
+.seg button[aria-checked='true'] {
+  background: var(--raise);
+  color: var(--text);
+  border-bottom-color: var(--signal);
+  font-weight: 600;
+}
+.seg .seg-n {
+  font-weight: 600;
+}
+.seg .seg-t {
+  font-size: 0.85em;
+}
+
+/* ---------- SafetySlider ---------- */
+.slider {
+  display: grid;
+  grid-template-columns: 6ch minmax(0, 1fr) 6ch;
+  align-items: center;
+  gap: 0 1ch;
+}
+.slider-step {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0;
+  background: var(--panel);
+}
+.slider-val {
+  text-align: center;
+  font-weight: 600;
+}
+.slider-range {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.slider input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  background: transparent;
+}
+.slider input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--dim);
+}
+.slider input[type='range']::-moz-range-track {
+  height: 2px;
+  background: var(--dim);
+}
+.slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 2ch;
+  height: 44px;
+  margin-top: -21px;
+  background: var(--signal);
+  border: 0;
+  border-radius: 0;
+}
+.slider input[type='range']::-moz-range-thumb {
+  width: 2ch;
+  height: 44px;
+  background: var(--signal);
+  border: 0;
+  border-radius: 0;
+}
+.slider-ends {
+  display: flex;
+  justify-content: space-between;
+  color: var(--dim);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  min-height: 44px;
+  padding: 0 2ch;
+  background: var(--panel);
+  border: var(--rule-w) solid var(--dim);
+}
+.btn-signal {
+  background: var(--signal);
+  color: var(--signal-ink);
+  border-color: var(--signal);
+  font-weight: 600;
+}
+.btn-block {
+  width: 100%;
+}
+.btn[disabled] {
+  color: var(--dim);
+  border-color: var(--rule);
+  cursor: not-allowed;
+}
+.btn-signal[disabled] {
+  background: var(--panel);
+  color: var(--dim);
+  border-color: var(--rule);
+}
+
+/* ---------- CardPicker ---------- */
+.card-trigger {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1ch;
+  background: var(--panel);
+  border: var(--rule-w) solid var(--dim);
+  text-align: left;
+}
+.sheet {
+  border: var(--rule-w) solid var(--dim);
+  border-radius: 2px 2px 0 0;
+  background: var(--panel);
+  color: var(--text);
+  padding: 0;
+  width: min(100vw, 64ch);
+  max-width: 100vw;
+  max-height: 90vh;
+  margin: auto auto 0;
+}
+.sheet::backdrop {
+  background: color-mix(in srgb, var(--base) 85%, transparent);
+}
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1ch;
+  border-bottom: var(--rule-w) solid var(--rule);
+  color: var(--dim);
+}
+.sheet-body {
+  padding: 1lh 1ch;
+  display: flex;
+  flex-direction: column;
+  gap: 1lh;
+  overflow-y: auto;
+  max-height: calc(90vh - 6lh);
+}
+.card-opt {
+  display: grid;
+  grid-template-columns: 8ch minmax(0, 1fr) 6ch;
+  gap: 0 1ch;
+  align-items: start;
+  min-height: 44px;
+  padding: 0.5lh 1ch;
+  border: var(--rule-w) solid var(--rule);
+  background: var(--base);
+  text-align: left;
+  width: 100%;
+}
+.card-opt[aria-checked='true'] {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+.card-opt[aria-disabled='true'] {
+  color: var(--dim);
+  cursor: not-allowed;
+}
+.card-opt .cost {
+  text-align: right;
+}
+.target-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9ch, 1fr));
+  gap: 1ch;
+}
+.target-list.is-long {
+  max-height: 12lh;
+  overflow-y: auto;
+}
+.target-list button {
+  min-height: 44px;
+  background: var(--base);
+}
+.target-list button[aria-checked='true'] {
+  background: var(--signal);
+  color: var(--signal-ink);
+  border-color: var(--signal);
+  font-weight: 600;
+}
+.target-list button[aria-disabled='true'] {
+  color: var(--dim);
+  cursor: not-allowed;
+}
+
+/* ---------- Countdown ---------- */
+.countdown {
+  font-weight: 600;
+}
+.countdown.is-low {
+  text-decoration: underline;
+}
+
+/* ---------- QR ---------- */
+.qr {
+  display: block;
+  background: var(--text);
+  padding: 1ch;
+}
+.qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  shape-rendering: crispEdges;
+  fill: var(--base);
+}
+
+/* ---------- Large numerals ---------- */
+.big {
+  font-size: 4em;
+  line-height: 1.1;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.big.is-inverted {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+.big.signal {
+  color: var(--signal);
+}
+.big.is-inverted.signal {
+  color: var(--signal-ink);
+}
+
+/* ---------- Results panels (spec §14.4) ---------- */
+.panel-body.col,
+.col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.figs {
+  display: flex;
+  flex-wrap: wrap;
+  border-top: var(--rule-w) solid var(--rule);
+  border-bottom: var(--rule-w) solid var(--rule);
+  margin-bottom: 1lh;
+}
+.fig {
+  flex: 1 1 0;
+  min-width: 18ch;
+  padding: 0 2ch;
+  border-right: var(--rule-w) solid var(--rule);
+}
+.fig:last-child {
+  border-right: 0;
+}
+.fig-v {
+  font-size: 2em;
+  line-height: 1.35;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.t-down {
+  color: var(--down);
+}
+.t-up {
+  color: var(--up);
+}
+.t-wire {
+  color: var(--wire);
+}
+.cf-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  column-gap: 3ch;
+}
+/* Results lists that scroll when the firms do not fit (§14.4); heading and axis stay in view. */
+.res-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--dim) var(--panel);
+}
+.res-sticky-top,
+.res-sticky-bottom {
+  position: sticky;
+  z-index: 1;
+  background: var(--panel);
+}
+.res-sticky-top {
+  top: 0;
+}
+.res-sticky-bottom {
+  bottom: 0;
+}
+.res-scroll > svg,
+.res-sticky-top > svg,
+.res-sticky-bottom > svg {
+  display: block;
+}
+.cmp-row {
+  display: grid;
+  grid-template-columns: 6ch minmax(0, 1fr) 8ch 14ch;
+  column-gap: 1ch;
+  align-items: center;
+  white-space: nowrap;
+}
+/* The per-firm comparison grows its rows to fill the column (§14.4), and scrolls when they do not fit. */
+.cmp-list {
+  display: flex;
+  flex-direction: column;
+}
+.cmp-list > .cmp-row:not(.res-sticky-top):not(.res-sticky-bottom) {
+  flex: 1 0 1lh;
+  max-height: 3lh;
+}
+.cmp-axis {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1ch;
+}
+.cmp-axis > span:nth-child(2):not(:last-child) {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+/* Results panel headline (§14.4): the panel's point in one sentence, above the chart. */
+.res-headline {
+  margin: 0 0 1lh;
+  color: var(--text);
+  font-size: 1.25em;
+  font-weight: 600;
+  line-height: 1.35;
+}
+/* Debrief prompts spread over the panel height. */
+.res-prompts {
+  flex: 1 1 0;
+  min-height: 0;
+  margin: 0;
+  padding-left: 4ch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  font-size: 1.25em;
+}
+/* PACT RECORD with no pact: the same spread, without list markers. */
+.res-prompts.is-plain {
+  list-style: none;
+  padding-left: 0;
+}
+/* PACT RECORD quarter strips (§14.4). */
+.ps-wrap {
+  flex: 1 1 0;
+  min-height: 6lh;
+  display: flex;
+  flex-direction: column;
+  margin: 1lh 0 0.5lh;
+}
+/* Rows share the panel height, and the list scrolls when they do not fit; cells keep their size. */
+.ps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1lh;
+}
+.ps-pact {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.ps-row {
+  display: grid;
+  grid-template-columns: 16ch repeat(var(--ps-q), minmax(1ch, 4ch));
+  align-items: center;
+  flex: 1 0 1.5lh;
+  white-space: nowrap;
+}
+.ps-head {
+  flex: 0 0 1lh;
+  border-bottom: var(--rule-w) solid var(--grid);
+}
+.ps-q {
+  overflow: visible;
+}
+.ps-q.is-year,
+.ps-row .ps-cell.is-year {
+  border-left: var(--rule-w) solid var(--grid);
+  padding-left: 2px;
+}
+.ps-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1lh;
+  min-width: 1ch;
+  vertical-align: middle;
+}
+.ps-cell::before {
+  content: '';
+  box-sizing: border-box;
+  width: calc(100% - 6px);
+  max-width: 3ch;
+  min-width: 1ch;
+  height: 1lh;
+}
+.ps-detected::before {
+  background: var(--down);
+}
+.ps-undetected::before {
+  border: 2px solid var(--down);
+}
+.ps-kept::before {
+  width: 6px;
+  min-width: 6px;
+  height: 6px;
+  background: var(--dim);
+}
+.ps-none::before {
+  height: 0;
+}
+.ps-key {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 3ch;
+  padding-top: 0.5lh;
+  border-top: var(--rule-w) solid var(--grid);
+}
+.ps-key .ps-cell {
+  width: 3ch;
+}
+.ps-key .ps-detected::before,
+.ps-key .ps-undetected::before {
+  height: 0.75lh;
+}
+
+/* ---------- Notices ---------- */
+/* Notices (spec §16.1): half-line padding and a 2 px left rule coloured by kind, no box. */
+.notice {
+  border-left: 2px solid var(--dim);
+  padding: 0.5lh 1ch;
+}
+.notice.err {
+  border-left-color: var(--down);
+  color: var(--down);
+}
+/* Banners: the summit in wire, distinct from the top bar; alerts in the down colour. */
+.banner {
+  background: var(--wire);
+  color: var(--signal-ink);
+  padding: 0.5lh 1ch;
+  font-weight: 600;
+}
+.banner.is-alert {
+  background: var(--down);
+}
+
+/* ---------- Participant tabs, key-value lists ---------- */
+.tabs {
+  display: flex;
+  background: var(--panel);
+  border-top: var(--rule-w) solid var(--rule);
+}
+.tabs button {
+  flex: 1;
+  min-height: 44px;
+  border: 0;
+  border-right: var(--rule-w) solid var(--rule);
+  color: var(--dim);
+  background: var(--panel);
+}
+.tabs button:last-child {
+  border-right: 0;
+}
+.tabs button {
+  border-top: 2px solid transparent;
+}
+.tabs button[aria-selected='true'] {
+  background: var(--raise);
+  color: var(--signal);
+  border-top-color: var(--signal);
+  font-weight: 600;
+}
+@media (min-width: 900px) {
+  .tabs {
+    flex-direction: column;
+    border-top: 0;
+    border-right: var(--rule-w) solid var(--rule);
+    height: 100%;
+  }
+  .tabs button {
+    flex: 0 0 auto;
+    text-align: left;
+    padding: 0 1ch;
+    border-right: 0;
+    border-bottom: var(--rule-w) solid var(--rule);
+    border-top: 0;
+    border-left: 2px solid transparent;
+  }
+  .tabs button[aria-selected='true'] {
+    border-top-color: transparent;
+    border-left-color: var(--signal);
+  }
+}
+.kv {
+  display: grid;
+  grid-template-columns: 14ch minmax(0, 1fr);
+  margin: 0;
+}
+.kv dt {
+  color: var(--dim);
+}
+.kv dd {
+  margin: 0;
+  text-align: right;
+}
+.scroll-x {
+  position: relative;
+  overflow-x: auto;
+}
+/* Console Firms panel (§14.2): at most 20 rows tall, scrolling inside the panel. */
+.scroll-y {
+  max-height: 21lh;
+  overflow-y: auto;
+}
+.scroll-y thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+}
+/* Console control strip (§14.2): fixed at the top while the page scrolls. */
+.ctl-strip {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--base);
+  border-bottom: var(--rule-w) solid var(--rule);
+  /* Panels that follow one another sit one rule width to the left (.panel + .panel); cover their edge. */
+  margin: 0 calc(var(--rule-w) * -1);
+  padding: 0.5lh var(--rule-w);
+}
+
+/* ---------- Form fields ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25lh;
+}
+.field.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 1ch;
+  min-height: 44px;
+}
+.field input[type='number'],
+.field input[type='text'],
+.field input[type='email'],
+.field input[type='password'],
+.field select {
+  min-height: 44px;
+  background: var(--base);
+  border: var(--rule-w) solid var(--dim);
+  padding: 0 1ch;
+  width: 100%;
+  max-width: 24ch;
+}
+.field input[type='checkbox'],
+.field input[type='radio'] {
+  width: 3ch;
+  height: 3ch;
+  accent-color: var(--signal);
+  margin: 0;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+legend {
+  padding: 0;
+}
+
+
+/* Square checkable controls: filled when on, empty when off. */
+.field input[type='checkbox'],
+.field input[type='radio'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--base);
+  border: 2px solid var(--dim);
+  border-radius: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.field input[type='checkbox']:checked,
+.field input[type='radio']:checked {
+  background: var(--signal);
+  border-color: var(--signal);
+}
+
+/* Links used as navigation on plain pages keep a 44 px touch target. */
+.link-block {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* ---------- Lobby firm columns (§14.1, above 16 firms) ---------- */
+.lobby-cols {
+  display: flex;
+  column-gap: 1ch;
+  margin-top: 1lh;
+}
+.lobby-col {
+  width: 11ch;
+  flex: 0 0 auto;
+}
+.lobby-cell {
+  display: flex;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+/* ---------- Board key strip (spec §14.1): one line, only the tags on screen ---------- */
+/* One line after a one-line gap; when the entries need more, they wrap into the gap row (Session 13), never further. */
+.key-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  gap: 0 2ch;
+  height: 2lh;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.key-strip .key-tag {
+  color: var(--text);
+}
+
+/* ---------- Lobby join steps (spec §14.1) ---------- */
+.join-steps {
+  list-style: none;
+  margin: 1lh 0 0;
+  padding: 0;
+}
+.join-steps li {
+  display: flex;
+  gap: 1ch;
+}
+.join-steps .step-n {
+  flex: 0 0 3ch;
+  text-align: center;
+  border: var(--rule-w) solid var(--signal-dim);
+  color: var(--signal);
+}
+
+/* ---------- Firm performance on the board (spec §14.1, Session 13) ---------- */
+/* One line plus half a line of space, so the board's two-line capacities are unchanged. */
+.share-strip {
+  display: flex;
+  align-items: stretch;
+  height: 1lh;
+  margin: 0.25lh 0;
+  white-space: nowrap;
+}
+.share-strip .ss-label {
+  flex: 0 0 12ch;
+  color: var(--dim);
+}
+.share-strip .ss-track {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  overflow: hidden;
+}
+.share-strip .ss-cap {
+  flex: 0 0 14ch;
+  text-align: right;
+  color: var(--down);
+}
+.share-strip .ss-none {
+  color: var(--dim);
+}
+/* Faded by rank by mixing with the panel colour; never below 64 %, so black text stays above 4.5:1. */
+.ss-seg {
+  flex: none;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--signal-ink);
+  border-left: 1px solid var(--base);
+}
+.ss-text {
+  margin-left: 0.5ch;
+}
+.ss-seg:first-child {
+  border-left: 0;
+}
+.ss-l0 {
+  background: var(--wire);
+}
+.ss-l1 {
+  background: color-mix(in srgb, var(--wire) 91%, var(--panel));
+}
+.ss-l2 {
+  background: color-mix(in srgb, var(--wire) 82%, var(--panel));
+}
+.ss-l3 {
+  background: color-mix(in srgb, var(--wire) 73%, var(--panel));
+}
+.ss-l4 {
+  background: color-mix(in srgb, var(--wire) 64%, var(--panel));
+}
+.neg-c {
+  color: var(--down);
+}
+.tbl td.chart-cell {
+  vertical-align: middle;
+}
+.vbar {
+  position: relative;
+  display: block;
+  height: 0.8em;
+}
+.vbar-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.vbar-fill.pos {
+  background: var(--wire);
+}
+.vbar-fill.neg {
+  background: var(--down);
+}
+.vbar-zero {
+  position: absolute;
+  top: -0.2em;
+  bottom: -0.2em;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--dim);
+}
+.trend,
+.trend-empty {
+  display: block;
+  width: 100%;
+  height: 1lh;
+}
+.trend .trend-zero {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.trend .trend-line {
+  fill: none;
+  stroke: var(--wire);
+  stroke-width: 1.5;
+}
+.trend .trend-line.neg {
+  stroke: var(--down);
+}
+/* Commit mark: a solid green box carrying a black check (owner decision 2026-10-05). */
+.tbl td.cmt-cell {
+  padding-right: 0.5ch;
+  text-align: center;
+}
+/* Drawn inside the text line (1 em tall, centred), so a one-line row keeps its 1lh height. */
+.cmt-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5ch;
+  height: 1em;
+  line-height: 1;
+  vertical-align: middle;
+  background: var(--up);
+  color: var(--signal-ink);
+}
+
+/* ---------- FIRMS small multiples and RANKS chart (spec §14.1, Session 13) ---------- */
+.fm-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  gap: 0 1ch;
+}
+.fm-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-top: var(--rule-w) solid var(--grid);
+}
+.fm-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1ch;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.fm-ticker {
+  font-weight: 600;
+}
+.fm-chart {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.lc .fm-zero {
+  stroke: var(--dim);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+.lc .rc-other {
+  stroke: var(--rule);
+  stroke-width: 1.5;
+}
+.lc .rc-hi {
+  stroke-width: 3;
+}
+.ranks-headline {
+  padding: 0.5lh 0;
+}
+.lc .lc-ctx {
+  fill: none;
+  stroke: var(--rule);
+  stroke-width: 1.25;
+}
+.lc .lc-zero.lc-dotted {
+  stroke-dasharray: 2 3;
+}
+/* Phone BOOK key (§14.3, Session 13): short swatches drawn as rules, words beside them. */
+.book-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2ch;
+  color: var(--dim);
+}
+.book-key .sw {
+  display: inline-block;
+  width: 2ch;
+  height: 0;
+  vertical-align: 0.3em;
+  margin-right: 1ch;
+  border-top: 3px solid var(--signal);
+}
+.book-key .sw.other {
+  border-top: 2px solid var(--rule);
+}
+.book-key .sw.zero {
+  border-top: 1px dotted var(--dim);
+}
+
+/* ---------- ≤ ≥ → strokes ---------- */
+.glyph-s {
+  display: inline-block;
+  width: 1ch;
+  height: 1ch;
+  vertical-align: -0.1ch;
+}
+
+/* ---------- Phone: countdown, decision ticket, commit bar (spec §14.3) ---------- */
+.topbar-play .tb-clock {
+  font-size: 2em;
+}
+.desk-foot {
+  position: sticky;
+  /* The scroll area has 1lh of bottom padding; sticking at -1lh puts the bar on the screen edge. */
+  bottom: -1lh;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5lh;
+  margin: 0 -1ch -1lh;
+  padding: 0.5lh 1ch 1lh;
+  background: var(--base);
+  border-top: var(--rule-w) solid var(--rule);
+}
+.ticket {
+  border: var(--rule-w) solid var(--dim);
+  background: var(--panel);
+  padding: 0.25lh 1ch;
+}
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1ch;
+}
+.expo {
+  display: inline-flex;
+  align-items: center;
+  gap: 1ch;
+}
+.expo-cells {
+  display: inline-flex;
+  gap: 2px;
+}
+.expo-cell {
+  width: 2ch;
+  height: 1ch;
+  border: var(--rule-w) solid var(--dim);
+  background: var(--base);
+}
+.expo-cell.is-on {
+  background: var(--text);
+  border-color: var(--text);
+}
+.expo-cell.is-hot {
+  background: var(--down);
+  border-color: var(--down);
+}
+.commit-status {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  min-height: 44px;
+  padding: 0 1ch;
+  background: var(--raise);
+  border-left: 2px solid var(--dim);
+  color: var(--text);
+  font-weight: 600;
+}
+.commit-status.is-committed {
+  background: var(--up);
+  border-left-color: var(--up);
+  color: var(--signal-ink);
+}
+.commit-status.is-dirty {
+  border-left-color: var(--signal);
+  color: var(--signal);
+}
+.commit-status.is-locked,
+.commit-status.is-idle {
+  color: var(--dim);
+  font-weight: 400;
+}
+.commit-status.is-error,
+.commit-status.is-offline {
+  border-left-color: var(--down);
+  color: var(--down);
+}
+.card-effect {
+  padding-left: 1ch;
+  border-left: 2px solid var(--rule);
+}
+/* Pact form: the terms a firm is about to sign (Session 19). */
+.pact-preview {
+  padding-left: 1ch;
+  border-left: 2px solid var(--signal-dim);
+}
+/* Decision ticket: a draft that would break a pact the firm belongs to. Carries ▼ and the text, never colour alone. */
+.ticket-pact {
+  color: var(--down);
+}
+
+/* ---------- Result sentence, notices with a left rule, three-step strip ---------- */
+.result-sentence {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: var(--text);
+}
+.notices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5lh;
+}
+.notice-rule {
+  padding: 0.5lh 1ch;
+  border-left: 2px solid var(--dim);
+}
+.notice-rule.is-alert {
+  border-left-color: var(--down);
+}
+.steps {
+  border: var(--rule-w) solid var(--rule);
+  background: var(--panel);
+  padding: 0.5lh 1ch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25lh;
+}
+.steps-head {
+  font-weight: 600;
+  color: var(--signal);
+}
+.steps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.steps-n {
+  display: inline-block;
+  width: 1ch;
+  color: var(--dim);
+}
+
+/* ---------- Landing: wordmark and four-cell code field (spec §3) ---------- */
+.wordmark-name {
+  font-size: 2em;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--signal);
+}
+/* 16ch of field at 1.5em: four cells of 4ch each. */
+.code-form {
+  width: 24ch;
+}
+.code-form .field,
+.code-form .btn-block {
+  width: 100%;
+}
+.code-field {
+  position: relative;
+  width: 100%;
+  height: 56px;
+  font-size: 1.5em;
+}
+.code-cells {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.code-cell {
+  border: var(--rule-w) solid var(--dim);
+  margin-left: calc(var(--rule-w) * -1);
+  background: var(--base);
+}
+.code-cell:first-child {
+  margin-left: 0;
+}
+.code-cell.is-next {
+  border-bottom: 3px solid var(--signal);
+}
+.field input.code-input {
+  position: absolute;
+  inset: 0;
+  width: calc(100% + 2ch);
+  max-width: none;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0 0 0 1.5ch;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 3ch;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+/* ---------- Console: buttons grouped by consequence (spec §14.2) ---------- */
+.ctl-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5lh 2ch;
+  align-items: stretch;
+}
+.ctl-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25lh 1ch;
+  padding: 0.25lh 1ch;
+  border: var(--rule-w) solid var(--rule);
+}
+.ctl-group.is-irreversible {
+  border-color: var(--down);
+}
+.ctl-group.is-irreversible .ctl-group-label {
+  color: var(--down);
+}
+.ctl-next {
+  color: var(--text);
+  border-left: 2px solid var(--signal);
+  padding-left: 1ch;
+}
+.ctl-group .btn {
+  padding: 0 1ch;
+}
+
+/* ---------- Incident block (spec §14.1, Session 18): takes the trust chart's place after the reveal ---------- */
+.incid-block {
+  flex: 1 1 0;
+  min-height: 0;
+  margin-top: 1lh;
+  overflow: hidden;
+}
+.incid-head {
+  font-weight: 600;
+}
+.incid-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.incid-line.is-sub {
+  padding-left: 2ch;
+}
+/* INCID view: every incident of the session; the list scrolls inside the panel. */
+.panel-body.incid-scroll {
+  overflow-y: auto;
+}
+
+/* ---------- Facilitator wire screen (spec §14.2, Session 18) ---------- */
+.wire-select {
+  flex-wrap: wrap;
+  align-items: center;
+}
+.wire-sel-label {
+  min-width: 7ch;
+  text-align: center;
+  font-weight: 600;
+}
+.panel-body.wire-scroll {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.wire-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.wire-line {
+  display: flex;
+  gap: 2ch;
+}
+.wire-line .wl-q {
+  flex: none;
+  width: 6ch;
+}
+.wire-line .wl-t {
+  flex: none;
+  width: 8ch;
+}
+.wire-line .wl-k {
+  flex: none;
+  width: 9ch;
+}
+.wire-q-head {
+  font-weight: 600;
+  margin-top: 1lh;
+}
+.wire-quarter:first-child .wire-q-head {
+  margin-top: 0;
+}
+/* QUARTER BRIEF (Session 19): facilitator only, at the top of each resolved quarter. */
+.wire-brief {
+  margin-bottom: 0.5lh;
+  padding: 0.25lh 1ch;
+  border-left: 2px solid var(--signal-dim);
+  background: var(--panel);
+}
+.wire-brief p {
+  max-width: 120ch;
+}
+.wire-off {
+  margin-top: 0.5lh;
+  padding-top: 0.5lh;
+  border-top: var(--rule-w) solid var(--rule);
+}
+
+/* ---------- NET CONTRIBUTION panel (spec §14.4 panel 5, Session 18) ---------- */
+.lc .sl-line {
+  stroke-width: 1;
+}
+.lc .sl-dim {
+  stroke: var(--rule);
+}
+.lc .sl-up {
+  stroke: var(--up);
+  stroke-width: 3;
+}
+.lc .sl-down {
+  stroke: var(--down);
+  stroke-width: 3;
+}
+.nc-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 41ch minmax(0, 1fr);
+  column-gap: 2ch;
+}
+.nc-row {
+  display: grid;
+  grid-template-columns: 7ch 7ch minmax(0, 1fr) 8ch 9ch 8ch 9ch 8ch;
+  column-gap: 1ch;
+  align-items: center;
+  white-space: nowrap;
+}
+.nc-list {
+  display: flex;
+  flex-direction: column;
+}
+/* Lit-room mode (130 columns): a narrower slope and figure columns leave the waterfall room. */
+/* Briefing (§14.5): in lit-room mode (larger type, 32 rows) paragraphs sit half a line apart so it stays one screen. */
+.lit-room .briefing-stack {
+  gap: 0.5lh;
+}
+.lit-room .nc-grid {
+  grid-template-columns: 36ch minmax(0, 1fr);
+}
+.lit-room .nc-row {
+  grid-template-columns: 7ch 7ch minmax(0, 1fr) 7ch 8ch 7ch 8ch 7ch;
+}
+.nc-firm {
+  padding: 0.15lh 0;
+  border-bottom: var(--rule-w) solid var(--grid);
+}
+.nc-ledger {
+  padding-left: 15ch;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nc-track {
+  position: relative;
+  height: 1lh;
+}
+.nc-seg {
+  position: absolute;
+  top: 0.3lh;
+  height: 0.4lh;
+}
+.nc-seg.is-value {
+  background: var(--wire);
+}
+.nc-seg.is-up {
+  background: var(--up);
+}
+.nc-seg.is-down {
+  background: var(--down);
+}
+.nc-seg.is-credit {
+  border: var(--rule-w) solid var(--signal);
+}
+.nc-seg.is-rivalry {
+  border: var(--rule-w) solid var(--down);
+}
+.nc-zero {
+  position: absolute;
+  top: 0.1lh;
+  bottom: 0.1lh;
+  border-left: var(--rule-w) solid var(--dim);
+}
+.nc-net {
+  position: absolute;
+  top: 0.25lh;
+  width: 0.5lh;
+  height: 0.5lh;
+  margin-left: -0.25lh;
+  background: var(--text);
+}
+.nc-key {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 3ch;
+}
+.nc-key .nc-sw {
+  display: inline-block;
+  position: relative;
+  width: 2ch;
+  height: 0.5lh;
+  vertical-align: 0.1em;
+  margin-right: 1ch;
+}

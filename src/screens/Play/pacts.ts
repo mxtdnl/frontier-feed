@@ -1,0 +1,100 @@
+/**
+ * Pure helpers for the PACTS tab (spec §5.3, §9.1). No Firebase and no React.
+ */
+import { breaches, type Pace, type Pact, type PactTerms } from '../../engine';
+import type { Phase } from '../../firebase/schema';
+
+export interface TermsForm {
+  limitPace: boolean;
+  maxPace: Pace;
+  limitSafety: boolean;
+  /** Raw field text; validated on submit. */
+  minSafety: string;
+}
+
+/** No term is ticked when the form opens: a firm chooses each term it signs (owner decision, Session 19). */
+export const DEFAULT_TERMS_FORM: TermsForm = { limitPace: false, maxPace: 2, limitSafety: false, minSafety: '15' };
+
+export type TermsResult = { ok: true; terms: PactTerms } | { ok: false; message: string };
+
+/** Terms need a maximum pace and/or a minimum safety (spec §5.3); safety is a whole number 0 to 30. */
+export function termsFromForm(f: TermsForm): TermsResult {
+  if (!f.limitPace && !f.limitSafety) return { ok: false, message: 'Set a maximum pace, a minimum safety spend, or both.' };
+  let minSafety: number | null = null;
+  if (f.limitSafety) {
+    const t = f.minSafety.trim();
+    if (!/^\d{1,2}$/.test(t) || Number(t) > 30) return { ok: false, message: 'Minimum safety is a whole number from 0 to 30.' };
+    minSafety = Number(t);
+  }
+  return { ok: true, terms: { maxPace: f.limitPace ? f.maxPace : null, minSafety } };
+}
+
+/** Pacts can be proposed while a quarter is open or in a summit (rules, spec §13). */
+export const canPropose = (phase: Phase): boolean => phase === 'open' || phase === 'summit';
+
+export type PactAction = 'leave' | 'join' | 'none';
+
+/** Own firm's action on a pact: members may leave, others may join an active pact. */
+export function pactAction(pact: Pick<Pact, 'members' | 'status'>, firmId: string): PactAction {
+  if (pact.status !== 'active') return 'none';
+  return firmId in pact.members ? 'leave' : 'join';
+}
+
+export function termsText(t: PactTerms): string {
+  const parts: string[] = [];
+  if (t.maxPace !== null) parts.push(`pace ${t.maxPace} or lower`);
+  if (t.minSafety !== null) parts.push(`safety ${t.minSafety} or higher`);
+  return parts.join(' · ') || '–';
+}
+
+/** The line above SIGN (spec §5.3, §14.3): exactly the terms the firm would sign, or null while the form is invalid. */
+export function termsPreview(f: TermsForm): string | null {
+  const r = termsFromForm(f);
+  return r.ok ? `You are signing: ${termsText(r.terms)}` : null;
+}
+
+export interface PactNotice {
+  pactId: string;
+  text: string;
+}
+
+/**
+ * Decision ticket notices (spec §14.3, Session 19): one per active pact the firm belongs to whose terms the draft would
+ * break. Uses the engine's `breaches()`, so the phone and the resolution agree; equality is compliant. A firm that left
+ * or was expelled is no longer in `members` and gets no notice. Pass the pace the engine will apply (1 when insolvent).
+ */
+export function pactNotices(pacts: Record<string, Pact>, firmId: string, pace: Pace, safety: number): PactNotice[] {
+  return sortPacts(pacts)
+    .filter((pact) => pact.status === 'active' && firmId in pact.members && breaches(pact.terms, pace, safety))
+    .map((pact) => {
+      const broken: PactTerms = {
+        maxPace: pact.terms.maxPace !== null && pace > pact.terms.maxPace ? pact.terms.maxPace : null,
+        minSafety: pact.terms.minSafety !== null && safety < pact.terms.minSafety ? pact.terms.minSafety : null,
+      };
+      return { pactId: pact.id, text: `Breaks ${pact.name}: ${termsText(broken)}.` };
+    });
+}
+
+/** Active pacts first, then by creation order. */
+export function sortPacts(pacts: Record<string, Pact>): Pact[] {
+  return Object.values(pacts).sort(
+    (a, b) => Number(b.status === 'active') - Number(a.status === 'active') || a.createdRound - b.createdRound || a.name.localeCompare(b.name),
+  );
+}
+
+/** Terms as short symbols (spec §14.3): `pace ≤ 2 · safety ≥ 15%`. `≤` and `≥` are drawn by the component. */
+export function termsParts(t: PactTerms): Array<{ label: string; op: 'le' | 'ge'; value: string }> {
+  const parts: Array<{ label: string; op: 'le' | 'ge'; value: string }> = [];
+  if (t.maxPace !== null) parts.push({ label: 'pace', op: 'le', value: String(t.maxPace) });
+  if (t.minSafety !== null) parts.push({ label: 'safety', op: 'ge', value: `${t.minSafety}%` });
+  return parts;
+}
+
+/** Plain-text form of `termsParts`, for assistive technology and tests. */
+export function termsShort(t: PactTerms): string {
+  return (
+    termsParts(t)
+      .map((p) => `${p.label} ${p.op === 'le' ? '≤' : '≥'} ${p.value}`)
+      .join(' · ') || '–'
+  );
+}
