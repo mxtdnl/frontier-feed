@@ -909,3 +909,52 @@ A separate PDF for facilitators: a detailed walkthrough for someone running FRON
   - that the briefing deck in the slides repository needs updating (six cards and the new lines).
 
 **Commits.** Commit each part separately, in the order A, B, C, D, E.
+
+---
+
+# FEED reskin (Sessions R1–R4)
+
+This repository is a copy of FRONTIER (`mxtdnl/frontier`, commit 3e209ce), being reskinned as FEED for a masterclass on social media platforms. The owner's decisions are in `docs/RESKIN.md`; read that file at the start of every R session. The engine and every value in `src/engine/params.ts` stay unchanged, and card IDs stay unchanged. Only names, copy, documents and the Firebase project change.
+
+---
+
+## Session R1 — Identity and spec
+
+Read docs/RESKIN.md and docs/spec.md §1, §5, §6.6, §9.3, §14, §15.
+
+1. Replace the config in `src/firebase/config.ts` with the config for the new Firebase project `frontier-feed-9759d` (given in the R1 instruction).
+2. Rename the app to FEED: package name, page title, board header, CLAUDE.md.
+3. Revise docs/spec.md §1, §5, §6.6, §9.3, §14 and §15 to match the decisions in docs/RESKIN.md.
+4. Add the new non-telegraphing terms to the spec (§15.3) and to `scripts/lint-copy.ts`.
+5. Start a PROGRESS.md entry recording that this is a copy of FRONTIER at commit 3e209ce.
+6. No other app code changes.
+7. List the open wording choices (FEED labels, regulator name, firm names) for the owner to approve.
+
+---
+
+## Session R2 — App copy
+
+Read docs/RESKIN.md and the revised docs/spec.md §5, §6.6, §14, §15.
+
+1. Replace all participant, projector, console and results copy, the card display labels, the briefing and the wire QUARTER BRIEF, following the revised spec.
+2. Engine values and card IDs unchanged.
+3. Provide screenshots of the board, a phone and the briefing.
+
+---
+
+## Session R3 — Wire and debrief
+
+Read docs/RESKIN.md and the revised docs/spec.md §15.4, §15.5, §14.4.
+
+1. A new headline bank (spec §15.4, at least 40 templates) with tests.
+2. The debrief prompts (spec §15.5).
+3. The results-screen copy.
+
+---
+
+## Session R4 — Facilitator materials
+
+Read docs/RESKIN.md, docs/RUNBOOK.md and docs/facilitator-guide/.
+
+1. Rewrite docs/RUNBOOK.md and the teaching notes for this class.
+2. Rebuild the facilitator guide screenshots and PDF.
