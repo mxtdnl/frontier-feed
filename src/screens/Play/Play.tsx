@@ -51,8 +51,8 @@ const PHONE_PHASE: Record<PlayView, readonly [PhaseKind, string]> = {
   ended: ['ended', 'ENDED'],
 };
 
-type Tab = 'DESK' | 'BOOK' | 'PACTS' | 'WIRE';
-const TABS: Tab[] = ['DESK', 'BOOK', 'PACTS', 'WIRE'];
+type Tab = 'DESK' | 'BOOK' | 'YDC' | 'WIRE';
+const TABS: Tab[] = ['DESK', 'BOOK', 'YDC', 'WIRE'];
 const SAFE_ID = /^[^.#$[\]/\x00-\x1f\x7f]{1,64}$/;
 
 function Message({ children, link }: { children: string; link?: { href: string; text: string } }) {
@@ -164,7 +164,7 @@ function PlayLive({ g, uid }: { g: string; uid: string }) {
   const [tab, setTab] = useState<Tab>('DESK');
   const prevView = useRef(view);
   useEffect(() => {
-    if (view === 'summit' && prevView.current !== 'summit') setTab('PACTS');
+    if (view === 'summit' && prevView.current !== 'summit') setTab('YDC');
     if (view !== 'summit' && prevView.current === 'summit') setTab('DESK');
     prevView.current = view;
   }, [view]);
@@ -228,7 +228,7 @@ function PlayLive({ g, uid }: { g: string; uid: string }) {
     } catch (e) {
       setPactError(
         isPermissionDenied(e)
-          ? `${what} was refused. The session may have moved on, or the pact changed. Check the pact list and try again.`
+          ? `${what} was refused. The session may have moved on, or the code changed. Check the YDC list and try again.`
           : `${what} was not sent. Check the connection, then try again.`,
       );
     } finally {
@@ -268,7 +268,7 @@ function PlayLive({ g, uid }: { g: string; uid: string }) {
           <span><span className="dim">CASH</span> {priv.data ? fmt(priv.data.cash) : '–'}</span>
           <span><span className="dim">PROFIT</span> {lastRow ? <Delta value={lastRow.profit} /> : '–'}</span>
         </div>
-        {view === 'summit' ? <div className="banner" role="status">Industry summit in session. Pacts are open.</div> : null}
+        {view === 'summit' ? <div className="banner" role="status">Industry summit in session. Youth design codes are open.</div> : null}
       </header>
 
       <nav className="play-tabs" aria-label="Sections">
@@ -341,7 +341,7 @@ function PlayLive({ g, uid }: { g: string; uid: string }) {
           )
         ) : null}
         {tab === 'BOOK' && firmId ? <Book rows={book} rounds={roundsSub.data} firms={firms} firmId={firmId} /> : null}
-        {tab === 'PACTS' ? (
+        {tab === 'YDC' ? (
           <PactsTab
             phase={pub.phase}
             pacts={pactsSub.data}

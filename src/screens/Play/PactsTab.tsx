@@ -3,10 +3,11 @@ import type { Pace, Pact, PactTerms } from '../../engine';
 import type { FirmNode, Phase } from '../../firebase/schema';
 import { GlyphGe, GlyphLe, Panel, Segmented4, Tag } from '../../ui/components';
 import { truncateList } from '../../ui/layout';
+import { pactLabel } from '../../ui/vocab';
 import { PACE_OPTIONS } from './model';
 import { DEFAULT_TERMS_FORM, canPropose, pactAction, sortPacts, termsFromForm, termsParts, termsPreview, termsShort, type TermsForm } from './pacts';
 
-/** Terms as `pace ≤ 2 · safety ≥ 15%` with the comparison signs drawn as shapes. */
+/** Terms as `feed ≤ 2 · safeguards ≥ 15%` with the comparison signs drawn as shapes. */
 export function PactTermsText({ terms }: { terms: PactTerms }) {
   const parts = termsParts(terms);
   if (parts.length === 0) return <>–</>;
@@ -27,7 +28,7 @@ interface Props {
   pacts: Record<string, Pact>;
   firms: Record<string, FirmNode>;
   ownFirmId: string;
-  /** Name the next proposed pact will take. */
+  /** Stored name the next proposed pact will take (PACT-C); shown as YDC-C. */
   nextName: string;
   summit: boolean;
   busy: boolean;
@@ -38,7 +39,7 @@ interface Props {
   onLeave: (pactId: string) => void;
 }
 
-/** PACTS: propose, join, leave, terms and members. A firm edits only its own membership. */
+/** YDC (youth design codes; internal: pacts): propose, join, leave, terms and members. A firm edits only its own membership. */
 export function PactsTab(p: Props) {
   const list = sortPacts(p.pacts);
   const [form, setForm] = useState<TermsForm>(DEFAULT_TERMS_FORM);
@@ -62,19 +63,19 @@ export function PactsTab(p: Props) {
     <div className="stack">
       {p.error ? <p className="notice err" role="alert">{p.error}</p> : null}
 
-      <Panel title="PROPOSE" right={p.nextName} bodyClassName="pad">
+      <Panel title="PROPOSE" right={pactLabel(p.nextName)} bodyClassName="pad">
         {!proposing ? (
           <div className="stack">
-            <p className="dim">A pact sets a limit on pace, a floor on safety spend, or both. Your firm joins it on signing.</p>
+            <p className="dim">A youth design code sets a maximum feed, minimum safeguards, or both. Your firm joins it on signing.</p>
             <button
               type="button"
               className="btn btn-signal btn-block"
               disabled={!allowed || p.busy || p.offline}
               onClick={() => setProposing(true)}
             >
-              PROPOSE A PACT
+              PROPOSE A CODE
             </button>
-            {!allowed ? <p className="dim" role="status">Pacts can be proposed while a quarter is open or during a summit.</p> : null}
+            {!allowed ? <p className="dim" role="status">Codes can be proposed while a quarter is open or during a summit.</p> : null}
           </div>
         ) : (
           <form
@@ -86,20 +87,20 @@ export function PactsTab(p: Props) {
           >
             <label className="field check">
               <input type="checkbox" checked={form.limitPace} onChange={(e) => setForm({ ...form, limitPace: e.target.checked })} />
-              <span>Maximum pace</span>
+              <span>Maximum feed</span>
             </label>
             <Segmented4
-              label="Maximum pace value"
+              label="Maximum feed value"
               options={PACE_OPTIONS}
               value={form.limitPace ? form.maxPace : null}
               onChange={(v) => setForm({ ...form, maxPace: v as Pace, limitPace: true })}
             />
             <label className="field check">
               <input type="checkbox" checked={form.limitSafety} onChange={(e) => setForm({ ...form, limitSafety: e.target.checked })} />
-              <span>Minimum safety spend</span>
+              <span>Minimum safeguards</span>
             </label>
             <div className="field">
-              <label htmlFor="pact-safety" className="dim">Minimum safety, 0 to 30</label>
+              <label htmlFor="pact-safety" className="dim">Minimum safeguards, 0 to 30</label>
               <input
                 id="pact-safety"
                 type="number"
@@ -111,20 +112,20 @@ export function PactsTab(p: Props) {
                 onChange={(e) => setForm({ ...form, minSafety: e.target.value, limitSafety: true })}
               />
             </div>
-            <p className="dim">A breach found by an audit is published and fined. Repeated breaches lead to removal from the pact.</p>
+            <p className="dim">A breach found by an audit is published and fined. Repeated breaches lead to removal from the code.</p>
             {formError ? <p className="notice err" role="alert">{formError}</p> : null}
             <p className="pact-preview" role="status" aria-live="polite" data-pact-preview="">
-              {termsPreview(form) ?? 'No term chosen. Tick a maximum pace, a minimum safety spend, or both.'}
+              {termsPreview(form) ?? 'No term chosen. Tick a maximum feed, minimum safeguards, or both.'}
             </p>
             <div className="row">
-              <button type="submit" className="btn btn-signal" disabled={p.busy || p.offline}>SIGN {p.nextName}</button>
+              <button type="submit" className="btn btn-signal" disabled={p.busy || p.offline}>SIGN {pactLabel(p.nextName)}</button>
               <button type="button" className="btn" onClick={() => setProposing(false)}>CANCEL</button>
             </div>
           </form>
         )}
       </Panel>
 
-      {list.length === 0 ? <p className="notice" role="status">No pacts have been formed.</p> : null}
+      {list.length === 0 ? <p className="notice" role="status">No youth design codes have been formed.</p> : null}
       {list.map((pact) => {
         const members = Object.keys(pact.members)
           .map((id) => p.firms[id]?.ticker ?? '?')
@@ -135,7 +136,7 @@ export function PactsTab(p: Props) {
         return (
           <Panel
             key={pact.id}
-            title={pact.name}
+            title={pactLabel(pact.name)}
             right={`${members.length} MBRS${pact.status !== 'active' ? ' · ' + pact.status.toUpperCase() : ''}`}
             bodyClassName="pad"
           >
@@ -163,15 +164,15 @@ export function PactsTab(p: Props) {
               </dl>
               {action === 'join' ? (
                 <button type="button" className="btn btn-block" disabled={p.busy || p.offline} onClick={() => p.onJoin(pact.id)}>
-                  JOIN {pact.name}
+                  JOIN {pactLabel(pact.name)}
                 </button>
               ) : null}
               {action === 'leave' ? (
                 <button type="button" className="btn btn-block" disabled={p.busy || p.offline} onClick={() => p.onLeave(pact.id)}>
-                  LEAVE {pact.name}
+                  LEAVE {pactLabel(pact.name)}
                 </button>
               ) : null}
-              {pact.status !== 'active' ? <p className="dim">This pact has dissolved. It can no longer be joined.</p> : null}
+              {pact.status !== 'active' ? <p className="dim">This code has dissolved. It can no longer be joined.</p> : null}
             </div>
           </Panel>
         );

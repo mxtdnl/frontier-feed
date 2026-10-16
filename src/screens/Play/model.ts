@@ -17,23 +17,20 @@ import {
 import type { DecisionNode, FirmNode, NoticeEntry, PublicNode, RoundNode, WireNode } from '../../firebase/schema';
 import { mergeWire } from '../../firebase/wire';
 import { quarterLabel } from '../../ui/format';
+import { CARD_LABEL, FEED_OPTIONS, pactLabel } from '../../ui/vocab';
 
-export const PACE_OPTIONS = [
-  { value: 1, label: '1', sub: 'Cautious' },
-  { value: 2, label: '2', sub: 'Standard' },
-  { value: 3, label: '3', sub: 'Aggressive' },
-  { value: 4, label: '4', sub: 'Breakneck' },
-] as const;
+/** FEED segments (internal: pace), spec §5.0. */
+export const PACE_OPTIONS = FEED_OPTIONS;
 
-/** Card costs come from the engine parameters; the wording follows spec §5.2. */
-export const CARD_INFO: ReadonlyArray<{ id: Card; name: string; cost: number; effect: string }> = [
-  { id: 'NONE', name: 'No card', cost: PARAMS.CARD_COST.NONE, effect: 'Play nothing this quarter.' },
-  { id: 'POACH', name: 'Poach talent', cost: PARAMS.CARD_COST.POACH, effect: 'Take capability from a target firm. Needs a target.' },
-  { id: 'PUBLISH', name: 'Publish safety research', cost: PARAMS.CARD_COST.PUBLISH, effect: 'Raises public trust. Lowers your incident risk this quarter.' },
-  { id: 'LOBBY', name: 'Lobby regulators', cost: PARAMS.CARD_COST.LOBBY, effect: 'Exempt from pact fines detected this quarter. Lowers public trust.' },
-  { id: 'BLITZ', name: 'Marketing blitz', cost: PARAMS.CARD_COST.BLITZ, effect: 'Raises your effective capability this quarter only.' },
-  { id: 'SHARE', name: 'Share safety tooling', cost: PARAMS.CARD_COST.SHARE, effect: 'Lowers every firm’s incident risk this quarter, yours included.' },
-  { id: 'RUSH', name: 'Rush a release', cost: PARAMS.CARD_COST.RUSH, effect: 'Raises your capability. Raises your public exposure and incident risk this quarter.' },
+/** Card costs come from the engine parameters; the wording follows spec §5.0 and §5.2. */
+export const CARD_INFO: ReadonlyArray<{ id: Card; label: string; name: string; cost: number; effect: string }> = [
+  { id: 'NONE', label: CARD_LABEL.NONE, name: 'No card', cost: PARAMS.CARD_COST.NONE, effect: 'Play nothing this quarter.' },
+  { id: 'POACH', label: CARD_LABEL.POACH, name: 'Copy a rival’s feature', cost: PARAMS.CARD_COST.POACH, effect: 'Take reach from a named rival. Needs a target.' },
+  { id: 'PUBLISH', label: CARD_LABEL.PUBLISH, name: 'Release internal wellbeing research', cost: PARAMS.CARD_COST.PUBLISH, effect: 'Raises public trust. Lowers your harm-story risk this quarter.' },
+  { id: 'LOBBY', label: CARD_LABEL.LOBBY, name: 'Lobby the Assembly', cost: PARAMS.CARD_COST.LOBBY, effect: 'Exempt from code fines detected this quarter. Lowers public trust.' },
+  { id: 'BLITZ', label: CARD_LABEL.BLITZ, name: 'Influencer campaign', cost: PARAMS.CARD_COST.BLITZ, effect: 'Raises your effective reach this quarter only.' },
+  { id: 'SHARE', label: CARD_LABEL.SHARE, name: 'Release safety tooling to the industry', cost: PARAMS.CARD_COST.SHARE, effect: 'Lowers every platform’s harm-story risk this quarter, yours included.' },
+  { id: 'RUSH', label: CARD_LABEL.RUSH, name: 'Ship a new engagement feature', cost: PARAMS.CARD_COST.RUSH, effect: 'Raises your reach. Raises your public exposure and harm-story risk this quarter.' },
 ];
 
 export interface Draft {
@@ -122,15 +119,7 @@ export function bookRows(history: Record<string, FirmRoundResult>): BookRow[] {
     .sort((a, b) => a.round - b.round);
 }
 
-const CARD_NAME: Record<Card, string> = {
-  NONE: 'No card',
-  POACH: 'POACH',
-  PUBLISH: 'PUBLISH',
-  LOBBY: 'LOBBY',
-  BLITZ: 'BLITZ',
-  SHARE: 'SHARE',
-  RUSH: 'RUSH',
-};
+const CARD_NAME: Record<Card, string> = { ...CARD_LABEL, NONE: 'No card' };
 
 /** Why a requested card was dropped (spec §6.3 step 2). The card did not run and cost nothing. */
 export function cardNoticeText(n: NoticeEntry): string {
@@ -163,14 +152,15 @@ export function resultNoticeItems(
 ): ResultNotice[] {
   const out: ResultNotice[] = cards.map((n) => ({ text: cardNoticeText(n), kind: 'alert' }));
   if (result.auto) out.push({ text: 'No decision was received. Last quarter’s settings were applied.', kind: 'alert' });
-  if (result.incident) out.push({ text: 'Incident reported against the firm. Revenue was reduced this quarter.', kind: 'alert' });
+  if (result.incident) out.push({ text: 'Harm story reported against the firm. Revenue was reduced this quarter.', kind: 'alert' });
   if (result.insolvent) out.push({ text: 'Insolvent. Action cards are unavailable until cash is positive.', kind: 'alert' });
   for (const a of audits) {
     const b = a.breaches.find((x) => x.firmId === firmId);
     if (!b) continue;
-    const name = pacts[a.pactId]?.name ?? 'Pact';
+    const stored = pacts[a.pactId]?.name;
+    const name = stored ? pactLabel(stored) : 'YDC';
     out.push({
-      text: `${name} audit found a breach. ${b.waived ? 'Fine waived.' : `Fine ${b.fine.toFixed(1)}.`}${b.expelled ? ' Firm removed from the pact.' : ''}`,
+      text: `${name} audit found a breach. ${b.waived ? 'Fine waived.' : `Fine ${b.fine.toFixed(1)}.`}${b.expelled ? ' Firm removed from the code.' : ''}`,
       kind: 'alert',
     });
   }
