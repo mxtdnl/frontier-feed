@@ -1,6 +1,7 @@
-# CLAUDE.md — FRONTIER
+# CLAUDE.md — FEED
 
-Multiplayer classroom simulation: teams run AI companies over quarterly rounds. The model is engineered to produce a tragedy-of-the-commons collapse.
+Multiplayer classroom simulation: teams run fictional social platforms competing for share of attention in an ad market, over quarterly rounds. The model is engineered to produce a tragedy-of-the-commons collapse.
+FEED is a reskin of FRONTIER (copied from `mxtdnl/frontier` at commit 3e209ce). The owner's reskin decisions are in `docs/RESKIN.md`: the engine and every value in `src/engine/params.ts` stay unchanged; only names, copy, documents and the Firebase project change.
 The source of truth is `docs/spec.md`. When this file and the spec disagree, the spec wins. When the spec is silent, ask; do not invent mechanics.
 
 ## Environment
@@ -73,9 +74,9 @@ The source of truth is `docs/spec.md`. When this file and the spec disagree, the
 
 - The voice is a financial terminal and wire service. Terse and declarative. Labels are short uppercase mnemonics; body and headlines are in sentence case. No exclamation marks, no emoji, no second-person cheerleading.
 - Banned everywhere: unlock, empower, seamless, revolutionary, harness, elevate, supercharge, game-changer, dive in, journey, "welcome to the future", "in today's fast-paced", let's, awesome, great job, oops, "not just X but Y".
-- **Non-telegraphing.** Never use these in participant or projector UI outside the results screen: commons, tragedy, sustainable or sustainability, cooperate or cooperation, collective, shared resource, tipping point, threshold, collapse (except the single moratorium headline), game, player, score, win, level.
+- **Non-telegraphing.** Never use these in participant or projector UI outside the results screen: commons, tragedy, sustainable or sustainability, cooperate or cooperation, collective, shared resource, tipping point, threshold, collapse (except the single moratorium headline), game, player, score, win, level, addictive, addiction, dark pattern, attention economy, externality, lawsuit, mental health crisis, and the names of real platforms (spec §15.3).
 - `npm run lint:copy` greps `src/screens` and `src/ui` for banned terms and fails the build on a hit. Keep it passing.
-- Fictional entities only: Office of Frontier Systems (OFS), the Assembly, Halden Research. No real companies or people.
+- Fictional entities only: a fictional online-safety regulator (name in spec §15.4), the Assembly, Halden Research. No real companies, platforms or people anywhere in the app. Meta is named only in the facilitator runbook and guide, and there only as allegations, not established findings.
 - Error messages state what happened and what to do next. No apologies.
 
 ## Testing expectations

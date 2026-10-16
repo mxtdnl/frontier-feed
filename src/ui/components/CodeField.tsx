@@ -39,11 +39,11 @@ export function CodeField({ id, value, onChange, invalid, describedBy }: Props) 
   );
 }
 
-/** "FRONTIER" with the Office of Frontier Systems line beneath (spec §3). */
+/** "FEED" with the regulator line beneath (spec §3). */
 export function Wordmark() {
   return (
     <div className="wordmark">
-      <h1 className="wordmark-name">FRONTIER</h1>
+      <h1 className="wordmark-name">FEED</h1>
       <p className="dim">Office of Frontier Systems</p>
     </div>
   );
