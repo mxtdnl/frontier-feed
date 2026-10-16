@@ -142,8 +142,8 @@ async function scenario(browser: Browser): Promise<void> {
     const text = await screenText(fac);
     for (const line of [
       'Every cost comes out of cash, and cash counts in full in your valuation.',
-      'A firm whose cash falls too far below zero becomes insolvent: it is held at Cautious pace and cannot play cards.',
-      'A firm that falls behind on capability loses market share.',
+      'A firm whose cash falls too far below zero becomes insolvent: it is held at FEED 1 and cannot play cards.',
+      'A firm that falls behind on reach loses share of attention.',
     ]) check(text.includes(line), `the briefing reads "${line}"`);
     await adminSet(`games/${g}/meta/settings/litRoom`, true);
     await fac.waitForFunction(() => document.documentElement.classList.contains('lit-room'), undefined, { timeout: 5_000 }).catch(() => fail('lit-room mode applies on the projector'));
@@ -526,20 +526,20 @@ async function participantScenario(
   await waitText(A, /Q1 Y1/, 'the header shows the quarter');
   const botTickers = Object.values((await adminGet<Record<string, { ticker: string; isBot: boolean }>>(`games/${g}/firms`)) ?? {}).filter((f) => f.isBot).map((f) => f.ticker);
 
-  await A.getByRole('radio', { name: /Aggressive/ }).click();
-  for (let i = 0; i < 3; i++) await A.getByRole('button', { name: 'Safety spend: increase' }).click();
+  await A.getByRole('radio', { name: /AUTOPLAY/ }).click();
+  for (let i = 0; i < 3; i++) await A.getByRole('button', { name: 'Safeguards: increase' }).click();
   await A.getByRole('button', { name: /^Card:/ }).click();
   // Session 17: SHARE and RUSH in the card sheet at 360×640, and RUSH doubles the exposure shown on the ticket.
   {
     const sheet = A.locator('[aria-label="Card"] dialog.sheet');
     const sheetText = (await sheet.textContent()) ?? '';
-    check(/Share safety tooling[\s\S]*Lowers every firm’s incident risk/.test(sheetText), 'the card sheet lists SHARE with its effect');
-    check(/Rush a release[\s\S]*Raises your public exposure and incident risk/.test(sheetText), 'the card sheet lists RUSH with its effect');
+    check(/Release safety tooling to the industry[\s\S]*Lowers every platform’s harm-story risk/.test(sheetText), 'the card sheet lists SHARE with its effect');
+    check(/Ship a new engagement feature[\s\S]*Raises your public exposure and harm-story risk/.test(sheetText), 'the card sheet lists RUSH with its effect');
     const base = A.viewportSize() ?? { width: 390, height: 844 };
     await A.setViewportSize({ width: 360, height: 640 });
     await A.waitForTimeout(150);
     await shot(A, 'play-card-sheet');
-    const rush = A.getByRole('radio', { name: /RUSH/ });
+    const rush = A.getByRole('radio', { name: /LAUNCH/ });
     await rush.scrollIntoViewIfNeeded();
     const rb = await rush.boundingBox();
     check(rb !== null && rb.y >= 0 && rb.y + rb.height <= 640 && rb.height >= 44, 'at 360×640 the RUSH option scrolls into view inside the sheet with a 44 px target');
@@ -560,13 +560,13 @@ async function participantScenario(
   check(/LOW|MED|HIGH|SEVERE/.test(await A.locator('[aria-label="Estimate"]').innerText()), 'the public exposure label is shown');
   check(/same card cannot repeat[\s\S]*Insolvent firms cannot play cards/.test((await A.locator('[aria-label="Card"] dialog.sheet').textContent()) ?? ''), 'the cooldown and insolvency rules are in the card sheet');
   check(!/same card cannot repeat/.test(await A.locator('[aria-label="Card"]').innerText()), 'the rules paragraph is no longer on the desk');
-  check(/Publish safety research/.test(await A.locator('[data-card-effect]').innerText()) && /Raises public trust/.test(await A.locator('[data-card-effect]').innerText()), 'the selected card’s one-line effect shows under its name');
+  check(/Release internal wellbeing research/.test(await A.locator('[data-card-effect]').innerText()) && /Raises public trust/.test(await A.locator('[data-card-effect]').innerText()), 'the selected card’s one-line effect shows under its name');
   await snapPlay(A, 'play-open');
   await A.getByRole('button', { name: 'COMMIT' }).click();
   await waitText(A, /COMMITTED \d\d:\d\d:\d\d · edit until close · device AB/, 'commit shows the time and the committing device');
   await waitText(B, /COMMITTED \d\d:\d\d:\d\d · edit until close · device AB/, 'a teammate sees which device committed');
-  check((await B.getByRole('radio', { name: /Aggressive/ }).getAttribute('aria-checked')) === 'true', 'a teammate’s desk adopts the committed pace');
-  await B.getByRole('radio', { name: /Breakneck/ }).click();
+  check((await B.getByRole('radio', { name: /AUTOPLAY/ }).getAttribute('aria-checked')) === 'true', 'a teammate’s desk adopts the committed pace');
+  await B.getByRole('radio', { name: /STREAKS/ }).click();
   await waitText(B, /CHANGES NOT COMMITTED/, 'an edited desk says changes are not committed');
   await B.getByRole('button', { name: 'Recommit' }).click();
   await waitText(B, /device EF(?![\s\S]*CHANGES NOT COMMITTED)/, 'recommit replaces the decision from the second device');
@@ -576,9 +576,9 @@ async function participantScenario(
 
   // Keyboard-only commit on desktop C.
   await C.keyboard.press('Tab');
-  await tabTo(C, '[aria-label="Deployment pace"] [role=radio][aria-checked="true"]', 'the pace selector');
+  await tabTo(C, '[aria-label="Feed design"] [role=radio][aria-checked="true"]', 'the pace selector');
   await C.keyboard.press('ArrowRight');
-  await tabTo(C, 'input[type=range][aria-label="Safety spend"]', 'the safety slider');
+  await tabTo(C, 'input[type=range][aria-label="Safeguards"]', 'the safety slider');
   await C.keyboard.press('ArrowRight');
   await C.keyboard.press('ArrowRight');
   await tabTo(C, '.card-trigger', 'the card picker');
@@ -627,8 +627,8 @@ async function participantScenario(
   await A.getByRole('tab', { name: 'WIRE' }).click();
   check((await A.locator('ul[aria-label="Wire"] li').count()) >= 2, 'WIRE lists the quarter’s headlines');
   await snapPlay(A, 'play-wire');
-  await A.getByRole('tab', { name: 'PACTS' }).click();
-  await waitText(A, /No pacts have been formed/, 'PACTS shows existing pacts read only');
+  await A.getByRole('tab', { name: 'YDC' }).click();
+  await waitText(A, /No youth design codes have been formed/, 'PACTS shows existing pacts read only');
   await snapPlay(A, 'play-pacts');
   await A.getByRole('tab', { name: 'DESK' }).click();
   const priv1 = await adminGet<{ cash: number }>(`games/${g}/firmsPrivate/${firmA}`);
@@ -637,13 +637,13 @@ async function participantScenario(
   // ── Quarter 2: summit freezes the desk, then POACH ──
   await key(fac, 'F9');
   await waitText(A, /Q2 Y1[\s\S]*T-/, 'quarter 2 opens on the phone', 15_000);
-  const defaultsText = await A.locator('[aria-label="Pace"]').innerText();
-  check(/4/.test(defaultsText) && (await A.getByRole('radio', { name: /Breakneck/ }).getAttribute('aria-checked')) === 'true', 'the desk defaults to last quarter’s applied pace');
+  const defaultsText = await A.locator('[aria-label="Feed"]').innerText();
+  check(/4/.test(defaultsText) && (await A.getByRole('radio', { name: /STREAKS/ }).getAttribute('aria-checked')) === 'true', 'the desk defaults to last quarter’s applied pace');
   await key(fac, 'F8');
   await waitText(A, /Industry summit in session/, 'the summit banner shows', 15_000);
   // The tab switches in an effect after the banner first renders, so wait for it rather than reading it at once.
   check(
-    await A.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.includes('PACTS') ?? false, undefined, { timeout: 5_000 }).then(() => true, () => false),
+    await A.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.includes('YDC') ?? false, undefined, { timeout: 5_000 }).then(() => true, () => false),
     'the summit selects the PACTS tab',
   );
   await snapPlay(A, 'play-summit');
@@ -653,16 +653,16 @@ async function participantScenario(
   {
     const base = A.viewportSize() ?? { width: 390, height: 844 };
     await A.setViewportSize({ width: 360, height: 640 });
-    await A.getByRole('button', { name: 'PROPOSE A PACT' }).click();
-    check(!(await A.getByRole('checkbox', { name: 'Maximum pace' }).isChecked()) && !(await A.getByRole('checkbox', { name: 'Minimum safety spend' }).isChecked()), 'the pact form opens with no term ticked');
+    await A.getByRole('button', { name: 'PROPOSE A CODE' }).click();
+    check(!(await A.getByRole('checkbox', { name: 'Maximum feed' }).isChecked()) && !(await A.getByRole('checkbox', { name: 'Minimum safeguards' }).isChecked()), 'the pact form opens with no term ticked');
     check(/No term chosen/.test(await A.locator('[data-pact-preview]').innerText()), 'with no term ticked the preview says so');
     await A.locator('#pact-safety').fill('25');
-    check((await A.locator('[data-pact-preview]').innerText()).trim() === 'You are signing: safety 25 or higher', 'typing a minimum safety previews a safety-only pact');
-    await A.getByRole('checkbox', { name: 'Maximum pace' }).check();
-    check((await A.locator('[data-pact-preview]').innerText()).trim() === 'You are signing: pace 2 or lower · safety 25 or higher', 'ticking a maximum pace adds it to the preview');
-    await A.getByRole('checkbox', { name: 'Minimum safety spend' }).uncheck();
-    check((await A.locator('[data-pact-preview]').innerText()).trim() === 'You are signing: pace 2 or lower', 'the preview shows exactly the ticked terms');
-    const sign = A.getByRole('button', { name: 'SIGN PACT-A' });
+    check((await A.locator('[data-pact-preview]').innerText()).trim() === 'You are signing: safeguards 25 or higher', 'typing a minimum safety previews a safety-only pact');
+    await A.getByRole('checkbox', { name: 'Maximum feed' }).check();
+    check((await A.locator('[data-pact-preview]').innerText()).trim() === 'You are signing: feed 2 or lower · safeguards 25 or higher', 'ticking a maximum pace adds it to the preview');
+    await A.getByRole('checkbox', { name: 'Minimum safeguards' }).uncheck();
+    check((await A.locator('[data-pact-preview]').innerText()).trim() === 'You are signing: feed 2 or lower', 'the preview shows exactly the ticked terms');
+    const sign = A.getByRole('button', { name: 'SIGN YDC-A' });
     await sign.scrollIntoViewIfNeeded();
     const pv = await A.locator('[data-pact-preview]').boundingBox();
     const sb = await sign.boundingBox();
@@ -671,33 +671,33 @@ async function participantScenario(
     await sign.click();
     await A.setViewportSize(base);
   }
-  await waitText(A, /PACT-A[\s\S]*Terms\s+pace\s+2/, 'a pact is proposed from the phone during the summit');
-  check((await A.locator('[data-pact-terms]').first().getAttribute('aria-label')) === 'pace ≤ 2', 'pact terms read pace ≤ 2');
-  check((await A.getByText('Summit in session. Propose, join or leave pacts now.').count()) === 0, 'the summit shows one notice, not two');
-  await waitText(fac, /PACT-A/, 'the projector lists the new pact in the summit view', 15_000, '.scr');
-  await C.getByRole('button', { name: 'JOIN PACT-A' }).click();
-  await waitText(C, /LEAVE PACT-A/, 'a second firm joins the pact from the desktop');
+  await waitText(A, /YDC-A[\s\S]*Terms\s+feed\s+2/, 'a pact is proposed from the phone during the summit');
+  check((await A.locator('[data-pact-terms]').first().getAttribute('aria-label')) === 'feed ≤ 2', 'code terms read feed ≤ 2');
+  check((await A.getByText('Summit in session. Propose, join or leave youth design codes now.').count()) === 0, 'the summit shows one notice, not two');
+  await waitText(fac, /YDC-A/, 'the projector lists the new code in the summit view', 15_000, '.scr');
+  await C.getByRole('button', { name: 'JOIN YDC-A' }).click();
+  await waitText(C, /LEAVE YDC-A/, 'a second firm joins the pact from the desktop');
   await waitText(fac, /ALPH\s+CEDR|CEDR\s+ALPH/, 'the projector shows both members', 15_000, '.scr');
   await snapPlay(C, 'play-pacts-live');
   await A.getByRole('tab', { name: 'WIRE' }).click();
   await waitText(A, /PACT-A/, 'the pact headlines reach the WIRE tab', 20_000);
-  await A.getByRole('tab', { name: 'PACTS' }).click();
+  await A.getByRole('tab', { name: 'YDC' }).click();
   // Another pact attempt without terms is refused with an explanation.
-  await A.getByRole('button', { name: 'PROPOSE A PACT' }).click();
-  await A.getByRole('button', { name: /SIGN PACT-B/ }).click();
-  await waitText(A, /Set a maximum pace, a minimum safety spend, or both/, 'a pact with no terms is explained');
+  await A.getByRole('button', { name: 'PROPOSE A CODE' }).click();
+  await A.getByRole('button', { name: /SIGN YDC-B/ }).click();
+  await waitText(A, /Set a maximum feed, minimum safeguards, or both/, 'a pact with no terms is explained');
   await A.getByRole('button', { name: 'CANCEL' }).click();
   // F6 on the projector queues a manual audit; the console shows it queued.
   await key(fac, 'Shift+F');
-  await waitText(fac, /AUDIT · SELECT PACT/, 'Shift+F opens the audit picker on the projector', 15_000, '.scr');
+  await waitText(fac, /AUDIT · SELECT CODE/, 'Shift+F opens the audit picker on the projector', 15_000, '.scr');
   await shot(fac, 'participant-run-audit');
   await key(fac, '1');
-  await waitText(fac, /PACT-A audit queued/, 'pressing 1 queues the audit', 15_000, '.scr');
+  await waitText(fac, /YDC-A audit queued/, 'pressing 1 queues the audit', 15_000, '.scr');
   await waitText(control, /QUEUED/, 'the console shows the audit queued', 15_000);
   // F7 / Shift+D turns disclosure on, on the projector and the console.
   await key(fac, 'Shift+D');
-  await waitText(fac, /DISCLOSURE ON/, 'Shift+D turns disclosure on', 15_000, '.scr');
-  await waitText(control, /F7 DISCLOSURE ON/, 'the console shows disclosure on', 15_000);
+  await waitText(fac, /TRANSPARENCY ON/, 'Shift+D turns disclosure on', 15_000, '.scr');
+  await waitText(control, /F7 TRANSPARENCY ON/, 'the console shows disclosure on', 15_000);
   await A.getByRole('tab', { name: 'DESK' }).click();
   check((await A.locator('[data-commit-status="locked"]').count()) === 1 && (await A.locator('.desk-foot .btn-signal').count()) === 0, 'the desk is locked during the summit');
   await key(fac, 'F8');
@@ -708,15 +708,15 @@ async function participantScenario(
     await A.setViewportSize({ width: 360, height: 640 });
     await A.waitForTimeout(150);
     const note = A.locator('[data-ticket] .ticket-pact');
-    check((await note.count()) === 1 && (await note.innerText()).trim() === '▼ Breaks PACT-A: pace 2 or lower.', 'the ticket shows one ▼ notice: Breaks PACT-A: pace 2 or lower.');
+    check((await note.count()) === 1 && (await note.innerText()).trim() === '▼ Breaks YDC-A: feed 2 or lower.', 'the ticket shows one ▼ notice: Breaks YDC-A: feed 2 or lower.');
     const nb = await note.boundingBox();
     const cb = await A.locator('.desk-foot .btn-signal').boundingBox();
     check(nb !== null && cb !== null && nb.y >= 0 && cb.y + cb.height <= 640 && cb.height >= 44, 'at 360×640 the notice and COMMIT are in view, COMMIT a 44 px target');
     check(await A.locator('.desk-foot .btn-signal').isEnabled(), 'the notice does not block COMMIT');
     await shot(A, 'play-pact-notice');
-    await A.getByRole('radio', { name: /Standard/ }).click();
+    await A.getByRole('radio', { name: /RANKED/ }).click();
     check((await note.count()) === 0, 'pace 2, equal to the maximum, shows no notice');
-    await A.getByRole('radio', { name: /Breakneck/ }).click();
+    await A.getByRole('radio', { name: /STREAKS/ }).click();
     await A.getByRole('button', { name: /^Card:/ }).click();
     // Done sits at the end of the sheet's own scroll (as in the Session 17 check above).
     await A.getByRole('button', { name: 'Done' }).scrollIntoViewIfNeeded();
@@ -726,7 +726,7 @@ async function participantScenario(
     await A.setViewportSize(base);
   }
   await A.getByRole('button', { name: /^Card:/ }).click();
-  await A.getByRole('radio', { name: /POACH/ }).click();
+  await A.getByRole('radio', { name: /CLONE/ }).click();
   await A.getByRole('button', { name: 'Done' }).click({ force: true, trial: true }).catch(() => undefined);
   check(await A.getByRole('button', { name: 'Done' }).isDisabled(), 'POACH without a target cannot be confirmed');
   const target = botTickers[0] ?? 'ARCN';
@@ -739,7 +739,7 @@ async function participantScenario(
   check(dec2.card === 'POACH' && dec2.target !== null && dec2.target !== firmA, 'the stored POACH has a target other than the own firm');
   await key(fac, 'F9');
   await waitText(A, /Q2 Y1 RESULT/, 'quarter 2 resolves', 15_000);
-  check(/PACT-A audit found a breach\. Fine \d/.test(await A.locator('main').innerText()), 'the result card reports the audit breach and the fine');
+  check(/YDC-A audit found a breach\. Fine \d/.test(await A.locator('main').innerText()), 'the result card reports the audit breach and the fine');
   // BOOK against the field (Session 13): every other firm as a thin line, from public round results.
   await A.getByRole('tab', { name: 'BOOK' }).click();
   await A.locator('[data-book-field] svg[data-chart="line"]').waitFor({ timeout: 5_000 }).catch(() => fail('BOOK draws the field chart after quarter 2'));
@@ -755,12 +755,12 @@ async function participantScenario(
   await snapProjector(fac, 'ranks');
   await fac.keyboard.press('Escape');
   const board2 = await screenText(fac);
-  check(/PACE\s+SAFETY\s+EXPOSURE/.test(board2), 'the board shows PACE, SAFETY and EXPOSURE while disclosure is on');
-  check(/BREACH/.test(board2) && /PACT-A/.test(board2), 'the board carries the pact tag and the BREACH tag after the audit');
+  check(/FEED\s+GUARDS\s+EXPOSURE/.test(board2), 'the board shows PACE, SAFETY and EXPOSURE while disclosure is on');
+  check(/BREACH/.test(board2) && /YDC-A/.test(board2), 'the board carries the pact tag and the BREACH tag after the audit');
   await shot(fac, 'participant-run-disclosure-on');
   await key(fac, 'Shift+D');
-  await waitText(fac, /DISCLOSURE OFF/, 'Shift+D turns disclosure off', 15_000, '.scr');
-  check(!/PACE\s+SAFETY\s+EXPOSURE/.test(await screenText(fac)), 'the PACE, SAFETY and EXPOSURE columns disappear when disclosure is off');
+  await waitText(fac, /TRANSPARENCY OFF/, 'Shift+D turns disclosure off', 15_000, '.scr');
+  check(!/FEED\s+GUARDS\s+EXPOSURE/.test(await screenText(fac)), 'the PACE, SAFETY and EXPOSURE columns disappear when disclosure is off');
   const round2 = await adminGet<{ disclosure?: Record<string, unknown> }>(`games/${g}/rounds/2`);
   check(Object.keys(round2.disclosure ?? {}).length === 4, 'the quarter 2 snapshot holds all four firms');
 
@@ -768,7 +768,7 @@ async function participantScenario(
   await key(fac, 'F9');
   await waitText(A, /Q3 Y1[\s\S]*T-/, 'quarter 3 opens', 15_000);
   await A.getByRole('button', { name: /^Card:/ }).click();
-  check((await A.getByRole('radio', { name: /POACH/ }).getAttribute('aria-disabled')) === 'true', 'the card played last quarter is not selectable');
+  check((await A.getByRole('radio', { name: /CLONE/ }).getAttribute('aria-disabled')) === 'true', 'the card played last quarter is not selectable');
   check(/Played last quarter/.test(await A.locator('dialog').innerText()), 'the sheet says why the card is unavailable');
   await A.getByRole('radio', { name: /LOBBY/ }).click();
   await A.getByRole('button', { name: 'Done' }).click();
@@ -837,8 +837,8 @@ async function participantScenario(
     [2, /TRUST TRACE/, 'TRUST TRACE'],
     [3, /COUNTERFACTUAL[\s\S]*INDUSTRY VALUE[\s\S]*ALTERNATIVE[\s\S]*VALUE (LOST|ADDED)/, 'COUNTERFACTUAL'],
     [4, /ATTRIBUTION[\s\S]*SHARE OF DAMAGE[\s\S]*SHARE OF VALUE/, 'ATTRIBUTION'],
-    [5, /NET CONTRIBUTION[\s\S]*Ranked by value created for the whole market[\s\S]*research credit, not money/, 'NET CONTRIBUTION'],
-    [6, /PACT RECORD/, 'PACT RECORD'],
+    [5, /NET CONTRIBUTION[\s\S]*Ranked by value created for the whole ad market[\s\S]*research credit, not money/, 'NET CONTRIBUTION'],
+    [6, /YDC RECORD/, 'YDC RECORD'],
     [7, /DEBRIEF[\s\S]*Ranked by net contribution[\s\S]*Ostrom/, 'DEBRIEF'],
   ];
   for (const [n, re, name] of panels) {
@@ -848,10 +848,10 @@ async function participantScenario(
     const text = await screenText(fac);
     if (n === 2) {
       check(!/τ|tau/i.test(text) && (await fac.locator('.scr .lc-ref').count()) === 0, 'the trust trace has no tau line while the setting is off');
-      check(/moratorium from Q\d Y\d|no moratorium/.test(text), 'the trust trace states the moratorium marker');
+      check(/crackdown from Q\d Y\d|no crackdown/.test(text), 'the trust trace states the moratorium marker');
       // The line itself is drawn from the published value; publish one to check the drawing.
       await adminSet(`games/${g}/results/tau`, 33);
-      await waitText(fac, /τ 33\.0 · a moratorium starts below this line/, 'a published tau draws the labelled line', 10_000, '.scr');
+      await waitText(fac, /τ 33\.0 · a crackdown starts below this line/, 'a published tau draws the labelled line', 10_000, '.scr');
       check((await fac.locator('.scr .lc-ref').count()) === 1, 'the tau line is drawn');
       await snapProjector(fac, 'results-2-tau');
       await adminSet(`games/${g}/results/tau`, null);
@@ -865,7 +865,7 @@ async function participantScenario(
       check((await fac.locator('.scr [data-chart="slope"] g[data-firm]').count()) === firms, `panel 5 draws a slope for each of ${firms} firms`);
       check((await fac.locator('.scr .nc-firm[data-firm] [data-ledger]').count()) === firms, 'panel 5 shows a conduct ledger under each firm');
     }
-    if (n === 6) check(/UNDETECTED|No pacts were formed/.test(text), 'panel 6 reveals undetected violations or says no pact formed');
+    if (n === 6) check(/UNDETECTED|No youth design codes were formed/.test(text), 'panel 6 reveals undetected violations or says no pact formed');
     await snapProjector(fac, `results-${n}`);
   }
   await fac.waitForTimeout(600);
@@ -874,9 +874,9 @@ async function participantScenario(
   check((await adminGet<number>(`games/${g}/public/revealStep`)) === 6, 'the results step is stored (panel 7)');
   await fac.waitForTimeout(600);
   await fac.keyboard.press('Escape');
-  await waitText(fac, /6\/7[\s\S]*PACT RECORD/, 'Esc steps back to panel 6', 10_000, '.scr');
+  await waitText(fac, /6\/7[\s\S]*YDC RECORD/, 'Esc steps back to panel 6', 10_000, '.scr');
   await fac.reload();
-  await waitText(fac, /6\/7[\s\S]*PACT RECORD/, 'a reload restores the results step from the database', 15_000, '.scr');
+  await waitText(fac, /6\/7[\s\S]*YDC RECORD/, 'a reload restores the results step from the database', 15_000, '.scr');
 
   // Console: exports.
   await control.reload();
@@ -884,7 +884,7 @@ async function participantScenario(
   const [jsonDl] = await Promise.all([control.waitForEvent('download'), control.getByRole('button', { name: /DOWNLOAD HISTORY/ }).click()]);
   const jsonPath = await jsonDl.path();
   const exported = JSON.parse(readFileSync(jsonPath, 'utf8')) as { format: string; code: string; history: unknown[]; engine: { tau: number }; results: { rounds: number } | null };
-  check(jsonDl.suggestedFilename() === `frontier-${code}-history.json`, 'the history download is named after the join code');
+  check(jsonDl.suggestedFilename() === `feed-${code}-history.json`, 'the history download is named after the join code');
   check(exported.format === 'frontier-export' && exported.history.length === 3 && typeof exported.engine.tau === 'number' && exported.results?.rounds === 3, 'the JSON holds 3 quarters, the hidden values and the results');
   const [txtDl] = await Promise.all([control.waitForEvent('download'), control.getByRole('button', { name: /DOWNLOAD DATA LINES/ }).click()]);
   const lines = readFileSync(await txtDl.path(), 'utf8').trimEnd().split('\n');

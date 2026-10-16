@@ -12,8 +12,8 @@ export const BRIEFING_LINES = {
     'A firm that falls behind on reach loses share of attention.',
   ],
   controls: [
-    ['FEED', '1 CHRONO, 2 RANKED, 3 AUTOPLAY or 4 STREAKS.'],
-    ['SAFEGUARDS', 'Time-limit prompts, age checks, quiet hours and moderation, as a share of the reference budget.'],
+    ['FEED', 'CHRONO, RANKED, AUTOPLAY, STREAKS.'],
+    ['SAFEGUARDS', 'Age checks, time limits, quiet hours and moderation.'],
     ['CARD', 'One optional action. The same card cannot repeat in consecutive quarters.'],
   ],
   cards: [
@@ -21,7 +21,7 @@ export const BRIEFING_LINES = {
     ['PUBLISH', 'Release internal wellbeing research.'],
     ['LOBBY', 'Lobby the Assembly on fines.'],
     ['BLITZ', 'Run an influencer campaign.'],
-    ['SHARE', 'Give every platform your safety tooling.'],
+    ['SHARE', 'Give every firm your safety tooling.'],
     ['LAUNCH', 'Ship a new engagement feature. More reach, more exposure and harm-story risk.'],
   ],
   commits: [

@@ -362,7 +362,7 @@ export function NetContribution({ r }: { r: FinalResults }) {
   const { domain } = niceDomain(Math.min(0, ...points), Math.max(0, ...points), 4);
   const right = others
     ? `the ${rows.length} largest rank changes · OTHERS combines ${combined} firms`
-    : `against every firm at FEED ${alt.pace}, SAFEGUARDS ${alt.safety} · research credit is not money`;
+    : `against every firm at FEED ${alt.pace}, SAFEGUARDS ${alt.safety} · credit is not money`;
   return (
     <Panel title="NET CONTRIBUTION · value created for the whole ad market" right={right} bodyClassName="pad col">
       <Headline text={contributionHeadline(r)} />

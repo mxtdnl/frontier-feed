@@ -139,7 +139,7 @@ async function scenario(browser: Browser): Promise<void> {
   await page.getByRole('button', { name: 'COPY' }).click();
   await waitText(page, /Copied Q4 Y3 as plain text/, 'COPY confirms');
   const clip = await page.evaluate(() => navigator.clipboard.readText());
-  check(clip.startsWith('FRONTIER WIRE · Wire scale · code WIRE · Q4 Y3'), 'the clipboard holds the quarter heading');
+  check(clip.startsWith('FEED WIRE · Wire scale · code WIRE · Q4 Y3'), 'the clipboard holds the quarter heading');
   check(clip.includes('NOT ON THE WIRE') && !clip.includes('Q3 Y3'), 'the clipboard holds only the selected quarter, with its facilitator section');
   check(/Q4 Y3\nQUARTER BRIEF\nTrust /.test(clip) && clip.includes('Largest draws:'), 'the clipboard holds the QUARTER BRIEF first');
   await ctx.close();

@@ -7,7 +7,7 @@
  *  - the INCIDENTS block lists min(k, cap) incidents, then "+N more", and fits its panel
  *  - the board rows sit exactly where they sit with no incidents
  *  - with disclosure off the projector shows no pace, safety or incident risk for an incident firm
- *  - the INCID tag marks each listed firm on the board, and the INCID view lists every incident.
+ *  - the HARM tag marks each listed firm on the board, and the HARM view lists every harm story.
  * Screenshots go to shots/e2e-incidents-*.png. Exits non-zero on any failed check.
  */
 import type { Browser, Page } from 'playwright';
@@ -149,19 +149,19 @@ async function scenario(browser: Browser): Promise<void> {
             check(k > cap ? info.more === String(k - cap) : info.more === null, `${label}: "+N more" ${k > cap ? `reads +${k - cap}` : 'absent'} (got ${info.more})`);
             check(!info.overflow && info.lastBottom <= info.bodyBottom + 1, `${label}: block fits its panel`);
             check(info.clippedText === 0, `${label}: no wrapped line is cut off`);
-            if (!disclosure) check(!/pace \d|safety \d|risk \d/.test(info.text), `${label}: no pace, safety or risk while disclosure is off`);
-            else check(/pace \d · safety \d+% · incident risk \d+%/.test(info.text), `${label}: cause gives pace, safety and risk while disclosure is on`);
+            if (!disclosure) check(!/feed \d|safeguards \d|risk \d/.test(info.text), `${label}: no pace, safety or risk while disclosure is off`);
+            else check(/feed \d · safeguards \d+% · story risk \d+%/.test(info.text), `${label}: cause gives pace, safety and risk while disclosure is on`);
             check((await rowTops(page)) === baseline[`${w}`], `${label}: board rows do not move`);
-            const tags = await page.locator('.scr .tag-incid').count();
-            check(tags >= 1, `${label}: INCID tag on the board (${tags})`);
+            const tags = await page.locator('.scr .tag-harm').count();
+            check(tags >= 1, `${label}: HARM tag on the board (${tags})`);
             if (n <= 16 || k === 1) await shot(page, name);
           }
           // The INCID view lists every incident of the session: quarter 1's real ones and quarter 2's.
           const total = k + Number(getAt(base, 'rounds/1/incidents') ?? 0);
           await page.setViewportSize({ width: 1280, height: 720 });
-          await page.keyboard.type('INCID');
+          await page.keyboard.type('HARM');
           await page.keyboard.press('Enter');
-          await waitText(page, /INCID · INCIDENTS BY QUARTER/, `${name}: INCID view opens`, 5000, '.scr');
+          await waitText(page, /HARM · HARM STORIES BY QUARTER/, `${name}: INCID view opens`, 5000, '.scr');
           const listed = await page.locator('[data-incid-view] [data-incident]').count();
           check(listed === total, `${name}: INCID view lists ${total} incidents (got ${listed})`);
           // The list scrolls inside its panel by design, so the clipping check does not apply to the panel body.

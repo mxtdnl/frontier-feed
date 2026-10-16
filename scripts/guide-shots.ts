@@ -102,7 +102,7 @@ await runWithStack(async (browser) => {
   await t.goto(`${BASE}#/play/${g}`);
   await waitText(q, /T-\d\d:\d\d/, 'the QRRY phone shows the countdown', 15_000);
   await save(q, 'phone-desk');
-  await q.getByRole('radio', { name: /Aggressive/ }).click();
+  await q.getByRole('radio', { name: /AUTOPLAY/ }).click();
   await q.getByRole('button', { name: /^COMMIT/ }).click();
   await waitText(q, /COMMITTED/, 'QRRY commits quarter 1');
   await fac.waitForTimeout(800);
@@ -135,20 +135,20 @@ await runWithStack(async (browser) => {
   await waitText(fac, /Industry summit in session/, 'F8 enters the summit', 15_000, '.scr');
   await save(fac, 'summit');
   await waitText(q, /PROPOSE A PACT/, 'the summit opens the PACTS tab on the phone', 15_000);
-  await q.getByRole('button', { name: 'PROPOSE A PACT' }).click();
-  await q.getByRole('checkbox', { name: 'Maximum pace' }).check();
+  await q.getByRole('button', { name: 'PROPOSE A CODE' }).click();
+  await q.getByRole('checkbox', { name: 'Maximum feed' }).check();
   await q.locator('[data-pact-preview]').scrollIntoViewIfNeeded();
   await save(q, 'phone-pact-preview');
-  await q.getByRole('button', { name: 'SIGN PACT-A' }).click();
-  await waitText(t, /JOIN PACT-A/, 'TLWN sees PACT-A', 15_000);
-  await t.getByRole('button', { name: 'JOIN PACT-A' }).click();
-  await waitText(q, /PACT-A[\s\S]*TLWN|PACT-A[\s\S]*2 MBRS/, 'QRRY sees TLWN join', 15_000);
+  await q.getByRole('button', { name: 'SIGN YDC-A' }).click();
+  await waitText(t, /JOIN YDC-A/, 'TLWN sees YDC-A', 15_000);
+  await t.getByRole('button', { name: 'JOIN YDC-A' }).click();
+  await waitText(q, /YDC-A[\s\S]*TLWN|YDC-A[\s\S]*2 MBRS/, 'QRRY sees TLWN join', 15_000);
   await save(q, 'phone-pacts');
   await key('F8');
   await waitText(fac, new RegExp(`${label(2)}[\\s\\S]*OPEN`), 'F8 returns to the open quarter', 15_000, '.scr');
   await q.getByRole('tab', { name: 'DESK' }).click();
-  await q.getByRole('radio', { name: /Breakneck/ }).click();
-  await waitText(q, /Breaks PACT-A: pace 2 or lower/, 'the ticket warns that Breakneck breaks PACT-A');
+  await q.getByRole('radio', { name: /STREAKS/ }).click();
+  await waitText(q, /Breaks YDC-A: feed 2 or lower/, 'the ticket warns that STREAKS breaks YDC-A');
   await save(q, 'phone-ticket-notice');
   await q.getByRole('button', { name: /COMMIT/ }).click();
   await waitText(q, /COMMITTED/, 'QRRY commits quarter 2');
@@ -166,14 +166,14 @@ await runWithStack(async (browser) => {
     if (r === 4) {
       // F6 (Shift+F) then 1: audit PACT-A when this quarter resolves.
       await key('Shift+F');
-      await waitText(fac, /Press the number of the pact/, 'Shift+F opens the audit picker', 5_000, '.scr');
+      await waitText(fac, /Press the number of the code/, 'Shift+F opens the audit picker', 5_000, '.scr');
       await fac.keyboard.press('1');
       await fac.waitForTimeout(800);
       await key('Escape');
     }
     if (r === 7) {
       await key('Shift+D');
-      await waitText(fac, /DISCLOSURE ON/, 'Shift+D turns disclosure on', 15_000, '.scr');
+      await waitText(fac, /TRANSPARENCY ON/, 'Shift+D turns disclosure on', 15_000, '.scr');
     }
     await h(qh, 'submit', g, r, qId, qrry(r));
     await resolveQuarter(r);
