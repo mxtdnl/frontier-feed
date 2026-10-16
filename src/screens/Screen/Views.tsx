@@ -1,3 +1,4 @@
+import { pactLabel } from '../../ui/vocab';
 import { COMMAND_HELP } from '../../ui/commands';
 import { DataTable, Delta, FirmMultiples, LineChart, Panel, QR, RankChart, Tag, type RankLine } from '../../ui/components';
 import { yDomain } from '../../ui/chart';
@@ -37,19 +38,19 @@ export function TrustView({ data }: { data: ScreenData }) {
 export function PactsView({ data, emphasis = false }: { data: ScreenData; emphasis?: boolean }) {
   const rows = pactRows(data);
   return (
-    <Panel title={emphasis ? 'PACTS · SUMMIT' : 'PACT'} bodyClassName="pad">
+    <Panel title={emphasis ? 'YDC · SUMMIT' : 'YDC · YOUTH DESIGN CODES'} bodyClassName="pad">
       {rows.length === 0 ? (
-        <p className="dim">No pacts in force.</p>
+        <p className="dim">No youth design codes in force.</p>
       ) : (
         <DataTable
-          caption="Pacts"
+          caption="Youth design codes"
           tall
           rows={rows}
           rowKey={(p) => p.id}
           columns={[
-            { key: 'id', label: 'PACT', w: 9, render: (p) => <Tag pact={p.name} /> },
-            { key: 'pace', label: 'MAX PACE', w: 10, align: 'r', render: (p) => p.maxPace ?? '–' },
-            { key: 'safe', label: 'MIN SAFETY', w: 12, align: 'r', render: (p) => p.minSafety ?? '–' },
+            { key: 'id', label: 'YDC', w: 9, render: (p) => <Tag pact={p.name} /> },
+            { key: 'pace', label: 'MAX FEED', w: 10, align: 'r', render: (p) => p.maxPace ?? '–' },
+            { key: 'safe', label: 'MIN GUARDS', w: 12, align: 'r', render: (p) => p.minSafety ?? '–' },
             // Beside the board at a summit the panel is narrow; the members need the room more than the audit line.
             ...(emphasis ? [] : [{ key: 'audit', label: 'AUDIT', w: 27, render: (p: PactRow) => <AuditCell audit={p.lastAudit} /> }]),
             {
@@ -87,24 +88,24 @@ function AuditCell({ audit }: { audit: PactRow['lastAudit'] }) {
 
 interface AuditViewProps {
   data: ScreenData;
-  /** Pact ids already queued are not known to the projector; the notice confirms each press. */
+  /** Code (pact) ids already queued are not known to the projector; the notice confirms each press. */
   onQueue: (pactId: string) => void;
 }
 
-/** F6: choose a pact to audit. Press the number, or select the row. */
+/** F6: choose a youth design code (pact) to audit. Press the number, or select the row. */
 export function AuditView({ data, onQueue }: AuditViewProps) {
   const rows = pactRows(data).slice(0, 9);
   return (
-    <Panel title="AUDIT · SELECT PACT" bodyClassName="pad">
+    <Panel title="AUDIT · SELECT CODE" bodyClassName="pad">
       {rows.length === 0 ? (
-        <p className="dim">No pacts in force to audit. Esc returns to the board.</p>
+        <p className="dim">No youth design codes in force to audit. Esc returns to the board.</p>
       ) : (
         <div className="stack">
-          <p className="dim">Press the number of the pact to queue an audit. It runs when the quarter resolves. Esc returns to the board.</p>
+          <p className="dim">Press the number of the code to queue an audit. It runs when the quarter resolves. Esc returns to the board.</p>
           {rows.map((p, i) => (
             <button key={p.id} type="button" className="btn" style={{ justifyContent: 'flex-start', textAlign: 'left' }} onClick={() => onQueue(p.id)}>
               <span className="signal" style={{ width: '3ch', display: 'inline-block' }}>{i + 1}</span>
-              <span style={{ width: '9ch', display: 'inline-block' }}>{p.name}</span>
+              <span style={{ width: '9ch', display: 'inline-block' }}>{pactLabel(p.name)}</span>
               <span className="dim">{tickerLine(p.members.map((m) => m.ticker))}</span>
             </button>
           ))}
@@ -131,12 +132,12 @@ export function WireView({ data }: { data: ScreenData }) {
   );
 }
 
-/** `INCID` (§14.1, Session 18): every incident of the session, newest quarter first, with its effect and cause. */
+/** `HARM` (§14.1, Session 18): every harm story (internal: incident) of the session, newest quarter first, with its effect and cause. */
 export function IncidentsView({ data }: { data: ScreenData }) {
   const lines = allIncidents(data.rounds, data.firms);
   return (
-    <Panel title="INCID · INCIDENTS BY QUARTER" right={`${lines.length} in total · Esc returns to the board`} bodyClassName="pad incid-scroll">
-      {lines.length === 0 ? <p className="dim">No incidents yet.</p> : null}
+    <Panel title="HARM · HARM STORIES BY QUARTER" right={`${lines.length} in total · Esc returns to the board`} bodyClassName="pad incid-scroll">
+      {lines.length === 0 ? <p className="dim">No harm stories yet.</p> : null}
       <ul className="stack" style={{ listStyle: 'none', margin: 0, padding: 0, gap: 0 }} data-incid-view="">
         {lines.map((l, i) => (
           <li key={`${l.round}-${l.firmId}`} data-incident={l.ticker} data-round={l.round}>
@@ -332,7 +333,7 @@ export function LobbyView({ code, firms, memberCounts }: { code: string; firms: 
 export function BriefingView() {
   return (
     <>
-      <Panel title="MARKET" bodyClassName="pad" style={{ width: 'var(--board-w)' }}>
+      <Panel title="AD MARKET" bodyClassName="pad" style={{ width: 'var(--board-w)' }}>
         <div className="stack briefing-stack">
           {BRIEFING_LINES.market.map((l) => (
             <p key={l}>{l}</p>
@@ -347,7 +348,7 @@ export function BriefingView() {
         <div className="stack briefing-stack">
           {BRIEFING_LINES.controls.map(([k, v]) => (
             <div key={k} className="row" style={{ flexWrap: 'nowrap' }}>
-              <span className="signal" style={{ width: '8ch', flexShrink: 0 }}>{k}</span>
+              <span className="signal" style={{ width: '11ch', flexShrink: 0 }}>{k}</span>
               <span>{v}</span>
             </div>
           ))}

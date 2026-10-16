@@ -1,4 +1,5 @@
 import { PARAMS } from '../../engine';
+import { pactLabel } from '../../ui/vocab';
 import { CommitMark, DataTable, Delta, GlyphCheck, HBar, LineChart, Panel, RankMove, ShareStrip, Tag, TrendLine, ValueBar, type Column, type TagKind } from '../../ui/components';
 import { fmt, fmtInt, fmtShare, quarterLabel } from '../../ui/format';
 import { GENERAL_CAUSE, incidentBlock, type IncidentLine } from '../../ui/incidents';
@@ -8,7 +9,7 @@ import { shareSegments, sharedDomain, trendWindow } from '../../ui/performance';
 
 import { committedCount, marketCeiling, previousTrust, tagKey, trustSeries, type BoardRow, type ScreenData } from './model';
 
-const TAG_KINDS: ReadonlyArray<string> = ['BOT', 'AUTO', 'BREACH', 'INCID', 'INSOLV'];
+const TAG_KINDS: ReadonlyArray<string> = ['BOT', 'AUTO', 'BREACH', 'HARM', 'INSOLV'];
 
 interface BoardProps {
   rows: ReadonlyArray<BoardRow>;
@@ -22,15 +23,15 @@ interface BoardProps {
   banner?: boolean;
 }
 
-/** Board tags in priority order: alarms first, pact memberships last (§14.1). */
+/** Board tags in priority order: alarms first, code memberships (YDC-A…) last (§14.1). */
 export function boardTags(f: BoardRow): string[] {
   return [
     ...(f.breach ? ['BREACH'] : []),
-    ...(f.incident ? ['INCID'] : []),
+    ...(f.incident ? ['HARM'] : []),
     ...(f.insolvent ? ['INSOLV'] : []),
     ...(f.auto ? ['AUTO'] : []),
     ...(f.bot ? ['BOT'] : []),
-    ...f.pacts,
+    ...f.pacts.map(pactLabel),
   ];
 }
 
@@ -38,7 +39,7 @@ export function boardTags(f: BoardRow): string[] {
 const MIN_TAG_W = 12;
 /** Rank, MOVE, FIRM, SHARE, PROFIT, VALUE, CHANGE and the commit mark (§14.1, Session 13). */
 const BASE_W = 48;
-/** PACE, SAFETY and EXPOSURE, or PACE, SAFE and EXPO. */
+/** FEED, GUARDS and EXPOSURE, or FEED, GRD and EXPO (spec §14.1). */
 const DISCLOSURE_W = { full: 21, short: 16 } as const;
 
 /**
@@ -48,7 +49,7 @@ const DISCLOSURE_W = { full: 21, short: 16 } as const;
 export function boardMnemonics(disclosure: boolean, lit: boolean): Array<{ tag: string; text: string }> {
   if (!disclosure || boardTagWidth(BASE_W + DISCLOSURE_W.full, lit) >= MIN_TAG_W) return [];
   return [
-    { tag: 'SAFE', text: 'safety' },
+    { tag: 'GRD', text: 'safeguards' },
     { tag: 'EXPO', text: 'exposure' },
   ];
 }
@@ -137,8 +138,8 @@ export function boardColumns(disclosure: boolean, reveal: boolean, lit = false, 
   if (trend > 0) cols.push({ key: 'trend', label: 'TREND', w: trend, className: 'chart-cell', render: (f) => <TrendLine values={trendWindow(f.history)} domain={scales.trend} /> });
   if (disclosure) {
     cols.push(
-      { key: 'pace', label: 'PACE', w: 5, align: 'r', render: (f) => f.disclosed?.pace ?? '–' },
-      { key: 'safe', label: short ? 'SAFE' : 'SAFETY', w: short ? 5 : 7, align: 'r', render: (f) => f.disclosed?.safety ?? '–' },
+      { key: 'pace', label: 'FEED', w: 5, align: 'r', render: (f) => f.disclosed?.pace ?? '–' },
+      { key: 'safe', label: short ? 'GRD' : 'GUARDS', w: short ? 5 : 7, align: 'r', render: (f) => f.disclosed?.safety ?? '–' },
       { key: 'expo', label: short ? 'EXPO' : 'EXPOSURE', w: short ? 6 : 9, align: 'r', render: (f) => (f.disclosed ? fmt(f.disclosed.expo) : '–') },
     );
   }
@@ -224,8 +225,8 @@ export function BoardPanel({ rows, disclosure, reveal, page = 0, lit = false, ba
 }
 
 /**
- * The INCIDENTS block (§14.1, Session 18): each incident of the quarter with its effect and cause, at most `max`, then
- * `+N more`. With disclosure off the general cause is printed once at the foot, so it never names pace or safety.
+ * The HARM STORIES block (§14.1, Session 18; internal: incidents): each harm story of the quarter with its effect and cause, at most `max`, then
+ * `+N more`. With disclosure off the general cause is printed once at the foot, so it never names feed or safeguards.
  */
 export function IncidentBlock({ round, lines, max }: { round: number; lines: ReadonlyArray<IncidentLine>; max: number }) {
   const { shown, more } = incidentBlock(lines, max);
@@ -233,7 +234,7 @@ export function IncidentBlock({ round, lines, max }: { round: number; lines: Rea
   return (
     <div className="incid-block" data-incident-block="" data-incidents={lines.length}>
       <p className="incid-head">
-        INCIDENTS <span className="dim">· {quarterLabel(round)}</span>
+        HARM STORIES <span className="dim">· {quarterLabel(round)}</span>
       </p>
       {shown.map((l) => (
         <div key={l.firmId} data-incident={l.ticker}>
@@ -246,7 +247,7 @@ export function IncidentBlock({ round, lines, max }: { round: number; lines: Rea
       ))}
       {more > 0 ? (
         <p className="incid-line dim" data-incident-more={more}>
-          +{more} more · INCID for the full list
+          +{more} more · HARM for the full list
         </p>
       ) : null}
       {general ? (
@@ -301,10 +302,10 @@ export function TrustPanel({ data, reveal, incidents = [], incidentMax = 4 }: Tr
         </div>
       )}
       <div className="stack" style={{ margin: '1lh 0 0.5lh', gap: 0 }}>
-        <HBar label="MARKET" labelW={11} textW={8} value={pub.M} domain={[0, marketCeiling(firmCount)]} text={fmtInt(pub.M)} describe={`Market size ${fmtInt(pub.M)}`} />
-        <div className="row"><span className="dim" style={{ width: '11ch' }}>INCIDENTS</span><span>{incidentCount} this quarter</span></div>
-        <div className="row"><span className="dim" style={{ width: '11ch' }}>PACTS</span><span>{activePacts} active</span></div>
-        <div className="row"><span className="dim" style={{ width: '11ch' }}>DISCLOSURE</span><span>{pub.disclosure ? 'ON' : 'OFF'}</span></div>
+        <HBar label="AD MARKET" labelW={13} textW={8} value={pub.M} domain={[0, marketCeiling(firmCount)]} text={fmtInt(pub.M)} describe={`Ad market size ${fmtInt(pub.M)}`} />
+        <div className="row"><span className="dim" style={{ width: '13ch' }}>HARM STORIES</span><span>{incidentCount} this quarter</span></div>
+        <div className="row"><span className="dim" style={{ width: '13ch' }}>YDC</span><span>{activePacts} active</span></div>
+        <div className="row"><span className="dim" style={{ width: '13ch' }}>TRANSPARENCY</span><span>{pub.disclosure ? 'ON' : 'OFF'}</span></div>
       </div>
     </Panel>
   );

@@ -11,7 +11,7 @@ import type { FirmNode, RoundNode } from '../firebase/schema';
 import { fmt } from './format';
 
 /** The cause line while pace and safety are private (§15.4). */
-export const GENERAL_CAUSE = 'Incident risk rises with pace and falls with safety spend.';
+export const GENERAL_CAUSE = 'Story risk rises with the feed and falls with safeguards.';
 /** Incidents listed in the board's block before `+N more` (§14.1). */
 export const INCIDENT_BLOCK_MAX = 4;
 /** Lit-room mode with disclosure on: three lines per incident leave room for three (32-row grid). */
@@ -56,7 +56,7 @@ export function incidentLines(round: number, node: RoundNode | undefined, firms:
     const ticker = firms[id]?.ticker;
     if (!ticker) return [];
     const d = node.disclosure?.[id] ?? null;
-    const parts = d ? [`pace ${d.pace}`, `safety ${d.safety}%`, ...(d.risk !== null ? [`incident risk ${Math.round(d.risk * 100)}%`] : [])] : [];
+    const parts = d ? [`feed ${d.pace}`, `safeguards ${d.safety}%`, ...(d.risk !== null ? [`story risk ${Math.round(d.risk * 100)}%`] : [])] : [];
     return [
       {
         round,
@@ -71,7 +71,7 @@ export function incidentLines(round: number, node: RoundNode | undefined, firms:
   });
 }
 
-/** Every incident of the session, newest quarter first, creation order within a quarter (the `INCID` view). */
+/** Every incident of the session, newest quarter first, creation order within a quarter (the `HARM` view). */
 export function allIncidents(rounds: Record<string, RoundNode>, firms: Record<string, FirmNode>): IncidentLine[] {
   return Object.keys(rounds)
     .map(Number)
@@ -85,7 +85,7 @@ export function incidentBlock(lines: ReadonlyArray<IncidentLine>, max = INCIDENT
   return { shown: lines.slice(0, max), more: Math.max(0, lines.length - max) };
 }
 
-/** Firms that carry the `INCID` tag: an incident in the latest resolved quarter, during its reveal and the next open quarter. */
+/** Firms that carry the `HARM` tag: an incident in the latest resolved quarter, during its reveal and the next open quarter. */
 export function incidentTagged(latest: number, node: RoundNode | undefined, pubRound: number, phase: string): Set<string> {
   if (!node || latest <= 0) return new Set();
   const during = pubRound === latest || (pubRound === latest + 1 && (phase === 'open' || phase === 'summit'));

@@ -12,9 +12,9 @@ export interface KeyBinding {
 export const KEY_BINDINGS: ReadonlyArray<KeyBinding> = [
   { action: 'board', fKey: 'F2', letter: 'B', label: 'BOARD' },
   { action: 'trust', fKey: 'F3', letter: 'T', label: 'TRUST' },
-  { action: 'pacts', fKey: 'F4', letter: 'P', label: 'PACTS' },
+  { action: 'pacts', fKey: 'F4', letter: 'P', label: 'YDC' },
   { action: 'audit', fKey: 'F6', letter: 'F', label: 'AUDIT' },
-  { action: 'disclosure', fKey: 'F7', letter: 'D', label: 'DISCLOSURE' },
+  { action: 'disclosure', fKey: 'F7', letter: 'D', label: 'TRANSPARENCY' },
   { action: 'summit', fKey: 'F8', letter: 'S', label: 'SUMMIT' },
   { action: 'advance', fKey: 'F9', letter: 'A', label: 'ADVANCE' },
   { action: 'end', fKey: 'F10', letter: 'E', label: 'END' },

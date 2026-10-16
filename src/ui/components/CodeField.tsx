@@ -44,7 +44,7 @@ export function Wordmark() {
   return (
     <div className="wordmark">
       <h1 className="wordmark-name">FEED</h1>
-      <p className="dim">Office of Frontier Systems</p>
+      <p className="dim">Office of Platform Safety</p>
     </div>
   );
 }
