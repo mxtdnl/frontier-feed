@@ -137,10 +137,10 @@ function NewGameForm({ uid }: { uid: string }) {
             <div className="stack">
               <label className="field check">
                 <input type="checkbox" checked={disclosure} onChange={(e) => setDisclosure(e.target.checked)} />
-                <span>Disclosure at start</span>
+                <span>Transparency rule at start</span>
               </label>
               <label className="field">
-                <span>Automatic audit probability per pact per quarter</span>
+                <span>Automatic audit probability per youth design code per quarter</span>
                 <input type="number" min={0} max={1} step={0.05} value={auditP} onChange={num(setAuditP)} />
               </label>
               <label className="field check">

@@ -24,14 +24,14 @@ export function ExportPanel({ g, code, rounds, now }: ExportProps) {
       const parts = await readExportParts(getFirebase().db, g);
       if (kind === 'json') {
         const file = assembleExport(parts, new Date(now()).toISOString());
-        download(`frontier-${code}-history.json`, JSON.stringify(file, null, 2), 'application/json');
-        setNote(`History saved as frontier-${code}-history.json.`);
+        download(`feed-${code}-history.json`, JSON.stringify(file, null, 2), 'application/json');
+        setNote(`History saved as feed-${code}-history.json.`);
       } else {
         const text = dataText(parts.engine);
         if (text === '') setNote('No quarter has resolved yet, so there are no DATA lines.');
         else {
-          download(`frontier-${code}-data.txt`, text, 'text/plain');
-          setNote(`DATA lines saved as frontier-${code}-data.txt.`);
+          download(`feed-${code}-data.txt`, text, 'text/plain');
+          setNote(`DATA lines saved as feed-${code}-data.txt.`);
         }
       }
     } catch {

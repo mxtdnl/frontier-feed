@@ -1,3 +1,4 @@
+import { pactLabel } from '../../ui/vocab';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   addTime,
@@ -184,10 +185,10 @@ function LiveControl({ g, uid }: { g: string; uid: string }) {
   const auditKey = useCallback(() => {
     const list = activePactsRef.current;
     const only = list[0];
-    if (list.length === 0) say('No pacts in force to audit.');
+    if (list.length === 0) say('No youth design codes in force to audit.');
     else if (list.length === 1 && only) run(() => queueAudit(ctx, only.id));
     else {
-      say('Select a pact: press Enter on its AUDIT button.');
+      say('Select a code: press Enter on its AUDIT button.');
       pactsPanel.current?.querySelector('button')?.focus();
     }
   }, [ctx, run, say]);
@@ -306,7 +307,7 @@ function LiveControl({ g, uid }: { g: string; uid: string }) {
             <span className="ctl-group-label dim">SESSION FLOW</span>
             <button type="button" className="btn" onClick={auditKey}>F6 AUDIT</button>
             <button type="button" className="btn" aria-pressed={pub.disclosure} disabled={busyNow || pub.phase === 'ended'} onClick={() => run(() => toggleDisclosure(ctx, seenRef.current))}>
-              F7 DISCLOSURE {pub.disclosure ? 'ON' : 'OFF'}
+              F7 TRANSPARENCY {pub.disclosure ? 'ON' : 'OFF'}
             </button>
             <button type="button" className={`btn${next.key === 'F8' ? ' btn-signal' : ''}`} disabled={busyNow} onClick={() => run(() => toggleSummit(ctx, seenRef.current))}>F8 SUMMIT</button>
             <button type="button" className={`btn${next.key === 'F9' ? ' btn-signal' : ''}`} disabled={busyNow} onClick={() => run(() => advance(ctx, seenRef.current))}>F9 ADVANCE</button>
@@ -354,7 +355,7 @@ function LiveControl({ g, uid }: { g: string; uid: string }) {
               ) : null}
               <span className="dim">TRUST</span>
               <span>{fmt(pub.T)}</span>
-              {pub.collapsed ? <span className="signal">MORATORIUM</span> : null}
+              {pub.collapsed ? <span className="signal">CRACKDOWN</span> : null}
             </div>
             <div className="row">
               <span className="dim">TIMER</span>
@@ -382,7 +383,7 @@ function LiveControl({ g, uid }: { g: string; uid: string }) {
         <Panel title="CONTROLS" bodyClassName="pad">
           <div className="stack">
             <p className="dim">The buttons stay at the top of this page while it scrolls. The F-keys and Shift+letters work here too.</p>
-            <p className="dim">Disclosure {pub.disclosure ? 'ON: PACE, SAFETY and EXPOSURE are published each quarter' : 'OFF: nothing is published'}.</p>
+            <p className="dim">Transparency rule {pub.disclosure ? 'ON: FEED, GUARDS and EXPOSURE are published each quarter' : 'OFF: nothing is published'}.</p>
             <p className="dim">Press END twice within 3 s. ADVANCE resolves an open quarter, with AUTO defaults for firms that have not committed.</p>
           </div>
         </Panel>
@@ -460,17 +461,17 @@ function LiveControl({ g, uid }: { g: string; uid: string }) {
         ) : null}
       </Panel>
 
-      <Panel title="PACTS" right={queued.size ? `${queued.size} AUDIT QUEUED` : undefined} bodyClassName="pad">
-        {pactRows.length === 0 ? <p className="dim">No pacts in force.</p> : null}
+      <Panel title="YOUTH DESIGN CODES" right={queued.size ? `${queued.size} AUDIT QUEUED` : undefined} bodyClassName="pad">
+        {pactRows.length === 0 ? <p className="dim">No youth design codes in force.</p> : null}
         {pactRows.length > 0 ? (
           <div className="scroll-x" ref={pactsPanel}>
             <DataTable
-              caption="Pacts, unaudited violations and audit actions"
+              caption="Youth design codes, unaudited violations and audit actions"
               rows={pactRows}
               rowKey={(p) => p.id}
               columns={[
-                { key: 'id', label: 'PACT', w: 9, render: (p) => <Tag pact={p.name} /> },
-                { key: 'terms', label: 'TERMS', w: 26, render: (p) => `max pace ${p.terms.maxPace ?? '–'} · min safety ${p.terms.minSafety ?? '–'}` },
+                { key: 'id', label: 'YDC', w: 9, render: (p) => <Tag pact={p.name} /> },
+                { key: 'terms', label: 'TERMS', w: 31, render: (p) => `max feed ${p.terms.maxPace ?? '–'} · min safeguards ${p.terms.minSafety ?? '–'}` },
                 { key: 'm', label: 'MBRS', w: 6, align: 'r', render: (p) => Object.keys(p.members).length },
                 { key: 'u', label: 'UNAUD', w: 8, align: 'r', render: (p) => unaudited(p.id) },
                 {
@@ -481,7 +482,7 @@ function LiveControl({ g, uid }: { g: string; uid: string }) {
                     queued.has(p.id) ? (
                       <span className="signal">QUEUED</span>
                     ) : (
-                      <button type="button" className="btn" disabled={busyNow || !canAudit} onClick={() => run(() => queueAudit(ctx, p.id))} aria-label={`Audit ${p.name}`}>
+                      <button type="button" className="btn" disabled={busyNow || !canAudit} onClick={() => run(() => queueAudit(ctx, p.id))} aria-label={`Audit ${pactLabel(p.name)}`}>
                         AUDIT
                       </button>
                     ),
@@ -542,7 +543,8 @@ export function auditOutcomes(
   const nums = Object.keys(rounds).map(Number).filter((n) => n > 0).sort((a, b) => b - a);
   for (const r of nums) {
     for (const a of rounds[String(r)]?.audits ?? []) {
-      const name = pacts[a.pactId]?.name ?? a.pactId;
+      const stored = pacts[a.pactId]?.name;
+      const name = stored ? pactLabel(stored) : a.pactId;
       const text =
         a.breaches.length === 0
           ? 'full compliance'

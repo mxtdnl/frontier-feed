@@ -123,30 +123,30 @@ export function mergeWire(rounds: Record<string, RoundNode>, wire: Record<string
 const ALARM_KINDS: ReadonlySet<Headline['kind']> = new Set<Headline['kind']>(['incident', 'breach', 'insolvency', 'collapse', 'moratorium']);
 export const isAlarmKind = (kind: string): boolean => ALARM_KINDS.has(kind as Headline['kind']);
 
-/** Short uppercase label per headline kind, for the facilitator wire screen (§14.2, Session 18). */
+/** Short uppercase label per headline kind, for the facilitator wire screen (§14.2, Session 18), in the §5.0 vocabulary. */
 const WIRE_KIND_LABEL: Readonly<Record<Headline['kind'], string>> = {
-  collapse: 'MORAT',
-  moratorium: 'MORAT',
+  collapse: 'CRACK',
+  moratorium: 'CRACK',
   final: 'CLOSE',
   breach: 'BREACH',
   'audit-clean': 'AUDIT',
   insolvency: 'INSOLV',
-  incident: 'INCID',
+  incident: 'HARM',
   rank: 'RANK',
   publish: 'PUBLISH',
   lobby: 'LOBBY',
-  poach: 'POACH',
+  poach: 'CLONE',
   blitz: 'BLITZ',
   share: 'SHARE',
-  rush: 'RUSH',
-  pace4: 'PACE',
+  rush: 'LAUNCH',
+  pace4: 'FEED',
   'trust-band': 'POLL',
   ambient: 'NEWS',
-  'pact-formed': 'PACT',
-  'pact-joined': 'PACT',
-  'pact-left': 'PACT',
-  'disclosure-on': 'DISCL',
-  'disclosure-off': 'DISCL',
+  'pact-formed': 'YDC',
+  'pact-joined': 'YDC',
+  'pact-left': 'YDC',
+  'disclosure-on': 'TRNSP',
+  'disclosure-off': 'TRNSP',
 };
 
 export const wireKindLabel = (kind: string): string => WIRE_KIND_LABEL[kind as Headline['kind']] ?? kind.toUpperCase().slice(0, 7);
