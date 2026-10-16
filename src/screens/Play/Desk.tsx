@@ -34,7 +34,7 @@ interface Props {
 
 /** The card rules, printed inside the card sheet (spec §14.3). */
 const CARD_RULES =
-  'The same card cannot repeat in consecutive quarters. POACH needs a target, and not the same target two quarters running. Insolvent firms cannot play cards.';
+  'The same card cannot repeat in consecutive quarters. CLONE needs a target, and not the same target two quarters running. Insolvent firms cannot play cards.';
 
 const WAITING: Partial<Record<PlayView, string>> = {
   lobby: 'The session has not opened. Quarter 1 opens after the briefing.',
@@ -59,7 +59,7 @@ export function ExposureMeter({ label }: { label: ExposureLabel }) {
   );
 }
 
-/** DESK: pace, safety, card, then the decision ticket and the commit bar (spec §14.3). */
+/** DESK: feed, safeguards, card, then the decision ticket and the commit bar (spec §14.3). */
 export function Desk(p: Props) {
   const [sheet, setSheet] = useState(false);
   const open = p.view === 'open';
@@ -88,19 +88,19 @@ export function Desk(p: Props) {
     <>
       <div className="stack desk" style={{ gap: '0.5lh' }}>
         {!open && WAITING[p.view] ? <p className="notice" role="status">{WAITING[p.view]}</p> : null}
-        <section className="stack" style={{ gap: '0.25lh' }} aria-label="Pace">
-          <span className="dim">PACE</span>
+        <section className="stack" style={{ gap: '0.25lh' }} aria-label="Feed">
+          <span className="dim">FEED</span>
           <Segmented4
-            label="Deployment pace"
+            label="Feed design"
             options={PACE_OPTIONS}
             value={p.draft.pace}
             onChange={(v) => p.setDraft({ ...p.draft, pace: v as Pace })}
             disabled={!open}
           />
         </section>
-        <section className="stack" style={{ gap: '0.25lh' }} aria-label="Safety">
-          <span className="dim">SAFETY · share of reference budget</span>
-          <SafetySlider label="Safety spend" value={p.draft.safety} onChange={(v) => p.setDraft({ ...p.draft, safety: v })} disabled={!open} />
+        <section className="stack" style={{ gap: '0.25lh' }} aria-label="Safeguards">
+          <span className="dim">SAFEGUARDS · share of reference budget</span>
+          <SafetySlider label="Safeguards" value={p.draft.safety} onChange={(v) => p.setDraft({ ...p.draft, safety: v })} disabled={!open} />
         </section>
         <section className="stack" style={{ gap: '0.25lh' }} aria-label="Card">
           <span className="dim">CARD</span>
@@ -120,10 +120,10 @@ export function Desk(p: Props) {
           />
           {cardInfo ? (
             <p className="card-effect" data-card-effect="">
-              <strong>{cardInfo.name}</strong> <span className="dim">{cardInfo.effect}</span>
+              <strong>{cardInfo.name}.</strong> <span className="dim">{cardInfo.effect}</span>
             </p>
           ) : null}
-          {p.draft.card === 'POACH' && p.draft.target === null ? <p className="notice err" role="alert">POACH needs a target. Open CARD and select one, or choose another card.</p> : null}
+          {p.draft.card === 'POACH' && p.draft.target === null ? <p className="notice err" role="alert">CLONE needs a target. Open CARD and select one, or choose another card.</p> : null}
         </section>
       </div>
       <div className="desk-foot">
@@ -172,7 +172,7 @@ function Briefing() {
           <p key={l}>{l}</p>
         ))}
       </Panel>
-      <p className="notice" role="status">Quarter 1 opens shortly. Decide pace, safety and an optional card, then commit.</p>
+      <p className="notice" role="status">Quarter 1 opens shortly. Set feed, safeguards and an optional card, then commit.</p>
     </div>
   );
 }

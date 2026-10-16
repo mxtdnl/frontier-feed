@@ -142,7 +142,7 @@ export function displayRemainingMs(p: PublicNode, serverNow: number): number | n
 
 /** F7: disclosure may be toggled in any phase until the session ends (spec §9.3). */
 export const toggleDisclosureStep: Step = (p) => {
-  if (p.phase === 'ended') return 'The session has ended. Disclosure can no longer change.';
+  if (p.phase === 'ended') return 'The session has ended. The transparency rule can no longer change.';
   return { ...p, disclosure: !p.disclosure };
 };
 

@@ -38,30 +38,30 @@ function results(firms: FirmContribution[], moratorium: Contribution['moratorium
 describe('the headline sentence', () => {
   it('names the valuation leader’s fall and the largest rise', () => {
     const r = results([firm('humn', 1, 8, 10), firm('arcn', 9, 2, 300), firm('btc', 2, 1, 400), firm('cyra', 8, 9, 5), ...[3, 4, 5, 6, 7].map((k) => firm(`f${k}`, k, k - 1 === 2 ? 3 : k - 1, 50))]);
-    expect(contributionHeadline(r)).toBe('Ranked by value created for the whole market, HUMN falls from 1st to 8th and ARCN rises from 9th to 2nd.');
+    expect(contributionHeadline(r)).toBe('Ranked by value created for the whole ad market, HUMN falls from 1st to 8th and ARCN rises from 9th to 2nd.');
   });
 
   it('says so when no firm changes place, as with ties broken the same way', () => {
     const r = results([firm('a', 1, 1, 100), firm('b', 2, 2, 100), firm('c', 3, 3, 90)]);
-    expect(contributionHeadline(r)).toBe('Ranked by value created for the whole market, every firm keeps its place.');
+    expect(contributionHeadline(r)).toBe('Ranked by value created for the whole ad market, every firm keeps its place.');
   });
 
   it('says the leader holds 1st when only others move', () => {
     const r = results([firm('a', 1, 1, 100), firm('b', 2, 3, 50), firm('c', 3, 2, 60)]);
-    expect(contributionHeadline(r)).toBe('Ranked by value created for the whole market, A holds 1st and C rises from 3rd to 2nd.');
+    expect(contributionHeadline(r)).toBe('Ranked by value created for the whole ad market, A holds 1st and C rises from 3rd to 2nd.');
   });
 
   it('adds a sentence when every net contribution is below zero', () => {
     const r = results([firm('a', 1, 2, -10), firm('b', 2, 1, -5)]);
     expect(contributionHeadline(r)).toBe(
-      "Ranked by value created for the whole market, A falls from 1st to 2nd and B rises from 2nd to 1st. Every firm's net contribution is below zero.",
+      "Ranked by value created for the whole ad market, A falls from 1st to 2nd and B rises from 2nd to 1st. Every firm's net contribution is below zero.",
     );
   });
 
   it('states the moratorium cost and who is charged', () => {
     const m = { round: 9, revenue: 900, cash: 50, capability: 50, total: 1000, allocated: 1000 };
     const r = results([firm('a', 1, 2, -10, { moratoriumShare: 600 }), firm('b', 2, 1, 5, { moratoriumShare: 400 }), firm('c', 3, 3, -20)], m);
-    expect(contributionHeadline(r)).toContain('The moratorium cost 1000, charged to the 2 firms that drew trust down before it.');
+    expect(contributionHeadline(r)).toContain('The crackdown cost 1000, charged to the 2 firms that drew trust down before it.');
     const none = results([firm('a', 1, 1, 10)], { ...m, allocated: 0 });
     expect(contributionHeadline(none)).toContain('no firm had drawn trust down before it, so none is charged.');
   });
@@ -79,16 +79,16 @@ describe('the headline sentence', () => {
 });
 
 describe('the results model', () => {
-  it('is panel 5 of 7, before PACT RECORD and DEBRIEF, and the debrief refers to it', () => {
-    expect(RESULT_PANELS).toEqual(['FINAL BOARD', 'TRUST TRACE', 'COUNTERFACTUAL', 'ATTRIBUTION', 'NET CONTRIBUTION', 'PACT RECORD', 'DEBRIEF']);
+  it('is panel 5 of 7, before YDC RECORD and DEBRIEF, and the debrief refers to it', () => {
+    expect(RESULT_PANELS).toEqual(['FINAL BOARD', 'TRUST TRACE', 'COUNTERFACTUAL', 'ATTRIBUTION', 'NET CONTRIBUTION', 'YDC RECORD', 'DEBRIEF']);
     expect(DEBRIEF_PROMPTS[2]).toBe(
       'Compare your share of the damage with your share of the value. Ranked by net contribution, where does your firm fall? Is that outcome fair, and who should pay?',
     );
   });
 
-  it('formats the conduct ledger, for the market then against it', () => {
-    expect(ledgerLine(ledger({ publish: 6, restraint: 9, poach: 2, blitz: 3, breaches: 1 }))).toBe('▲ PUBLISH 6 · restraint 9  ▼ POACH 2 · BLITZ 3 · breaches 1');
-    expect(ledgerLine(ledger({ share: 1, compliant: 2, rush: 4, lobby: 1, incidents: 2 }))).toBe('▲ SHARE 1 · pact kept 2  ▼ LOBBY 1 · RUSH 4 · incidents 2');
+  it('formats the conduct ledger, for the ad market then against it', () => {
+    expect(ledgerLine(ledger({ publish: 6, restraint: 9, poach: 2, blitz: 3, breaches: 1 }))).toBe('▲ PUBLISH 6 · restraint 9  ▼ CLONE 2 · BLITZ 3 · breaches 1');
+    expect(ledgerLine(ledger({ share: 1, compliant: 2, rush: 4, lobby: 1, incidents: 2 }))).toBe('▲ SHARE 1 · code kept 2  ▼ LOBBY 1 · LAUNCH 4 · harm stories 2');
     expect(ledgerLine(ledger())).toBe('▲ none  ▼ none');
   });
 

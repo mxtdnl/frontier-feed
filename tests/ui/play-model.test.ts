@@ -149,15 +149,15 @@ describe('book, notices, wire', () => {
     expect(shareChangePp(h, 2)).toBeCloseTo(5);
     expect(shareChangePp(h, 1)).toBeNull();
   });
-  it('lists own incident, AUTO and audit outcomes only', () => {
+  it('lists own harm story, AUTO and audit outcomes only', () => {
     const pacts = { p1: { id: 'p1', name: 'PACT-A', proposer: 'f1', terms: { maxPace: 2 as const, minSafety: null }, members: {}, createdRound: 1, status: 'active' as const } };
     const audits = [
       { pactId: 'p1', kind: 'auto' as const, rounds: [1], breaches: [{ firmId: 'f1', rounds: [1], count: 1, fine: 12, waived: false, expelled: false }, { firmId: 'f2', rounds: [1], count: 1, fine: 99, waived: false, expelled: false }] },
     ];
     const n = resultNotices(result({ incident: true, auto: true }), audits, pacts, 'f1').join(' ');
-    expect(n).toMatch(/Incident/);
+    expect(n).toMatch(/Harm story/);
     expect(n).toMatch(/No decision/);
-    expect(n).toMatch(/PACT-A audit found a breach\. Fine 12\.0/);
+    expect(n).toMatch(/YDC-A audit found a breach\. Fine 12\.0/);
     expect(n).not.toMatch(/99/);
     expect(resultNotices(result(), [], pacts, 'f1')).toEqual(['No notices this quarter.']);
   });

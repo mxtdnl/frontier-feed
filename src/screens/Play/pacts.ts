@@ -1,8 +1,9 @@
 /**
- * Pure helpers for the PACTS tab (spec §5.3, §9.1). No Firebase and no React.
+ * Pure helpers for the YDC tab (youth design codes; internal: pacts; spec §5.3, §9.1). No Firebase and no React.
  */
 import { breaches, type Pace, type Pact, type PactTerms } from '../../engine';
 import type { Phase } from '../../firebase/schema';
+import { pactLabel } from '../../ui/vocab';
 
 export interface TermsForm {
   limitPace: boolean;
@@ -19,11 +20,11 @@ export type TermsResult = { ok: true; terms: PactTerms } | { ok: false; message:
 
 /** Terms need a maximum pace and/or a minimum safety (spec §5.3); safety is a whole number 0 to 30. */
 export function termsFromForm(f: TermsForm): TermsResult {
-  if (!f.limitPace && !f.limitSafety) return { ok: false, message: 'Set a maximum pace, a minimum safety spend, or both.' };
+  if (!f.limitPace && !f.limitSafety) return { ok: false, message: 'Set a maximum feed, minimum safeguards, or both.' };
   let minSafety: number | null = null;
   if (f.limitSafety) {
     const t = f.minSafety.trim();
-    if (!/^\d{1,2}$/.test(t) || Number(t) > 30) return { ok: false, message: 'Minimum safety is a whole number from 0 to 30.' };
+    if (!/^\d{1,2}$/.test(t) || Number(t) > 30) return { ok: false, message: 'Minimum safeguards is a whole number from 0 to 30.' };
     minSafety = Number(t);
   }
   return { ok: true, terms: { maxPace: f.limitPace ? f.maxPace : null, minSafety } };
@@ -42,8 +43,8 @@ export function pactAction(pact: Pick<Pact, 'members' | 'status'>, firmId: strin
 
 export function termsText(t: PactTerms): string {
   const parts: string[] = [];
-  if (t.maxPace !== null) parts.push(`pace ${t.maxPace} or lower`);
-  if (t.minSafety !== null) parts.push(`safety ${t.minSafety} or higher`);
+  if (t.maxPace !== null) parts.push(`feed ${t.maxPace} or lower`);
+  if (t.minSafety !== null) parts.push(`safeguards ${t.minSafety} or higher`);
   return parts.join(' · ') || '–';
 }
 
@@ -71,7 +72,7 @@ export function pactNotices(pacts: Record<string, Pact>, firmId: string, pace: P
         maxPace: pact.terms.maxPace !== null && pace > pact.terms.maxPace ? pact.terms.maxPace : null,
         minSafety: pact.terms.minSafety !== null && safety < pact.terms.minSafety ? pact.terms.minSafety : null,
       };
-      return { pactId: pact.id, text: `Breaks ${pact.name}: ${termsText(broken)}.` };
+      return { pactId: pact.id, text: `Breaks ${pactLabel(pact.name)}: ${termsText(broken)}.` };
     });
 }
 
@@ -82,11 +83,11 @@ export function sortPacts(pacts: Record<string, Pact>): Pact[] {
   );
 }
 
-/** Terms as short symbols (spec §14.3): `pace ≤ 2 · safety ≥ 15%`. `≤` and `≥` are drawn by the component. */
+/** Terms as short symbols (spec §14.3): `feed ≤ 2 · safeguards ≥ 15%`. `≤` and `≥` are drawn by the component. */
 export function termsParts(t: PactTerms): Array<{ label: string; op: 'le' | 'ge'; value: string }> {
   const parts: Array<{ label: string; op: 'le' | 'ge'; value: string }> = [];
-  if (t.maxPace !== null) parts.push({ label: 'pace', op: 'le', value: String(t.maxPace) });
-  if (t.minSafety !== null) parts.push({ label: 'safety', op: 'ge', value: `${t.minSafety}%` });
+  if (t.maxPace !== null) parts.push({ label: 'feed', op: 'le', value: String(t.maxPace) });
+  if (t.minSafety !== null) parts.push({ label: 'safeguards', op: 'ge', value: `${t.minSafety}%` });
   return parts;
 }
 

@@ -3,6 +3,8 @@ import { FILTER_ABOVE, filterByTicker } from '../layout';
 
 export interface CardInfo {
   id: string;
+  /** Display label (spec §5.0): CLONE for POACH, LAUNCH for RUSH. */
+  label: string;
   name: string;
   cost: number;
   effect: string;
@@ -48,7 +50,7 @@ export function CardPicker({ cards, value, target, onChange, lastCard, lastTarge
     <>
       <button type="button" className="card-trigger" onClick={onOpen} aria-haspopup="dialog">
         <span>
-          Card: <strong>{value}</strong>
+          Card: <strong>{current?.label ?? value}</strong>
           {needsTarget && target ? ` to ${target}` : ''}
         </span>
         <span className="dim">{current && current.cost > 0 ? `${current.cost}` : '–'}</span>
@@ -76,7 +78,7 @@ export function CardPicker({ cards, value, target, onChange, lastCard, lastTarge
                     if (!blocked) onChange(c.id, c.id === 'POACH' ? target : null);
                   }}
                 >
-                  <strong>{c.id}</strong>
+                  <strong>{c.label}</strong>
                   <span>
                     {c.name}
                     <br />
@@ -114,7 +116,7 @@ export function CardPicker({ cards, value, target, onChange, lastCard, lastTarge
                   </span>
                 </div>
               ) : null}
-              <div className={`target-list${long ? ' is-long' : ''}`} role="radiogroup" aria-label="Poach target">
+              <div className={`target-list${long ? ' is-long' : ''}`} role="radiogroup" aria-label="Clone target">
                 {shown.length === 0 ? <span className="dim">No ticker contains those letters.</span> : null}
                 {shown.map((t) => {
                   const blocked = t.ticker === lastTarget;

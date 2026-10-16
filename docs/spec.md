@@ -121,7 +121,7 @@ FEED keeps FRONTIER's engine, data model and code identifiers. Only what people 
 | Moratorium | regulatory crackdown: the Assembly suspends accounts for under-16s on every platform | `CRACKDOWN` | approved |
 | Regulator (OFS) | Office of Platform Safety | `OPS` | approved |
 | Legislature, pollster | the Assembly, Halden Research | — | approved (unchanged) |
-| Bot firm names and tickers | fictional platforms that do not resemble real ones | 4-letter tickers | scheme approved; the full list of 51 is presented for approval in R2 |
+| Bot firm names and tickers | fictional platforms that do not resemble real ones (Ambrel `AMBL`, Brisset `BRST`, Corvel `CRVL`…; the 51 are `BOT_FIRMS` in `src/firebase/orchestrator.ts`) | 4-letter tickers | approved (owner, 2026-10-16, Session R2) |
 
 Card display labels (internal IDs unchanged; approved):
 
@@ -312,7 +312,7 @@ Display vocabulary per §5.0. Each line states the same mechanism as the FRONTIE
 
 - Total market revenue tracks public trust. (Kept verbatim, owner decision 2026-10-16.)
 - Trust recovers when pressure eases.
-- A higher FEED builds reach faster, and reach wins share of attention.
+- A higher feed builds reach faster, and reach earns share of attention. (Session R2: "wins" in the R1 wording is a §15.3 term, and `lint:copy` rejects it.)
 - Safeguards cost money and lower your public exposure and the risk of a harm story.
 - Valuation reflects cash plus reach, priced by the ad market.
 - Every cost comes out of cash, and cash counts in full in your valuation.
@@ -735,7 +735,9 @@ Participants see their own firm's card: final rank, valuation actual vs counterf
 
 A terse ad-market primer covering §6.6, the three controls, cards (one line each), how commits work, and that the timer is shown. It contains no numbers that reveal parameters.
 
-Card lines (display labels; IDs in §5.2): CLONE "Copy a named rival's feature. Take reach from them."; PUBLISH "Release internal wellbeing research."; LOBBY "Lobby the Assembly on fines."; BLITZ "Run an influencer campaign."; SHARE "Give every platform your safety tooling."; LAUNCH "Ship a new engagement feature. More reach, more exposure and harm-story risk."
+Card lines (display labels; IDs in §5.2): CLONE "Copy a named rival's feature. Take reach from them."; PUBLISH "Release internal wellbeing research."; LOBBY "Lobby the Assembly on fines."; BLITZ "Run an influencer campaign."; SHARE "Give every firm your safety tooling."; LAUNCH "Ship a new engagement feature. More reach, more exposure and harm-story risk."
+
+Control lines (Session R2): FEED "CHRONO, RANKED, AUTOPLAY, STREAKS."; SAFEGUARDS "Age checks, time limits, quiet hours and moderation."; CARD "One optional action. The same card cannot repeat in consecutive quarters." The SHARE line says "firm" rather than "platform", and the FEED and SAFEGUARDS lines are short, so the CONTROLS panel fits in lit-room mode at 1280×720 (`npm run test:e2e`).
 
 ---
 

@@ -315,7 +315,7 @@
   color: var(--dim);
 }
 .tag-breach,
-.tag-incid,
+.tag-harm,
 .tag-insolv {
   color: var(--down);
 }

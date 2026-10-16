@@ -124,12 +124,12 @@ await runWithStack(async (browser) => {
       }
       if (r === DISCLOSURE_ON.from) {
         await key('Shift+D');
-        await waitText(fac, /DISCLOSURE ON/, 'Shift+D turns disclosure on', 15_000, '.scr');
+        await waitText(fac, /TRANSPARENCY ON/, 'Shift+D turns disclosure on', 15_000, '.scr');
         events.push('disclosure on');
       }
       if (r === 5 || r === 8) {
         await key('Shift+F');
-        await waitText(fac, /Press the number of the pact/, `Shift+F opens the audit picker (quarter ${r})`, 5_000, '.scr');
+        await waitText(fac, /Press the number of the code/, `Shift+F opens the audit picker (quarter ${r})`, 5_000, '.scr');
         await fac.keyboard.press('1');
         for (let i = 0; i < 20; i++) {
           const q = await adminGet<unknown[] | Record<string, unknown> | null>(`games/${g}/engine/pendingAudits`);
@@ -143,7 +143,7 @@ await runWithStack(async (browser) => {
       }
       if (r === DISCLOSURE_ON.to + 1) {
         await key('Shift+D');
-        await waitText(fac, /DISCLOSURE OFF/, 'Shift+D turns disclosure off', 15_000, '.scr');
+        await waitText(fac, /TRANSPARENCY OFF/, 'Shift+D turns disclosure off', 15_000, '.scr');
         events.push('disclosure off');
       }
 
@@ -168,8 +168,8 @@ await runWithStack(async (browser) => {
           check(new RegExp(`▼ ${t}\\b`).test(text) && text.includes(`trust −`) && text.includes(`${t} revenue −15% this quarter`), `quarter ${r}: the incident of ${t} is named with its effect`);
         }
         if (hit.length > cap) check(text.includes(`+${hit.length - cap} more`), `quarter ${r}: the block counts the incidents it does not list`);
-        if (disclosed) check(/pace \d · safety \d+% · incident risk \d+%/.test(text), `quarter ${r}: the cause names pace, safety and risk while disclosure is on`);
-        else check(text.includes('Incident risk rises with pace and falls with safety spend.') && !/pace \d|safety \d|risk \d/.test(text), `quarter ${r}: the cause is general and private values stay hidden while disclosure is off`);
+        if (disclosed) check(/feed \d · safeguards \d+% · story risk \d+%/.test(text), `quarter ${r}: the cause names pace, safety and risk while disclosure is on`);
+        else check(text.includes('Story risk rises with the feed and falls with safeguards.') && !/feed \d|safeguards \d|risk \d/.test(text), `quarter ${r}: the cause is general and private values stay hidden while disclosure is off`);
         if (!incidentShots.has(disclosed)) {
           incidentShots.add(disclosed);
           await snapProjector(fac, `rehearsal-incidents-${disclosed ? 'on' : 'off'}`);
@@ -179,7 +179,7 @@ await runWithStack(async (browser) => {
       if (r === DISCLOSURE_ON.from + 1 || r === DISCLOSURE_ON.to) {
         await fac.waitForTimeout(1700);
         const head = (await fac.locator('.scr table.tbl thead').innerText()).replace(/\s+/g, ' ');
-        check(/PACE/.test(head) && /SAFETY/.test(head) && /EXPOSURE/.test(head), `quarter ${r}: the PACE, SAFETY and EXPOSURE columns show while disclosure is on`);
+        check(/FEED/.test(head) && /GUARDS/.test(head) && /EXPOSURE/.test(head), `quarter ${r}: the PACE, SAFETY and EXPOSURE columns show while disclosure is on`);
         check(round?.disclosure != null, `quarter ${r}: a disclosure snapshot is published`);
       }
       if (r === 5 || r === 8) {
@@ -194,7 +194,7 @@ await runWithStack(async (browser) => {
       if (r === DISCLOSURE_ON.to + 1) {
         await fac.waitForTimeout(1700);
         const head = (await fac.locator('.scr table.tbl thead').innerText()).replace(/\s+/g, ' ');
-        check(!/PACE|SAFE|EXPO/.test(head), 'after the toggle the disclosure columns are gone');
+        check(!/FEED|GUARDS|GRD|EXPO/.test(head), 'after the toggle the disclosure columns are gone');
       }
       if (r === model.collapseRound) {
         await fac.waitForTimeout(1700);
@@ -241,12 +241,12 @@ await runWithStack(async (browser) => {
       };
       await headlineIs(1);
       await snapProjector(fac, 'rehearsal-results-1');
-      const panels: Array<[number, RegExp]> = [[2, /TRUST TRACE/], [3, /COUNTERFACTUAL[\s\S]*INDUSTRY VALUE[\s\S]*ALTERNATIVE[\s\S]*VALUE LOST/], [4, /ATTRIBUTION[\s\S]*SHARE OF DAMAGE/], [5, /NET CONTRIBUTION[\s\S]*research credit, not money/], [6, /PACT RECORD[\s\S]*UNDETECTED/], [7, /DEBRIEF/]];
+      const panels: Array<[number, RegExp]> = [[2, /TRUST TRACE/], [3, /COUNTERFACTUAL[\s\S]*INDUSTRY VALUE[\s\S]*ALTERNATIVE[\s\S]*VALUE LOST/], [4, /ATTRIBUTION[\s\S]*SHARE OF DAMAGE/], [5, /NET CONTRIBUTION[\s\S]*research credit, not money/], [6, /YDC RECORD[\s\S]*UNDETECTED/], [7, /DEBRIEF/]];
       for (const [n, re] of panels) {
         await key('F9');
         await waitText(fac, new RegExp(`${n}/7`), `F9 steps to results panel ${n}`, 15_000, '.scr');
         await waitText(fac, re, `panel ${n} shows its content`, 5_000, '.scr');
-        if (n === 2) check(/moratorium from Q\d Y\d/.test(await screenText(fac)) && /MORATORIUM Q\d Y\d/.test(await screenText(fac)) && !/τ|tau/i.test(await screenText(fac)), 'the trust trace labels the moratorium and shows no tau line');
+        if (n === 2) check(/crackdown from Q\d Y\d/.test(await screenText(fac)) && /CRACKDOWN Q\d Y\d/.test(await screenText(fac)) && !/τ|tau/i.test(await screenText(fac)), 'the trust trace labels the moratorium and shows no tau line');
         if (n === 3) check((await screenText(fac)).replace(/\s+/g, ' ').includes(`INDUSTRY VALUE ${fmt(res.industry.actual, 0)}`), 'panel 3 shows the stored actual industry value');
         if (n === 5) {
           // NET CONTRIBUTION (Session 18): a slope per firm, figures and a ledger per firm, and a re-ranking.

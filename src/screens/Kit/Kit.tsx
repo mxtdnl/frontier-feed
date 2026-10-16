@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { CARDS, FIRMS, HEADLINES, PACE_OPTIONS, TRUST, TRUST_HISTORY, prevProfit, prevRank, prevShare, prevValue, valueHistory, type MockFirm } from '../../mock/fixtures';
+import { FIRMS, HEADLINES, TRUST, TRUST_HISTORY, prevProfit, prevRank, prevShare, prevValue, valueHistory, type MockFirm } from '../../mock/fixtures';
 import {
   Brand,
   PhaseBlock,
@@ -37,6 +37,8 @@ import { projectorKeys } from '../../ui/keys';
 import { playReveal } from '../../ui/reveal';
 import { boardColumns } from '../Screen/BoardView';
 import type { BoardRow } from '../Screen/model';
+import { CARD_INFO } from '../Play/model';
+import { FEED_OPTIONS } from '../../ui/vocab';
 
 const toRow = (f: MockFirm, i: number): BoardRow => ({
   id: f.ticker,
@@ -58,7 +60,7 @@ const toRow = (f: MockFirm, i: number): BoardRow => ({
   bot: f.tags.includes('BOT'),
   pacts: f.pacts,
   breach: f.breach,
-  incident: f.tags.includes('INCID'),
+  incident: f.tags.includes('HARM'),
   disclosed: { pace: f.pace as 1 | 2 | 3 | 4, safety: f.safety, expo: f.expo, risk: null },
 });
 
@@ -140,7 +142,7 @@ export function Kit() {
               <PhaseBlock kind="open" word="OPEN" />
               <span className="tb-clock">T-01:42</span>
             </TopBar>
-            <StatusLine text="Q3 Y2 resolved · Trust ▼5.9 to 45.6 · BTC takes 1st · 2 incidents." />
+            <StatusLine text="Q3 Y2 resolved · Trust ▼5.9 to 45.6 · BRST takes 1st · 2 harm stories." />
             <div className="row">
               {(['lobby', 'briefing', 'open', 'resolving', 'reveal', 'summit', 'ended'] as const).map((k) => (
                 <PhaseBlock key={k} kind={k} word={k.toUpperCase()} />
@@ -179,7 +181,7 @@ export function Kit() {
             ]}
             rows={FIRMS.slice(0, 4)}
             rowKey={(f) => f.ticker}
-            isOwn={(f) => f.ticker === 'CYRA'}
+            isOwn={(f) => f.ticker === 'CRVL'}
           />
         </Panel>
 
@@ -194,14 +196,14 @@ export function Kit() {
               domain="trust"
               hatchBetween
               endLabels
-              marker={{ index: 4, label: 'MORATORIUM Q4 Y1' }}
+              marker={{ index: 4, label: 'CRACKDOWN Q4 Y1' }}
               reference={{ value: 50, label: 'Reference line at 50', band: true }}
               height="14lh"
               description="Two series with hatch, marker and reference line"
             />
             <LineChart series={[{ values: [150, 120, 60, -20, -75], label: 'Valuation', tone: 'wire' }]} domain="zero" height="10lh" description="Valuation crossing zero" />
             <LineChart series={[{ values: [150], label: 'Valuation', tone: 'signal' }]} domain="zero" startQuarter={1} height="4lh" description="One quarter" />
-            <HBar label="MKT" value={0.79} text="1,184" />
+            <HBar label="ADS" value={0.79} text="1,184" />
             <HBar label="VAL" value={0.4} text="40.0%" tone="signal" marker={0.7} />
             <HBar label="DMG" value={-35} domain={[-50, 100]} text="−35.0" tone="signal" marker={60} markerTone="wire" />
           </div>
@@ -254,19 +256,19 @@ export function Kit() {
           </div>
         </Panel>
 
-        <Panel title="SEGMENTED4 / SAFETYSLIDER" bodyClassName="pad">
+        <Panel title="SEGMENTED4 / SAFEGUARDS SLIDER" bodyClassName="pad">
           <div className="stack">
-            <Segmented4 label="Pace" options={PACE_OPTIONS} value={pace} onChange={setPace} />
-            <Segmented4 label="Pace (disabled)" options={PACE_OPTIONS} value={3} onChange={() => {}} disabled />
-            <SafetySlider label="Safety" value={safety} onChange={setSafety} />
-            <SafetySlider label="Safety (disabled)" value={12} onChange={() => {}} disabled />
+            <Segmented4 label="Feed" options={FEED_OPTIONS} value={pace} onChange={setPace} />
+            <Segmented4 label="Feed (disabled)" options={FEED_OPTIONS} value={3} onChange={() => {}} disabled />
+            <SafetySlider label="Safeguards" value={safety} onChange={setSafety} />
+            <SafetySlider label="Safeguards (disabled)" value={12} onChange={() => {}} disabled />
           </div>
         </Panel>
 
         <Panel title="CARDPICKER / COMMITBUTTON" bodyClassName="pad">
           <div className="stack">
             <CardPicker
-              cards={CARDS}
+              cards={CARD_INFO}
               value={card}
               target={target}
               onChange={(c, t) => {
@@ -274,7 +276,7 @@ export function Kit() {
                 setTarget(t);
               }}
               lastCard="PUBLISH"
-              lastTarget="ARCN"
+              lastTarget="AMBL"
               insolvent={false}
               targets={FIRMS.map((f) => ({ ticker: f.ticker, name: f.name }))}
               open={sheet}

@@ -430,7 +430,7 @@ async function phoneRun(browser: Browser, facPage: Page, facUid: string): Promis
   await phone.getByRole('button', { name: 'Open the desk' }).click();
   await waitText(phone, /Card:/, 'the phone desk opens');
   await phone.locator('.card-trigger').click();
-  await phone.getByRole('radio', { name: /POACH/ }).click();
+  await phone.getByRole('radio', { name: /CLONE/ }).click();
   const targets = phone.locator('.target-list [role=radio]');
   check((await targets.count()) === 49, `the POACH picker lists 49 targets (got ${await targets.count()})`);
   check(await phone.getByLabel('Find a target by ticker').isVisible(), 'the POACH picker has a ticker filter');
@@ -446,7 +446,7 @@ async function phoneRun(browser: Browser, facPage: Page, facUid: string): Promis
 
   const members = Object.fromEntries(Array.from({ length: 30 }, (_, i) => [`b${String(i).padStart(2, '0')}`, 1]));
   await adminSet(`games/${g}/pacts/pBig`, { name: 'PACT-A', proposer: 'b00', terms: { maxPace: 2 }, members, createdRound: 1, status: 'active' });
-  await phone.getByRole('tab', { name: 'PACTS' }).click();
+  await phone.getByRole('tab', { name: 'YDC' }).click();
   const more = phone.getByRole('button', { name: '+20 more' });
   await more.waitFor({ timeout: 10_000 }).catch(() => fail('the 30-member pact shows "+20 more"'));
   await snapPlay(phone, 'scale-phone-pacts');

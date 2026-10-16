@@ -47,11 +47,11 @@ describe('pact form default and preview (Session 19)', () => {
   it('a firm that types only a minimum safety signs a safety-only pact', () => {
     const f = { ...DEFAULT_TERMS_FORM, limitSafety: true, minSafety: '25' };
     expect(termsFromForm(f)).toEqual({ ok: true, terms: { maxPace: null, minSafety: 25 } });
-    expect(termsPreview(f)).toBe('You are signing: safety 25 or higher');
+    expect(termsPreview(f)).toBe('You are signing: safeguards 25 or higher');
   });
 
   it('previews both terms, and nothing while the safety value is invalid', () => {
-    expect(termsPreview({ limitPace: true, maxPace: 2, limitSafety: true, minSafety: '25' })).toBe('You are signing: pace 2 or lower · safety 25 or higher');
+    expect(termsPreview({ limitPace: true, maxPace: 2, limitSafety: true, minSafety: '25' })).toBe('You are signing: feed 2 or lower · safeguards 25 or higher');
     expect(termsPreview({ limitPace: true, maxPace: 2, limitSafety: true, minSafety: '31' })).toBeNull();
   });
 });
@@ -66,11 +66,11 @@ describe('decision ticket pact notices (Session 19)', () => {
   });
 
   it('names only the broken term, one line per pact, in pact order', () => {
-    expect(pactNotices({ p1: both }, 'a', 3, 25)).toEqual([{ pactId: 'p1', text: 'Breaks PACT-A: pace 2 or lower.' }]);
-    expect(pactNotices({ p1: both }, 'a', 2, 24)).toEqual([{ pactId: 'p1', text: 'Breaks PACT-A: safety 25 or higher.' }]);
+    expect(pactNotices({ p1: both }, 'a', 3, 25)).toEqual([{ pactId: 'p1', text: 'Breaks YDC-A: feed 2 or lower.' }]);
+    expect(pactNotices({ p1: both }, 'a', 2, 24)).toEqual([{ pactId: 'p1', text: 'Breaks YDC-A: safeguards 25 or higher.' }]);
     expect(pactNotices({ p2: safe, p1: both }, 'a', 3, 10)).toEqual([
-      { pactId: 'p1', text: 'Breaks PACT-A: pace 2 or lower · safety 25 or higher.' },
-      { pactId: 'p2', text: 'Breaks PACT-B: safety 15 or higher.' },
+      { pactId: 'p1', text: 'Breaks YDC-A: feed 2 or lower · safeguards 25 or higher.' },
+      { pactId: 'p2', text: 'Breaks YDC-B: safeguards 15 or higher.' },
     ]);
   });
 
@@ -94,8 +94,8 @@ describe('pact actions', () => {
   });
 
   it('describes terms and orders active pacts first', () => {
-    expect(termsText({ maxPace: 2, minSafety: 10 })).toBe('pace 2 or lower · safety 10 or higher');
-    expect(termsText({ maxPace: null, minSafety: 5 })).toBe('safety 5 or higher');
+    expect(termsText({ maxPace: 2, minSafety: 10 })).toBe('feed 2 or lower · safeguards 10 or higher');
+    expect(termsText({ maxPace: null, minSafety: 5 })).toBe('safeguards 5 or higher');
     const list = sortPacts({ x: pact({ id: 'x', name: 'PACT-A', status: 'dissolved' }), y: pact({ id: 'y', name: 'PACT-B', createdRound: 2 }), z: pact({ id: 'z', name: 'PACT-C', createdRound: 1 }) });
     expect(list.map((p) => p.name)).toEqual(['PACT-C', 'PACT-B', 'PACT-A']);
   });
@@ -143,7 +143,7 @@ describe('result card rendering', () => {
 
   it('shows a dropped card in the notices panel', () => {
     const html = render([{ kind: 'card-target', card: 'POACH' }]);
-    expect(html).toContain('POACH was not played. It needs a valid target firm.');
+    expect(html).toContain('CLONE was not played. It needs a valid target firm.');
     expect(html).not.toContain('No notices this quarter.');
   });
 

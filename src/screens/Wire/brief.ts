@@ -10,6 +10,7 @@
 import { trustBreakdown, type Card, type EngineState, type Params, type TrustBreakdown } from '../../engine';
 import { fmt } from '../../ui/format';
 import { ordinal } from '../../ui/performance';
+import { cardLabel, pactLabel } from '../../ui/vocab';
 
 export interface QuarterBrief {
   round: number;
@@ -22,7 +23,7 @@ export interface QuarterBrief {
 /** Conduct ledger side of each card (spec §10): ▲ for the market, ▼ against it. */
 const SIDE: Partial<Record<Card, '▲' | '▼'>> = { PUBLISH: '▲', SHARE: '▲', POACH: '▼', BLITZ: '▼', LOBBY: '▼', RUSH: '▼' };
 
-export const CLOSING_LINE = 'Every trust loss this quarter came from firms’ own pace, safety, cards and incidents.';
+export const CLOSING_LINE = 'Every trust loss this quarter came from firms’ own feed design, safeguards, cards and harm stories.';
 
 /** Terms under 1 keep two decimals, without a trailing zero (PUBLISH +0.25, LOBBY −0.5); the rest one. Signed. */
 function term(x: number): string {
@@ -59,11 +60,11 @@ export function quarterBrief(
   const head =
     Math.abs(b.dT) < 0.05 ? `Trust unchanged at ${fmt(b.to)}.` : `Trust ${b.dT > 0 ? '▲' : '▼'}${fmt(Math.abs(b.dT))} to ${fmt(b.to)}.`;
   const parts = [`Recovery ${term(b.recovery)}`, `draw ${term(b.draw)}`];
-  if (b.incidentFirms.length) parts.push(`incidents ${term(b.incidents)}${who(b.incidentFirms, tk)}`);
+  if (b.incidentFirms.length) parts.push(`harm stories ${term(b.incidents)}${who(b.incidentFirms, tk)}`);
   if (b.publishFirms.length) parts.push(`PUBLISH ${term(b.publish)}${who(b.publishFirms, tk)}`);
   if (b.lobbyFirms.length) parts.push(`LOBBY ${term(b.lobby)}${who(b.lobbyFirms, tk)}`);
   if (b.clamp !== 0) parts.push(`${b.clamp > 0 ? 'floor at 0' : 'ceiling at 100'} ${term(b.clamp)}`);
-  if (b.moratoriumNow) parts.push(`moratorium ${term(b.moratorium)}`);
+  if (b.moratoriumNow) parts.push(`crackdown ${term(b.moratorium)}`);
   const lines = [`${head} ${parts.join(' · ')}.`];
 
   // 2. The three largest draws, with the firm's rank after the quarter.
@@ -73,7 +74,7 @@ export function quarterBrief(
     .slice(0, 3);
   if (byDraw.length) {
     lines.push(
-      `Largest draws: ${byDraw.map(({ id, f }) => `${tk(id)} ${fmt(f.draw)} (${ordinal(f.rank)}, pace ${f.pace} · safety ${f.safety})`).join(' · ')}.`,
+      `Largest draws: ${byDraw.map(({ id, f }) => `${tk(id)} ${fmt(f.draw)} (${ordinal(f.rank)}, feed ${f.pace} · safeguards ${f.safety})`).join(' · ')}.`,
     );
   }
 
@@ -92,8 +93,8 @@ export function quarterBrief(
         const f = rec.firms[id]!;
         const out: string[] = [];
         const side = SIDE[f.card];
-        if (side) out.push(`${side} ${f.card} ${tk(id)}`);
-        for (const pact of breachesBy.get(id) ?? []) out.push(`▼ breach ${pact} ${tk(id)}`);
+        if (side) out.push(`${side} ${cardLabel(f.card)} ${tk(id)}`);
+        for (const pact of breachesBy.get(id) ?? []) out.push(`▼ breach ${pactLabel(pact)} ${tk(id)}`);
         return out;
       });
   const half = (label: string, items: string[]): string => `${label}: ${items.length ? items.join(' · ') : 'no cards or breaches'}.`;

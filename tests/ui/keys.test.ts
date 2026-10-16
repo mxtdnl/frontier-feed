@@ -95,7 +95,7 @@ describe('F-key bar per screen (Session 12)', () => {
     expect(resultsKeys(false).find((k) => k.primary)?.fKey).toBe('F9');
     expect(resultsKeys(true).some((k) => k.primary)).toBe(false);
   });
-  it('F7 is labelled DISCLOSURE in full', () => {
-    expect(KEY_BINDINGS.find((b) => b.fKey === 'F7')?.label).toBe('DISCLOSURE');
+  it('F7 is labelled TRANSPARENCY in full', () => {
+    expect(KEY_BINDINGS.find((b) => b.fKey === 'F7')?.label).toBe('TRANSPARENCY');
   });
 });

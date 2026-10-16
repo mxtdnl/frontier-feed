@@ -14,6 +14,7 @@ import { useLitRoom } from '../../ui/litRoom';
 import { FacilitatorGate } from '../Auth/FacilitatorGate';
 import { Butterfly, Dumbbell, Slope } from './charts';
 import { DEBRIEF_HEADLINE, attributionHeadline, contributionHeadline, counterfactualHeadline, finalBoardHeadline, pactHeadline, trustHeadline } from './headlines';
+import { pactLabel } from '../../ui/vocab';
 import {
   DEBRIEF_PROMPTS,
   RESULT_PANELS,
@@ -210,7 +211,7 @@ export function TrustTrace({ r }: { r: FinalResults }) {
   return (
     <Panel
       title="TRUST TRACE"
-      right={`${marker !== null ? `moratorium from ${quarterLabel(marker)}` : 'no moratorium'}${r.tau !== null ? ' · τ revealed' : ''}`}
+      right={`${marker !== null ? `crackdown from ${quarterLabel(marker)}` : 'no crackdown'}${r.tau !== null ? ' · τ revealed' : ''}`}
       bodyClassName="pad col"
     >
       <Headline text={trustHeadline(r)} />
@@ -219,10 +220,10 @@ export function TrustTrace({ r }: { r: FinalResults }) {
         domain="trust"
         alarmDrop={5}
         changeStrip
-        marker={marker !== null ? { index: marker, label: `MORATORIUM ${quarterLabel(marker)}` } : undefined}
-        reference={r.tau !== null ? { value: r.tau, label: `τ ${fmt(r.tau)} · a moratorium starts below this line`, band: true } : undefined}
+        marker={marker !== null ? { index: marker, label: `CRACKDOWN ${quarterLabel(marker)}` } : undefined}
+        reference={r.tau !== null ? { value: r.tau, label: `τ ${fmt(r.tau)} · a crackdown starts below this line`, band: true } : undefined}
         description={`Public trust by quarter, from ${fmt(r.startTrust)} to ${fmt(last)}. ${
-          marker !== null ? `Moratorium from ${quarterLabel(marker)}.` : 'No moratorium.'
+          marker !== null ? `Crackdown from ${quarterLabel(marker)}.` : 'No crackdown.'
         }${r.tau !== null ? ` Threshold ${fmt(r.tau)}.` : ''}`}
       />
     </Panel>
@@ -248,13 +249,13 @@ export function Counterfactual({ r }: { r: FinalResults }) {
     Math.max(0, ...firms.flatMap((x) => [x.valuation, x.counterfactual])),
     4,
   );
-  const right = `same incident draws · every firm at pace ${alt.pace}, safety ${alt.safety}`;
+  const right = `same harm-story draws · every firm at FEED ${alt.pace}, SAFEGUARDS ${alt.safety}`;
   return (
     <Panel title="COUNTERFACTUAL" right={right} bodyClassName="pad col">
       <Headline text={counterfactualHeadline(r, alt)} />
       <div className="figs">
         <Figure label="INDUSTRY VALUE" value={fmt(f.actual, 0)} sub="actual, all firms" tone={f.actual < 0 ? 'down' : undefined} />
-        <Figure label="ALTERNATIVE" value={fmt(f.alternative, 0)} sub={`pace ${alt.pace}, safety ${alt.safety}`} tone="wire" />
+        <Figure label="ALTERNATIVE" value={fmt(f.alternative, 0)} sub={`FEED ${alt.pace}, SAFEGUARDS ${alt.safety}`} tone="wire" />
         <Figure label={f.change.label} value={`${f.change.glyph}${fmt(f.change.amount, 0)}`} sub={f.change.sub} tone={f.change.label === 'VALUE ADDED' ? 'up' : 'down'} />
       </div>
       <div className="cf-grid">
@@ -361,9 +362,9 @@ export function NetContribution({ r }: { r: FinalResults }) {
   const { domain } = niceDomain(Math.min(0, ...points), Math.max(0, ...points), 4);
   const right = others
     ? `the ${rows.length} largest rank changes · OTHERS combines ${combined} firms`
-    : `against every firm at pace ${alt.pace}, safety ${alt.safety} · research credit is not money`;
+    : `against every firm at FEED ${alt.pace}, SAFEGUARDS ${alt.safety} · credit is not money`;
   return (
-    <Panel title="NET CONTRIBUTION · value created for the whole market" right={right} bodyClassName="pad col">
+    <Panel title="NET CONTRIBUTION · value created for the whole ad market" right={right} bodyClassName="pad col">
       <Headline text={contributionHeadline(r)} />
       <div className="nc-grid">
         <div className="col">
@@ -454,7 +455,7 @@ function ContributionList({ rows, others, domain }: { rows: ReadonlyArray<Contri
           <span><span className="nc-sw"><span className="nc-seg is-credit" style={{ left: 0, width: '100%' }} /></span>research credit, not money</span>
           <span><span className="nc-sw"><span className="nc-seg is-rivalry" style={{ left: 0, width: '100%' }} /></span>rivalry taken −</span>
           <span><span className="nc-sw"><span className="nc-net" style={{ left: '50%' }} /></span>net contribution</span>
-          <span>▲ for the market · ▼ against it</span>
+          <span>▲ for the ad market · ▼ against it</span>
         </p>
       </div>
     </div>
@@ -464,18 +465,18 @@ function ContributionList({ rows, others, domain }: { rows: ReadonlyArray<Contri
 export function PactRecord({ r }: { r: FinalResults }) {
   const lines = pactLines(r);
   return (
-    <Panel title="PACT RECORD · undetected violations now shown" bodyClassName="pad col">
+    <Panel title="YDC RECORD · undetected violations now shown" bodyClassName="pad col">
       <Headline text={pactHeadline(r)} />
       {lines.length > 0 ? (
         <>
           <DataTable
-            caption="Pact record"
+            caption="Youth design code record"
             tall
             rows={lines}
             rowKey={(l) => l.pact.pactId}
             columns={[
-              { key: 'id', label: 'PACT', w: 9, render: (l) => l.pact.name },
-              { key: 't', label: 'TERMS', w: 28, render: (l) => `max pace ${l.pact.terms.maxPace ?? '–'} · min safety ${l.pact.terms.minSafety ?? '–'}` },
+              { key: 'id', label: 'YDC', w: 9, render: (l) => pactLabel(l.pact.name) },
+              { key: 't', label: 'TERMS', w: 32, render: (l) => `max feed ${l.pact.terms.maxPace ?? '–'} · min safeguards ${l.pact.terms.minSafety ?? '–'}` },
               { key: 'm', label: 'MEMBERS', w: 28, className: 'tags', render: (l) => l.members },
               { key: 'd', label: 'DETECTED', w: 12, align: 'r', render: (l) => l.pact.detected },
               { key: 'u', label: 'UNDETECTED', w: 14, align: 'r', render: (l) => l.pact.undetected },
@@ -497,15 +498,15 @@ export function PactRecord({ r }: { r: FinalResults }) {
   );
 }
 
-/** What the PACT RECORD says when no pact was formed: three lines that spread over the panel height (§14.4). */
+/** What the YDC RECORD says when no youth design code was formed: three lines that spread over the panel height (§14.4). */
 export function noPactLines(r: Pick<FinalResults, 'rounds' | 'final'>): string[] {
   const q = `${r.rounds} ${r.rounds === 1 ? 'quarter' : 'quarters'}`;
   const n = Object.keys(r.final).length;
   const f = `${n} ${n === 1 ? 'firm' : 'firms'}`;
   return [
-    'A pact binds its members to a pace limit, a safety floor, or both. Audits can find a breach and a breach is fined.',
+    'A youth design code binds its members to a maximum feed, minimum safeguards, or both. Audits can find a breach and a breach is fined.',
     `No firm proposed one in ${q} across ${f}. No audit ran and no breach could occur.`,
-    'Ask the room: what would have made a pact worth signing?',
+    'Ask the room: what would have made a code worth signing?',
   ];
 }
 
@@ -538,20 +539,20 @@ function PactStrips({ r, pacts }: { r: FinalResults; pacts: ReadonlyArray<PactFi
   const style = { ['--ps-q' as string]: Math.max(1, r.rounds) };
   return (
     <div className="ps-wrap">
-      <div className="res-scroll ps-list" data-res-scroll="" tabIndex={0} aria-label={`Pact record by quarter for ${pacts.length} ${pacts.length === 1 ? 'pact' : 'pacts'}`}>
+      <div className="res-scroll ps-list" data-res-scroll="" tabIndex={0} aria-label={`Youth design code record by quarter for ${pacts.length} ${pacts.length === 1 ? 'code' : 'codes'}`}>
         {pacts.map((pact) => {
           const rows = pactStripRows(r, pact);
           return (
             <div key={pact.pactId} className="ps-pact" data-pact-strip={pact.name}>
               <div className="ps-row ps-head dim" style={style} aria-hidden="true">
-                <span>{pact.name}</span>
+                <span>{pactLabel(pact.name)}</span>
                 {quarters.map((i) => (
                   <span key={i} className={`ps-q${i % 4 === 0 ? ' is-year' : ''}`}>
                     {i % 4 === 0 ? `Y${i / 4 + 1}` : ''}
                   </span>
                 ))}
               </div>
-              {rows.length === 0 ? <p className="dim">No quarter is recorded for this pact.</p> : null}
+              {rows.length === 0 ? <p className="dim">No quarter is recorded for this code.</p> : null}
               {rows.map((row) => (
                 <div key={row.firmId} className="ps-row" style={style} data-firm={row.ticker} role="img" aria-label={describeStripRow(row)}>
                   <span className="ps-name">

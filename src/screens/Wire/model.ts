@@ -10,6 +10,7 @@ import type { Card, EngineState, HeadlineKind } from '../../engine';
 import type { FirmNode, RoundNode, WireNode } from '../../firebase/schema';
 import { isAlarmKind, wireKindLabel as kindLabel } from '../../firebase/wire';
 import { quarterLabel } from '../../ui/format';
+import { cardLabel, pactLabel } from '../../ui/vocab';
 
 export type WireTone = 'wire' | 'down' | 'up';
 
@@ -90,7 +91,8 @@ const CARD_KIND: Partial<Record<Card, HeadlineKind>> = {
 
 /**
  * Events of quarter `round` that no headline of that quarter reports (§14.2 "NOT ON THE WIRE"): incidents, cards played,
- * audits and insolvencies, from the engine history. Facilitator only: the lines name cards, pace and safety.
+ * audits and insolvencies, from the engine history. Facilitator only: the lines name cards, feed and safeguards.
+ * `pactNames` holds the stored pact names (PACT-A); lines show the code label (YDC-A), and a headline naming either counts.
  */
 export function notOnWire(history: EngineState['history'], round: number, tickers: Readonly<Record<string, string>>, pactNames: Readonly<Record<string, string>>): OffWireLine[] {
   const rec = history.find((h) => h.round === round);
@@ -106,7 +108,7 @@ export function notOnWire(history: EngineState['history'], round: number, ticker
   for (const id of order) {
     const f = rec.firms[id];
     if (!f?.incident || said('incident', tk(id))) continue;
-    out.push({ round, kind: 'INCID', text: `${tk(id)} had an incident · pace ${f.pace} · safety ${f.safety}%`, tone: 'down' });
+    out.push({ round, kind: 'HARM', text: `${tk(id)} had a harm story · feed ${f.pace} · safeguards ${f.safety}%`, tone: 'down' });
   }
   for (const id of ids) {
     const f = rec.firms[id];
@@ -114,17 +116,19 @@ export function notOnWire(history: EngineState['history'], round: number, ticker
     const kind = CARD_KIND[f.card];
     const target = f.card === 'POACH' && f.target ? tk(f.target) : null;
     if (kind && said(kind, tk(id), ...(target ? [target] : []))) continue;
-    out.push({ round, kind: f.card, text: target ? `${tk(id)} played POACH on ${target}` : `${tk(id)} played ${f.card}`, tone: 'wire' });
+    out.push({ round, kind: cardLabel(f.card), text: target ? `${tk(id)} played ${cardLabel('POACH')} on ${target}` : `${tk(id)} played ${cardLabel(f.card)}`, tone: 'wire' });
   }
   for (const a of rec.audits) {
-    const pact = pactNames[a.pactId] ?? a.pactId;
+    const stored = pactNames[a.pactId] ?? a.pactId;
+    const pact = pactLabel(stored);
+    const saidPact = (kind: HeadlineKind, ...t: string[]): boolean => said(kind, ...t, stored) || said(kind, ...t, pact);
     const mode = a.kind === 'manual' ? 'manual' : 'automatic';
     if (a.breaches.length === 0) {
-      if (!said('audit-clean', pact)) out.push({ round, kind: 'AUDIT', text: `${mode} audit of ${pact}: full compliance`, tone: 'up' });
+      if (!saidPact('audit-clean')) out.push({ round, kind: 'AUDIT', text: `${mode} audit of ${pact}: full compliance`, tone: 'up' });
       continue;
     }
     for (const b of a.breaches) {
-      if (said('breach', tk(b.firmId), pact)) continue;
+      if (saidPact('breach', tk(b.firmId))) continue;
       const outcome = b.expelled ? 'expelled' : b.waived ? 'fine waived' : `fine ${b.fine.toFixed(1)}`;
       out.push({ round, kind: 'BREACH', text: `${mode} audit of ${pact}: ${tk(b.firmId)} breached · ${outcome}`, tone: 'down' });
     }
@@ -157,7 +161,7 @@ export function copyText(
 ): string {
   const chosen = selection === 'all' ? groups : groups.filter((g) => g.round === selection);
   const rounds = selection === 'all' ? chosen.map((g) => g.round) : [selection];
-  const lines = [`FRONTIER WIRE · ${title} · ${selection === 'all' ? 'ALL QUARTERS' : groupLabel(selection)}`];
+  const lines = [`FEED WIRE · ${title} · ${selection === 'all' ? 'ALL QUARTERS' : groupLabel(selection)}`];
   for (const r of rounds) {
     const g = chosen.find((x) => x.round === r);
     lines.push('', groupLabel(r));

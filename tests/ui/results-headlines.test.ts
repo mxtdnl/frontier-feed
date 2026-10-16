@@ -117,7 +117,7 @@ describe('TRUST TRACE headline', () => {
 
   it('adds the moratorium quarter', () => {
     expect(trustHeadline(results([{ ticker: 'AAAA', valuation: 1, peak: 1 }], { start: 72, trust: [60, 50, 30, 20, 15, 10], collapse: 6 }))).toBe(
-      'Trust fell from 72.0 to 10.0 over 6 quarters. The moratorium began in Q2 Y2.',
+      'Trust fell from 72.0 to 10.0 over 6 quarters. The crackdown began in Q2 Y2.',
     );
   });
 
@@ -135,26 +135,26 @@ describe('COUNTERFACTUAL headline', () => {
   const two = (a: number, b: number) => [{ ticker: 'AAAA', valuation: a, peak: Math.max(a, 1) }, { ticker: 'BBBB', valuation: b, peak: Math.max(b, 1) }];
 
   it('a ratio when the industry kept positive value', () => {
-    expect(counterfactualHeadline(results(two(600, 400), { alternative: 3200 }))).toBe('Holding pace 2 and safety 15 would have left the industry worth 3.2× what it kept.');
+    expect(counterfactualHeadline(results(two(600, 400), { alternative: 3200 }))).toBe('Holding FEED 2 and SAFEGUARDS 15 would have left the industry worth 3.2× what it kept.');
   });
 
   it('a difference when the ratio would round to 1.0', () => {
-    expect(counterfactualHeadline(results(two(600, 400), { alternative: 1040 }))).toBe('Holding pace 2 and safety 15 would have left the industry worth 40 more than it kept.');
+    expect(counterfactualHeadline(results(two(600, 400), { alternative: 1040 }))).toBe('Holding FEED 2 and SAFEGUARDS 15 would have left the industry worth 40 more than it kept.');
   });
 
   it('both totals when the industry finished at or below zero', () => {
-    expect(counterfactualHeadline(results(two(-500, 190), { alternative: 4210 }))).toBe('Holding pace 2 and safety 15 would have left the industry worth 4210; it finished at −310.');
-    expect(counterfactualHeadline(results(two(-500, 190), { alternative: -50 }))).toBe('Holding pace 2 and safety 15 would have left the industry at −50; it finished at −310.');
+    expect(counterfactualHeadline(results(two(-500, 190), { alternative: 4210 }))).toBe('Holding FEED 2 and SAFEGUARDS 15 would have left the industry worth 4210; it finished at −310.');
+    expect(counterfactualHeadline(results(two(-500, 190), { alternative: -50 }))).toBe('Holding FEED 2 and SAFEGUARDS 15 would have left the industry at −50; it finished at −310.');
   });
 
   it('actual above or equal to the alternative', () => {
-    expect(counterfactualHeadline(results(two(600, 400), { alternative: 880 }))).toBe('The industry finished 120 above what holding pace 2 and safety 15 would have left.');
-    expect(counterfactualHeadline(results(two(600, 400), { alternative: 1000.2 }))).toBe('The industry finished where holding pace 2 and safety 15 would have left it.');
+    expect(counterfactualHeadline(results(two(600, 400), { alternative: 880 }))).toBe('The industry finished 120 above what holding FEED 2 and SAFEGUARDS 15 would have left.');
+    expect(counterfactualHeadline(results(two(600, 400), { alternative: 1000.2 }))).toBe('The industry finished where holding FEED 2 and SAFEGUARDS 15 would have left it.');
   });
 
   it('names the alternative policy it is given', () => {
     expect(counterfactualHeadline(results(two(600, 400), { alternative: 2000 }), { pace: 1, safety: 20 })).toBe(
-      'Holding pace 1 and safety 20 would have left the industry worth 2.0× what it kept.',
+      'Holding FEED 1 and SAFEGUARDS 20 would have left the industry worth 2.0× what it kept.',
     );
   });
 });
@@ -212,23 +212,23 @@ describe('ATTRIBUTION headline', () => {
 describe('PACT RECORD headline', () => {
   const f = [{ ticker: 'AAAA', valuation: 1, peak: 1 }];
   it('no pacts', () => {
-    expect(pactHeadline(results(f))).toBe('No pacts were formed.');
+    expect(pactHeadline(results(f))).toBe('No youth design codes were formed.');
   });
   it('no breaches', () => {
-    expect(pactHeadline(results(f, { pacts: [pact(0, 0)] }))).toBe('1 pact formed. Every member kept the terms.');
+    expect(pactHeadline(results(f, { pacts: [pact(0, 0)] }))).toBe('1 youth design code formed. Every member kept the terms.');
   });
   it('some undetected', () => {
     expect(pactHeadline(results(f, { pacts: [pact(2, 1), pact(1, 3, 'dissolved')] }))).toBe(
-      '2 pacts formed; 1 dissolved. Members broke the terms 7 times; 4 breaches were never detected.',
+      '2 youth design codes formed; 1 dissolved. Members broke the terms 7 times; 4 breaches were never detected.',
     );
-    expect(pactHeadline(results(f, { pacts: [pact(1, 1)] }))).toBe('1 pact formed. Members broke the terms twice; 1 breach was never detected.');
+    expect(pactHeadline(results(f, { pacts: [pact(1, 1)] }))).toBe('1 youth design code formed. Members broke the terms twice; 1 breach was never detected.');
   });
   it('all detected, none detected, and all dissolved', () => {
-    expect(pactHeadline(results(f, { pacts: [pact(3, 0)] }))).toBe('1 pact formed. Members broke the terms 3 times; every breach was detected.');
-    expect(pactHeadline(results(f, { pacts: [pact(1, 0)] }))).toBe('1 pact formed. Members broke the terms once; the breach was detected.');
-    expect(pactHeadline(results(f, { pacts: [pact(0, 1)] }))).toBe('1 pact formed. Members broke the terms once; the breach was never detected.');
+    expect(pactHeadline(results(f, { pacts: [pact(3, 0)] }))).toBe('1 youth design code formed. Members broke the terms 3 times; every breach was detected.');
+    expect(pactHeadline(results(f, { pacts: [pact(1, 0)] }))).toBe('1 youth design code formed. Members broke the terms once; the breach was detected.');
+    expect(pactHeadline(results(f, { pacts: [pact(0, 1)] }))).toBe('1 youth design code formed. Members broke the terms once; the breach was never detected.');
     expect(pactHeadline(results(f, { pacts: [pact(0, 2, 'dissolved'), pact(0, 2, 'dissolved')] }))).toBe(
-      '2 pacts formed; all dissolved. Members broke the terms 4 times; no breach was detected.',
+      '2 youth design codes formed; all dissolved. Members broke the terms 4 times; no breach was detected.',
     );
   });
 });

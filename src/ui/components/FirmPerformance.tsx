@@ -12,7 +12,7 @@ export function ShareStrip({ segments, below, trackCh }: { segments: ReadonlyArr
       data-share-strip=""
       data-below={below}
       role="img"
-      aria-label={`Market value share: ${described || 'no firm above zero'}${caption ? `; ${caption}` : ''}.`}
+      aria-label={`Value share: ${described || 'no firm above zero'}${caption ? `; ${caption}` : ''}.`}
     >
       <span className="ss-label">VALUE SHARE</span>
       <div className="ss-track">

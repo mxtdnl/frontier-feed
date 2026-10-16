@@ -158,7 +158,7 @@ describe('results panels', () => {
     const on = html(createElement(TrustTrace, { r: read(true) }));
     expect(off).not.toContain('τ');
     expect(off).not.toContain('class="lc-ref"');
-    expect(on).toContain(`τ ${fmt(state.tau)} · a moratorium starts below this line`);
+    expect(on).toContain(`τ ${fmt(state.tau)} · a crackdown starts below this line`);
     expect(on).toContain('class="lc-ref"');
     expect(on).toMatch(/<rect[^>]*fill="url\(#c[^"]*-hd\)"/);
   });
@@ -167,8 +167,8 @@ describe('results panels', () => {
     const r = read(false);
     const out = html(createElement(TrustTrace, { r }));
     if (r.collapseRound !== null) {
-      expect(out).toContain(`moratorium from ${quarterLabel(r.collapseRound)}`);
-      expect(out).toContain(`MORATORIUM ${quarterLabel(r.collapseRound)}`);
+      expect(out).toContain(`crackdown from ${quarterLabel(r.collapseRound)}`);
+      expect(out).toContain(`CRACKDOWN ${quarterLabel(r.collapseRound)}`);
       expect(out).toContain('class="lc-mark"');
     } else expect(out).toContain('no moratorium');
   });
@@ -177,7 +177,7 @@ describe('results panels', () => {
     const r = { ...read(false), collapseRound: 3 };
     const out = html(createElement(TrustTrace, { r }));
     expect(out).toContain('class="lc-mark"');
-    expect(out).toContain('MORATORIUM Q3 Y1');
+    expect(out).toContain('CRACKDOWN Q3 Y1');
   });
 
   it('counterfactual panel states the three headline figures and labels both lines on the chart', () => {
@@ -228,7 +228,7 @@ describe('results panels', () => {
   it('pact record says so when no pact was formed', () => {
     const r = { ...read(false), pacts: [] };
     const out = html(createElement(PactRecord, { r }));
-    expect(out).toContain('No pacts were formed.');
+    expect(out).toContain('No youth design codes were formed.');
     expect(out).not.toContain('data-pact-strip');
   });
 

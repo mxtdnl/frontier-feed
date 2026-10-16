@@ -378,7 +378,7 @@ function LiveScreen({ g, uid }: { g: string; uid: string }) {
             <span>{committedCount(rows)}/{rows.length} COMMITTED</span>
           ) : null}
           {pub.phase === 'lobby' ? <span>{rows.length} FIRMS</span> : null}
-          <span className="tb-disc">DISCLOSURE {pub.disclosure ? 'ON' : 'OFF'}</span>
+          <span className="tb-disc">TRANSPARENCY {pub.disclosure ? 'ON' : 'OFF'}</span>
           <span className="grow topbar-notice" role="status" aria-live="polite">
             {notice}
           </span>

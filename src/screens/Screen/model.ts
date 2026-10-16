@@ -242,22 +242,22 @@ export function tickerTone(kind: string): TickerTone {
  */
 export const TAG_MEANING: ReadonlyArray<readonly [string, string]> = [
   ['BREACH', 'terms breached'],
-  ['INCID', 'incident'],
-  ['INSOLV', 'lowest pace forced'],
+  ['HARM', 'harm story'],
+  ['INSOLV', 'FEED 1 forced'],
   ['AUTO', 'defaults applied'],
   ['BOT', 'automated'],
 ];
 
 /**
  * The key strip at the foot of the board (§14.1): only the tags on screen. `shown` holds each
- * visible row's tags as drawn; pact names share one entry, and a `+N` count gets its own.
+ * visible row's tags as drawn; code labels share one entry, and a `+N` count gets its own.
  */
 export function tagKey(shown: ReadonlyArray<ReadonlyArray<string>>, anyMore: boolean): Array<{ tag: string; text: string }> {
   const on = new Set(shown.flat());
   const out = TAG_MEANING.filter(([t]) => on.has(t)).map(([tag, text]) => ({ tag, text }));
   const pacts = [...on].filter((t) => !TAG_MEANING.some(([k]) => k === t)).sort();
-  // Pact names are PACT-A, PACT-B…; several share one entry.
-  if (pacts.length) out.push({ tag: pacts.length === 1 ? (pacts[0] as string) : 'PACT-', text: 'pact member' });
+  // Code labels are YDC-A, YDC-B…; several share one entry.
+  if (pacts.length) out.push({ tag: pacts.length === 1 ? (pacts[0] as string) : 'YDC-', text: 'youth design code member' });
   if (anyMore) out.push({ tag: '+N', text: 'more tags' });
   return out;
 }

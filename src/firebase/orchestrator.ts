@@ -49,6 +49,7 @@ import {
 } from './phases';
 import { paths, rel } from './paths';
 import { disclosureEntry, pendingWire, type WireInput } from './wire';
+import { pactLabel } from '../ui/vocab';
 import {
   engineStateOf,
   type DecisionNode,
@@ -192,7 +193,7 @@ export function buildEngineNode(prev: EngineNode, firms: Record<string, FirmNode
 /** Writes engine state, per-firm nodes and the opening market numbers for the current firms. */
 async function ensureEngine(ctx: Ctx): Promise<{ ok: true; engine: EngineNode } | { ok: false; message: string }> {
   const [prev, firms] = await Promise.all([ctx.io.readEngine(), ctx.io.readFirms()]);
-  if (!prev) return { ok: false, message: 'The market set-up is missing for this session. Create a new session.' };
+  if (!prev) return { ok: false, message: 'The session set-up is missing. Create a new session.' };
   const count = Object.keys(firms).length;
   if (prev.firms.length === count && count > 0) return { ok: true, engine: prev };
   const engine = buildEngineNode(prev, firms);
@@ -268,7 +269,7 @@ export async function advance(ctx: Ctx, seen?: Seen): Promise<ActionResult> {
       return resolveCurrentRound(ctx, pub.round);
     case 'reveal': {
       const engine = await ctx.io.readEngine();
-      if (!engine) return fail('The market set-up is missing for this session. Create a new session.');
+      if (!engine) return fail('The session set-up is missing. Create a new session.');
       if (isFinalRound(engine, pub.round, engine.params)) return endSession(ctx);
       return startRound(ctx, pub.round + 1);
     }
@@ -403,12 +404,12 @@ export async function toggleDisclosure(ctx: Ctx, seen?: Seen): Promise<ActionRes
     const key = `d-${ctx.now()}-${on ? 'on' : 'off'}`;
     await ctx.io.update({ [rel.wireEntry(key)]: disclosureEntry(on, t.after, ctx.now()) });
   } catch {
-    return ok(`Disclosure ${on ? 'ON' : 'OFF'}. The wire headline was not published; toggle again to retry.`);
+    return ok(`Transparency rule ${on ? 'ON' : 'OFF'}. The wire headline was not published; toggle again to retry.`);
   }
   return ok(
     on
-      ? 'Disclosure ON. PACE, SAFETY and EXPOSURE appear from the next resolution.'
-      : 'Disclosure OFF. Nothing is published from the next resolution.',
+      ? 'Transparency rule ON. FEED, GUARDS and EXPOSURE appear from the next resolution.'
+      : 'Transparency rule OFF. Nothing is published from the next resolution.',
   );
 }
 
@@ -423,12 +424,12 @@ export async function queueAudit(ctx: Ctx, pactId: string): Promise<ActionResult
     return fail(`An audit can be queued while a quarter is open, in reveal or in a summit, not in ${pub.phase.toUpperCase()}.`);
   }
   const pact = pacts[pactId];
-  if (!pact) return fail('That pact no longer exists. Check the pact list.');
-  if (pact.status !== 'active') return fail(`${pact.name} has dissolved and cannot be audited.`);
+  if (!pact) return fail('That youth design code no longer exists. Check the YDC list.');
+  if (pact.status !== 'active') return fail(`${pactLabel(pact.name)} has dissolved and cannot be audited.`);
   const tx = await ctx.io.transactPendingAudits((cur) => (cur.includes(pactId) ? undefined : [...cur, pactId]));
-  if (!tx.committed && tx.value.includes(pactId)) return ok(`${pact.name} audit is already queued for the next resolution.`);
+  if (!tx.committed && tx.value.includes(pactId)) return ok(`${pactLabel(pact.name)} audit is already queued for the next resolution.`);
   if (!tx.committed) return fail('The audit queue changed in another window first. Try again.');
-  return ok(`${pact.name} audit queued. It runs when the quarter resolves.`);
+  return ok(`${pactLabel(pact.name)} audit queued. It runs when the quarter resolves.`);
 }
 
 /** Writes any pact headlines that are missing from `wire/` (see wire.ts). Safe to run from several windows. */
@@ -520,7 +521,7 @@ async function runResolution(ctx: Ctx, round: number): Promise<ActionResult> {
     if (!engine || !pub) return fail('Session data is missing. Reload the page.');
     if (pub.phase !== 'resolving' || pub.round !== round) return fail('The quarter is not waiting for resolution. Check the screen.');
     if (engine.round >= round) return fail(`Quarter ${round} is already resolved. Check the screen.`);
-    if (engine.round !== round - 1) return fail('The market state is out of step with the quarter. Create a new session.');
+    if (engine.round !== round - 1) return fail('The session state is out of step with the quarter. Create a new session.');
 
     // 3. Run the engine (pure).
     const state = engineStateOf(engine);
@@ -619,58 +620,59 @@ const sortKeys = (o: Record<string, number>): Array<[string, number]> => Object.
 
 // ── Session creation (#/new) ──────────────────────────────────────────────────
 
-/** Fictional bot firms (spec §15: fictional entities only). */
+/** Fictional bot platforms (spec §5.0, §15.4; owner approval 2026-10-16, Session R2). None resembles a real platform. */
 export const BOT_FIRMS: ReadonlyArray<{ name: string; ticker: string }> = [
-  { name: 'Arcturn Labs', ticker: 'ARCN' },
-  { name: 'Brelek Models', ticker: 'BRLK' },
-  { name: 'Cyra Systems', ticker: 'CYRA' },
-  { name: 'Dolmen AI', ticker: 'DOLM' },
-  { name: 'Ember Compute', ticker: 'EMBR' },
-  { name: 'Fjordline', ticker: 'FJRD' },
-  { name: 'Glynn Research', ticker: 'GLYN' },
-  { name: 'Hearth Systems', ticker: 'HRTH' },
-  { name: 'Iridian Works', ticker: 'IRDN' },
-  { name: 'Jorvik Data', ticker: 'JRVK' },
-  { name: 'Kestrel Logic', ticker: 'KSTL' },
-  { name: 'Lumen Cortex', ticker: 'LMNX' },
-  { name: 'Marrow Dynamics', ticker: 'MRRW' },
-  { name: 'Norvane Group', ticker: 'NRVN' },
-  { name: 'Orrin Compute', ticker: 'ORRN' },
-  { name: 'Pallet Research', ticker: 'PLTT' },
-  { name: 'Quillon Labs', ticker: 'QLLN' },
-  { name: 'Rhombic AI', ticker: 'RHMB' },
-  { name: 'Sallow Systems', ticker: 'SLLW' },
-  { name: 'Tamsin Compute', ticker: 'TMSN' },
-  { name: 'Umbral Works', ticker: 'UMBR' },
-  { name: 'Vantor Models', ticker: 'VNTR' },
-  { name: 'Wexley Data', ticker: 'WXLY' },
-  { name: 'Xerant Logic', ticker: 'XRNT' },
-  { name: 'Yarrow Research', ticker: 'YRRW' },
-  { name: 'Zenor Cortex', ticker: 'ZNOR' },
-  { name: 'Alder Dynamics', ticker: 'ALDR' },
-  { name: 'Bracken Group', ticker: 'BRKN' },
-  { name: 'Corvel Labs', ticker: 'CRVL' },
-  { name: 'Dunmore AI', ticker: 'DNMR' },
-  { name: 'Eskar Systems', ticker: 'ESKR' },
-  { name: 'Felwick Compute', ticker: 'FLWK' },
-  { name: 'Garnet Works', ticker: 'GRNT' },
-  { name: 'Holm Models', ticker: 'HOLM' },
-  { name: 'Inglen Data', ticker: 'INGL' },
-  { name: 'Jessamy Logic', ticker: 'JSSM' },
-  { name: 'Kelda Research', ticker: 'KELD' },
-  { name: 'Larch Cortex', ticker: 'LRCH' },
-  { name: 'Mallory Dynamics', ticker: 'MLRY' },
-  { name: 'Nethan Group', ticker: 'NTHN' },
-  { name: 'Osric Labs', ticker: 'OSRC' },
-  { name: 'Penrith AI', ticker: 'PNRT' },
-  { name: 'Quarrel Systems', ticker: 'QRRL' },
-  { name: 'Rowan Compute', ticker: 'RWAN' },
-  { name: 'Sedge Works', ticker: 'SEDG' },
-  { name: 'Thorne Models', ticker: 'THRN' },
-  { name: 'Ulric Data', ticker: 'ULRC' },
-  { name: 'Verity Logic', ticker: 'VRTY' },
-  { name: 'Wren Research', ticker: 'WREN' },
-  { name: 'Yewdale Cortex', ticker: 'YWDL' },
+  { name: 'Ambrel', ticker: 'AMBL' },
+  { name: 'Brisset', ticker: 'BRST' },
+  { name: 'Corvel', ticker: 'CRVL' },
+  { name: 'Dellow', ticker: 'DLLW' },
+  { name: 'Elvane', ticker: 'ELVN' },
+  { name: 'Fennick', ticker: 'FNIK' },
+  { name: 'Galder', ticker: 'GLDR' },
+  { name: 'Harrin', ticker: 'HRRN' },
+  { name: 'Idrel', ticker: 'IDRL' },
+  { name: 'Jasker', ticker: 'JSKR' },
+  { name: 'Kellet', ticker: 'KLLT' },
+  { name: 'Lomary', ticker: 'LMRY' },
+  { name: 'Mornel', ticker: 'MRNL' },
+  { name: 'Nesset', ticker: 'NSST' },
+  { name: 'Ostrin', ticker: 'OSTN' },
+  { name: 'Pellam', ticker: 'PLLM' },
+  { name: 'Quenby', ticker: 'QNBY' },
+  { name: 'Rossel', ticker: 'RSSL' },
+  { name: 'Sarrow', ticker: 'SRRW' },
+  { name: 'Tessary', ticker: 'TSRY' },
+  { name: 'Ulven', ticker: 'ULVN' },
+  { name: 'Vossel', ticker: 'VSSL' },
+  { name: 'Wendel', ticker: 'WNDL' },
+  { name: 'Yeldon', ticker: 'YLDN' },
+  { name: 'Zellor', ticker: 'ZLLR' },
+  { name: 'Arbeck', ticker: 'ARBK' },
+  { name: 'Bellac', ticker: 'BLLC' },
+  { name: 'Cashel', ticker: 'CSHL' },
+  { name: 'Dunmere', ticker: 'DNMR' },
+  { name: 'Eskel', ticker: 'ESKL' },
+  { name: 'Fintry', ticker: 'FNTY' },
+  { name: 'Gessel', ticker: 'GSSL' },
+  { name: 'Holver', ticker: 'HLVR' },
+  { name: 'Ivett', ticker: 'IVTT' },
+  { name: 'Jornel', ticker: 'JRNL' },
+  { name: 'Kessan', ticker: 'KSSN' },
+  { name: 'Lunder', ticker: 'LNDR' },
+  { name: 'Melkin', ticker: 'MLKN' },
+  { name: 'Norran', ticker: 'NRRN' },
+  { name: 'Olwen', ticker: 'OLWN' },
+  { name: 'Parrel', ticker: 'PRRL' },
+  { name: 'Quarne', ticker: 'QRNE' },
+  { name: 'Rendle', ticker: 'RNDL' },
+  { name: 'Sollen', ticker: 'SLLN' },
+  { name: 'Tamber', ticker: 'TMBR' },
+  { name: 'Undel', ticker: 'UNDL' },
+  { name: 'Vantry', ticker: 'VNTY' },
+  { name: 'Wickam', ticker: 'WKAM' },
+  { name: 'Yennor', ticker: 'YNNR' },
+  { name: 'Zavora', ticker: 'ZVRA' },
+  { name: 'Kirrow', ticker: 'KRRW' },
 ];
 
 export interface NewSessionInput {

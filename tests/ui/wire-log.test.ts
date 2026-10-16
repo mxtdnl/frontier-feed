@@ -43,9 +43,9 @@ describe('wireGroups', () => {
 
   it('labels and colours each line by kind, as the ticker does', () => {
     const q1 = wireGroups(rounds, wire).find((x) => x.round === 1);
-    expect(q1?.lines.map((l) => [l.kind, l.tone])).toEqual([['DISCL', 'wire'], ['INCID', 'down'], ['NEWS', 'wire'], ['PACT', 'wire']]);
+    expect(q1?.lines.map((l) => [l.kind, l.tone])).toEqual([['TRNSP', 'wire'], ['HARM', 'down'], ['NEWS', 'wire'], ['YDC', 'wire']]);
     const q2 = wireGroups(rounds, wire).find((x) => x.round === 2);
-    expect(q2?.lines.map((l) => [l.kind, l.tone, l.at])).toEqual([['PACT', 'wire', 1500], ['AUDIT', 'up', null]]);
+    expect(q2?.lines.map((l) => [l.kind, l.tone, l.at])).toEqual([['YDC', 'wire', 1500], ['AUDIT', 'up', null]]);
   });
 
   it('is empty for an empty session', () => {
@@ -81,17 +81,17 @@ describe('notOnWire', () => {
     const t = tickers(r.state);
     for (const id of rec.incidentFirms) {
       const headlined = rec.headlines.some((h) => h.kind === 'incident' && h.text.includes(t[id]!));
-      const listed = off.some((l) => l.kind === 'INCID' && l.text.startsWith(`${t[id]} had an incident`));
+      const listed = off.some((l) => l.kind === 'HARM' && l.text.startsWith(`${t[id]} had a harm story`));
       expect(headlined !== listed, t[id]).toBe(true);
     }
     // At most 4 headlines, so most of the 10 incidents and 10 BLITZ cards are off the wire.
-    expect(off.filter((l) => l.kind === 'INCID').length).toBeGreaterThanOrEqual(6);
+    expect(off.filter((l) => l.kind === 'HARM').length).toBeGreaterThanOrEqual(6);
     expect(off.filter((l) => l.kind === 'BLITZ')).toHaveLength(10);
-    expect(off.find((l) => l.kind === 'INCID')?.text).toMatch(/· pace 2 · safety 10%$/);
+    expect(off.find((l) => l.kind === 'HARM')?.text).toMatch(/· feed 2 · safeguards 10%$/);
     expect(off.every((l) => l.round === 1)).toBe(true);
   });
 
-  it('names the POACH target, audits and insolvencies', () => {
+  it('names the CLONE (POACH) target, audits and insolvencies', () => {
     const p: Params = { ...PARAMS, INC_BASE: [0, 0, 0, 0] };
     const g = game(6, { settings: { autoAuditP: 0 } });
     g.firms[1]!.cash = -99;
@@ -100,7 +100,7 @@ describe('notOnWire', () => {
     const off = notOnWire(r.state.history, 1, t, {});
     const rec = r.state.history[0]!;
     const poachHeadlined = rec.headlines.some((h) => h.kind === 'poach');
-    expect(off.some((l) => l.text === `${t.f0} played POACH on ${t.f1}`)).toBe(!poachHeadlined);
+    expect(off.some((l) => l.text === `${t.f0} played CLONE on ${t.f1}`)).toBe(!poachHeadlined);
     const insolvHeadlined = rec.headlines.some((h) => h.kind === 'insolvency');
     expect(rec.firms.f1?.insolvent).toBe(true);
     expect(off.some((l) => l.kind === 'INSOLV' && l.text === `${t.f1} became insolvent`)).toBe(!insolvHeadlined);
@@ -114,7 +114,7 @@ describe('notOnWire', () => {
     h[0]!.audits = [{ pactId: 'p1', kind: 'manual', rounds: [1], breaches: [{ firmId: 'f2', rounds: [1], count: 1, fine: 10, waived: false, expelled: false }] }];
     h[0]!.firms.f3!.card = 'SHARE';
     const off = notOnWire(h, 1, tickers(r.state), { p1: 'PACT-A' });
-    expect(off.map((l) => l.text)).toContain('manual audit of PACT-A: CYRA breached · fine 10.0');
+    expect(off.map((l) => l.text)).toContain('manual audit of YDC-A: CYRA breached · fine 10.0');
     expect(off.map((l) => l.text)).toContain('DOLM played SHARE');
     expect(notOnWire(h, 7, tickers(r.state), {})).toEqual([]);
   });
@@ -129,15 +129,15 @@ describe('copyText', () => {
 
   it('copies one quarter with its NOT ON THE WIRE section', () => {
     expect(copyText(1, groups, off, time, 'Class A · code ABCD', 1)).toBe(
-      ['FRONTIER WIRE · Class A · code ABCD · Q1 Y1', '', 'Q1 Y1', 'Q1 Y1  T1000  INCID    Service outage traced to HUMN model', 'NOT ON THE WIRE', 'Q1 Y1  BLITZ    BTC played BLITZ'].join('\n'),
+      ['FEED WIRE · Class A · code ABCD · Q1 Y1', '', 'Q1 Y1', 'Q1 Y1  T1000  HARM     Service outage traced to HUMN model', 'NOT ON THE WIRE', 'Q1 Y1  BLITZ    BTC played BLITZ'].join('\n'),
     );
   });
 
   it('copies every quarter, newest first, and PRE without a facilitator section', () => {
     const text = copyText('all', groups, off, time, 'x', 1);
-    expect(text.split('\n')[0]).toBe('FRONTIER WIRE · x · ALL QUARTERS');
+    expect(text.split('\n')[0]).toBe('FEED WIRE · x · ALL QUARTERS');
     expect(text.indexOf('Q1 Y1')).toBeLessThan(text.indexOf('\nPRE'));
-    expect(text).toContain('PRE  T10  PACT     HUMN joins PACT-A');
+    expect(text).toContain('PRE  T10  YDC      HUMN joins PACT-A');
     expect(text.match(/NOT ON THE WIRE/g)).toHaveLength(1);
   });
 
@@ -147,7 +147,7 @@ describe('copyText', () => {
 
   it('puts the QUARTER BRIEF first under each resolved quarter (Session 19)', () => {
     const brief = (r: number) => (r === 1 ? ['Trust ▼2.0 to 70.0. Recovery +2.6 · draw −4.6.', 'Closing.'] : null);
-    expect(copyText(1, groups, off, time, 'x', 1, brief)).toContain('Q1 Y1\nQUARTER BRIEF\nTrust ▼2.0 to 70.0. Recovery +2.6 · draw −4.6.\nClosing.\nQ1 Y1  T1000  INCID');
+    expect(copyText(1, groups, off, time, 'x', 1, brief)).toContain('Q1 Y1\nQUARTER BRIEF\nTrust ▼2.0 to 70.0. Recovery +2.6 · draw −4.6.\nClosing.\nQ1 Y1  T1000  HARM');
     expect(copyText(2, groups, off, time, 'x', 1, () => ['never'])).not.toContain('QUARTER BRIEF');
   });
 

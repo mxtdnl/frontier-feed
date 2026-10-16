@@ -129,7 +129,7 @@ export function Wire({ items, empty = 'No headlines yet.' }: { items: WireItem[]
 }
 
 export const STEPS: ReadonlyArray<{ n: number; word: string; line: string }> = [
-  { n: 1, word: 'DECIDE', line: 'Set pace, safety and an optional card.' },
+  { n: 1, word: 'DECIDE', line: 'Set feed, safeguards and an optional card.' },
   { n: 2, word: 'COMMIT', line: 'Press COMMIT. Edit until the timer ends.' },
   { n: 3, word: 'REVEAL', line: 'Results appear for every firm at once.' },
 ];

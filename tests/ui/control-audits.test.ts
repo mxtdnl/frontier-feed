@@ -22,7 +22,7 @@ describe('audit outcomes on the console', () => {
     expect(lines.map((l) => [l.round, l.kind])).toEqual([[2, 'MAN'], [1, 'AUTO']]);
     expect(lines[0]?.text).toBe('AAA breach #3, fine 12.5, expelled · BBB breach #1, fine waived');
     expect(lines[1]?.text).toBe('full compliance');
-    expect(lines[0]?.pact).toBe('PACT-A');
+    expect(lines[0]?.pact).toBe('YDC-A');
   });
 
   it('returns nothing before any audit', () => {

@@ -48,7 +48,7 @@ export function OwnResultsCard({ ticker, firmId, results, unavailable, rank, val
           <dt>Counterfactual</dt><dd>{fmt(own.counterfactual)}</dd>
           <dt>Difference</dt><dd><Delta value={-gap} /></dd>
         </dl>
-        <p className="dim" style={{ marginTop: '1lh' }}>Counterfactual: every firm holds pace 2 and safety 15 with no cards and no pacts, on the same incident draws.</p>
+        <p className="dim" style={{ marginTop: '1lh' }}>Counterfactual: every firm holds FEED 2 and SAFEGUARDS 15 with no cards and no youth design codes, on the same harm-story draws.</p>
       </Panel>
       <Panel title="YOUR SHARE OF THE DAMAGE" bodyClassName="pad stack">
         <HBar
@@ -86,17 +86,17 @@ export function OwnResultsCard({ ticker, firmId, results, unavailable, rank, val
           </dl>
           <p style={{ marginTop: '1lh' }} data-ledger="">{ledgerLine(mine.ledger)}</p>
           <p className="dim" style={{ marginTop: '1lh' }}>
-            Net contribution is your valuation plus what your decisions did to every firm's revenue through trust, against pace 2 and safety 15 with no
-            cards, plus the research credit for PUBLISH, minus value taken from rivals with POACH, BLITZ and RUSH. ▲ counts are for the market, ▼ against it.
+            Net contribution is your valuation plus what your decisions did to every firm's revenue through trust, against FEED 2 and SAFEGUARDS 15 with no
+            cards, plus the research credit for PUBLISH, minus value taken from rivals with CLONE, BLITZ and LAUNCH. ▲ counts are for the ad market, ▼ against it.
           </p>
         </Panel>
       ) : null}
-      <Panel title="YOUR PACT RECORD" bodyClassName="pad">
+      <Panel title="YOUR YDC RECORD" bodyClassName="pad">
         <dl className="kv">
           <dt>Detected</dt><dd>{own.detected}</dd>
           <dt>Undetected</dt><dd>{own.undetected}</dd>
         </dl>
-        <p className="dim" style={{ marginTop: '1lh' }}>Violations are quarters in which your firm broke a pact's terms. Undetected means no audit examined that quarter.</p>
+        <p className="dim" style={{ marginTop: '1lh' }}>Violations are quarters in which your firm broke a code's terms. Undetected means no audit examined that quarter.</p>
       </Panel>
       <p className="notice">Watch the board for the full results.</p>
     </div>

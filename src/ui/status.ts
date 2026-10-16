@@ -56,33 +56,33 @@ export function revealHeadline(r: RevealInput): string {
     const held = r.prevLeaders.length === 1 && r.prevLeaders[0] === t;
     parts.push(`${t} ${held ? 'holds' : 'takes'} 1st`);
   }
-  parts.push(r.incidents === 0 ? 'No incidents' : plural(r.incidents, 'incident', 'incidents'));
-  if (r.collapseRound !== null) parts.push(r.collapseRound === r.round ? 'Moratorium imposed' : 'Moratorium in force');
+  parts.push(r.incidents === 0 ? 'No harm stories' : plural(r.incidents, 'harm story', 'harm stories'));
+  if (r.collapseRound !== null) parts.push(r.collapseRound === r.round ? 'Crackdown imposed' : 'Crackdown in force');
   return `${parts.join(' · ')}.`;
 }
 
 /** The sentence under the top bar for the current phase. */
 export function statusSentence(s: StatusInput): string {
   const q = quarterLabel(s.round);
-  const moratorium = s.collapsed ? ' Moratorium in force.' : '';
+  const moratorium = s.collapsed ? ' Crackdown in force.' : '';
   switch (s.phase) {
     case 'lobby':
       return 'Lobby · Firms are forming. Scan the code or enter it at the address shown, then form or join a firm.';
     case 'briefing':
-      return 'Briefing · Read the market rules. Quarter 1 opens when the facilitator advances.';
+      return 'Briefing · Read the ad market rules. Quarter 1 opens when the facilitator advances.';
     case 'open':
       if (s.paused) {
         const at = s.leftMs !== null ? ` at ${fmtClock(s.leftMs)}` : '';
         return `${q} · Timer paused${at}. Decisions resume when the timer restarts.${moratorium}`;
       }
       if (s.leftMs !== null && s.leftMs <= 0) return `${q} · Time is up. Decisions are closed and the quarter resolves next.${moratorium}`;
-      return `${q} · Decisions open. Set pace, safety and a card, then commit.${s.leftMs !== null ? ` ${fmtClock(s.leftMs)} left.` : ''}${moratorium}`;
+      return `${q} · Decisions open. Set feed, safeguards and a card, then commit.${s.leftMs !== null ? ` ${fmtClock(s.leftMs)} left.` : ''}${moratorium}`;
     case 'resolving':
       return `${q} · Decisions closed. The quarter is resolving.`;
     case 'reveal':
       return s.reveal ? revealHeadline(s.reveal) : `${q} resolved.`;
     case 'summit':
-      return `${q} · Industry summit in session. Propose, join or leave pacts now. Decisions resume after the summit.`;
+      return `${q} · Industry summit in session. Propose, join or leave youth design codes now. Decisions resume after the summit.`;
     case 'ended':
       return `Session ended${s.resolved > 0 ? ` after ${plural(s.resolved, 'quarter', 'quarters')}` : ''}. Results follow on the results screen.`;
   }

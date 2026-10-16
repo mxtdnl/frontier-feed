@@ -13,12 +13,12 @@ export type Command =
 export const COMMAND_HELP: ReadonlyArray<{ mnemonic: string; text: string }> = [
   { mnemonic: 'BOARD', text: 'Firm board' },
   { mnemonic: 'TRST', text: 'Trust history, full screen' },
-  { mnemonic: 'PACT', text: 'Pact table with members and terms' },
+  { mnemonic: 'YDC', text: 'Youth design codes with members and terms' },
   { mnemonic: 'WIRE', text: 'Full headline log' },
   { mnemonic: 'FIRM <TICKER>', text: 'Public profile of one firm' },
   { mnemonic: 'FIRMS', text: 'Every firm\'s valuation, same scale' },
   { mnemonic: 'RANKS', text: 'Rank of every firm by quarter' },
-  { mnemonic: 'INCID', text: 'Every incident by quarter, with effect and cause' },
+  { mnemonic: 'HARM', text: 'Every harm story by quarter, with effect and cause' },
   { mnemonic: 'HELP', text: 'This list' },
 ];
 
@@ -32,7 +32,7 @@ export function parseCommand(input: string): Command {
       return { kind: 'board' };
     case 'TRST':
       return { kind: 'trust' };
-    case 'PACT':
+    case 'YDC':
       return { kind: 'pacts' };
     case 'WIRE':
       return { kind: 'wire' };
@@ -42,7 +42,7 @@ export function parseCommand(input: string): Command {
       return { kind: 'firms' };
     case 'RANKS':
       return { kind: 'ranks' };
-    case 'INCID':
+    case 'HARM':
       return { kind: 'incid' };
     case 'FIRM': {
       const ticker = rest[0] ?? '';

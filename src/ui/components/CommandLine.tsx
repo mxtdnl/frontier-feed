@@ -61,7 +61,7 @@ export const CommandLine = forwardRef<CommandLineHandle, Props>(function Command
         {'<GO>'}
       </button>
       <span id="cmd-hint" className="sr-only">
-        Enter BOARD, TRST, PACT, WIRE, FIRM followed by a ticker, or HELP.
+        Enter BOARD, TRST, YDC, WIRE, HARM, FIRM followed by a ticker, or HELP.
       </span>
     </form>
   );
