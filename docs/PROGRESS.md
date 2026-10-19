@@ -1541,7 +1541,7 @@ A room like the four live classes (observed-human room), moratorium by quarter 1
 - **Prompt 2 check method.** It uses fixed game lengths (10, 12, 14) rather than the hidden end quarter, with transparency off and no audits, and the observed trajectories come from FRONTIER live sessions. The engine is the same, but FEED rooms may play differently.
 
 **Open issues**
-- **Longer harm-story headlines are cut short in the HARM STORIES block** at 1280×720, for example "Leaked BTAG research on teen users circulates …". The block already truncated long headlines with an ellipsis; the FEED headlines are longer (up to 65 characters filled, against 55 before). The full text is on the ticker, the wire and `HARM`. Three of the six harm-story headlines are fixed by spec §15.4. Shortening them or wrapping the line is the owner's call.
+- **Longer harm-story headlines are cut short in the HARM STORIES block** at 1280×720, for example "Leaked BTAG research on teen users circulates …". The block already truncated long headlines with an ellipsis; the FEED headlines are longer (up to 65 characters with a four-letter ticker, against 53 before). The full text is on the ticker, the wire and `HARM`. Three of the six harm-story headlines are fixed by spec §15.4. Shortening them or wrapping the line is the owner's call.
 - **The crackdown headline** is 81 characters (was 64). On the ticker it scrolls; no check failed.
 
 **Next steps**
