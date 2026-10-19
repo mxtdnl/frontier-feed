@@ -771,7 +771,7 @@ Use "firm" or "platform", "board", "valuation", "quarter" and "ad market" instea
 
 ### 15.4 Wire headline bank (template engine; seeded choice via the `headline` stream)
 
-The bank below sets the register and the required events. Session R3 replaces the FRONTIER bank in `src/engine/headlines.ts` with at least 40 templates in this register, with tests; until then the app runs the FRONTIER bank. Headlines never name a real company, platform or person, never use the §15.3 words (except "collapse" in the crackdown headline), and describe harm stories as reports, testimony and investigations, not as established findings.
+The bank below sets the register and the required events. `src/engine/headlines.ts` holds the full bank (Session R3: 62 templates, every headline below included verbatim; tests in `tests/engine/headlines.test.ts`). `{PACT}` holds the stored pact name and is shown as its code label (`PACT-A` reads `YDC-A`, `codeLabel` in the engine, reused by `pactLabel` in `src/ui/vocab.ts`). Headlines never name a real company, platform or person, never use the §15.3 words (except "collapse" in the crackdown headline), and describe harm stories as reports, testimony and investigations, not as established findings.
 
 **Fictional entities**
 - Regulator: *Office of Platform Safety (OPS)* (approved 2026-10-16; replaces the Office of Frontier Systems)
@@ -804,7 +804,7 @@ The bank below sets the register and the required events. Session R3 replaces th
 - Breach: "Audit finds {FIRM} breached {PACT} terms; fine levied"
 - Transparency rule on / off: "Assembly passes platform transparency rule; researchers gain data access" / "Transparency rule suspended"
 - Insolvency: "{FIRM} enters administration talks"
-- Crackdown (moratorium; the only use of "collapse"): "Assembly suspends under-16 accounts on every platform; ad market collapse follows" (approved 2026-10-16). The lint exemption in `scripts/lib/copy-rules.ts` (`MORATORIUM_HEADLINE`) moves to the approved wording in R3.
+- Crackdown (moratorium; the only use of "collapse"): "Assembly suspends under-16 accounts on every platform; ad market collapse follows" (approved 2026-10-16). The lint exemption in `scripts/lib/copy-rules.ts` (`MORATORIUM_HEADLINE`) holds this wording (R3).
 - Crackdown rounds: "Under-16 suspension extended; platform valuations slide"
 - Final round reveal: "Markets close for the period"
 
@@ -818,7 +818,13 @@ Owner wording 2026-10-16 (`docs/RESKIN.md`); built in R3.
 4. Accountability: Which codes held: audits, fines or reputation? Would transparency from quarter 1 have changed your decisions?
 5. Reality check: Here the ad market tracked public trust every quarter. In the case discussed today, did it? If not, what replaces that signal: courts, regulation or design codes?
 
-**Note on prompt 2.** The COUNTERFACTUAL (§10) is the matching comparison: every firm at FEED 2 with SAFEGUARDS 15, no cards and no codes, with one per-firm value equal across firms. In a given session a leading firm's actual valuation can exceed that per-firm value, so "each would have been worth more" is not guaranteed for every firm. The facilitator should check the session's COUNTERFACTUAL panel before reading the prompt aloud. R3 reports to the owner how often the claim holds for every firm across calibration seeds.
+**Note on prompt 2.** The COUNTERFACTUAL (§10) is the matching comparison: every firm at FEED 2 with SAFEGUARDS 15, no cards and no codes, with one per-firm value equal across firms. In a given session a leading firm's actual valuation can exceed that per-firm value, so "each would have been worth more" is not guaranteed for every firm. The facilitator should check the session's COUNTERFACTUAL panel before reading the prompt aloud.
+
+Measured in Session R3 (`npx tsx tools/prompt2-check.ts --seeds 200`, report in `reports/prompt2-check.md`; 200 seeds per cell, 10, 12 and 14 quarters, rooms of 6, 10, 20 and 40 firms):
+- The industry total finished below the alternative in every run (100%).
+- Every firm finished below the per-firm alternative in 97–100% of runs with observed human trajectories, and in 100% of half-greedy and all-greedy runs.
+- With the mixed bot field (cautious, standard, greedy, mimic-leader) at 6 or 10 firms, the claim held for every firm in 0–21% of runs, although about 80% of all firms finished below the per-firm alternative. The firms above it were the greedy bots (FEED 4 or FEED 3 at even odds each quarter, SAFEGUARDS 5): at 6 firms, 98–100% of greedy firms finished above it, and 7–33% of mimic-leader firms; no cautious or standard firm did (separate per-policy run, 200 seeds, 10 and 14 quarters). At 20 and 40 firms it held in 26–41% of runs at 10 quarters and in 94–100% at 12 and 14.
+- Conclusion: in rooms that play like the observed human sessions the claim is almost always true. In a small room where most firms hold back, the one or two firms running FEED 3 and 4 can finish above the alternative; that is the case prompt 2's "why would no single firm hold back alone?" asks about.
 
 ---
 
