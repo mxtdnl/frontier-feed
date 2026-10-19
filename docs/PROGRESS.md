@@ -1528,3 +1528,23 @@ A room like the four live classes (observed-human room), moratorium by quarter 1
 - End-to-end, against the emulators:
   - `test:e2e`: 341 checks pass (was 340). The `PACT-A` WIRE-tab check now waits for a `YDC-A` headline and fails if `PACT-A` appears. The DEBRIEF check looks for the five prompt headings.
   - `test:e2e:incidents`: 566 checks pass.
+  - `test:e2e:rehearsal`: 220 checks pass. The first run failed one check, "the moratorium headline is on the projector", because it looked for the word MORATORIUM, which was in the old headline. The check now looks for the crackdown headline; the rerun passed.
+  - `test:e2e:wire`: 25 checks pass.
+  - Not run: `test:e2e:scale`, `test:e2e:hardening` and `test:e2e:long`. None of them checks headline text (searched), and no layout changed except the DEBRIEF panel.
+- **DEBRIEF panel** checked by eye in the `test:e2e` screenshots at 1280×720 and 1920×1080: the five prompts fit without clipping.
+
+**Spec deviations and choices made (with reasons)**
+- **Headline text is engine code.** The bank lives in `src/engine/headlines.ts`, which spec §15.4 assigns to R3. Only strings, the label function and the `{PACT}` fill changed.
+- **Template counts per key changed.** Template choice is `floor(u × length)`, so the same seed can now pick a different variant. Every other seeded value is unchanged.
+- **Debrief prompts 1 and 2 say "level".** This is the owner's verbatim wording. "Level" is allowed on the results screen (§15.3).
+- **The DEBRIEF panel no longer mentions NET CONTRIBUTION.** The old prompt 3 referred to it; the owner's new prompts do not. The NET CONTRIBUTION panel itself is unchanged.
+- **Prompt 2 check method.** It uses fixed game lengths (10, 12, 14) rather than the hidden end quarter, with transparency off and no audits, and the observed trajectories come from FRONTIER live sessions. The engine is the same, but FEED rooms may play differently.
+
+**Open issues**
+- **Longer harm-story headlines are cut short in the HARM STORIES block** at 1280×720, for example "Leaked BTAG research on teen users circulates …". The block already truncated long headlines with an ellipsis; the FEED headlines are longer (up to 65 characters filled, against 55 before). The full text is on the ticker, the wire and `HARM`. Three of the six harm-story headlines are fixed by spec §15.4. Shortening them or wrapping the line is the owner's call.
+- **The crackdown headline** is 81 characters (was 64). On the ticker it scrolls; no check failed.
+
+**Next steps**
+- Owner: merge. On the live site, run a short session with a youth design code and watch the wire read `YDC-A`. At the end, step to the DEBRIEF panel.
+- Owner: decide whether the cut-short harm-story headlines at 1280×720 need fixing.
+- R4: runbook, teaching notes and the facilitator guide. The guide should carry the prompt 2 caveat (spec §15.5).
