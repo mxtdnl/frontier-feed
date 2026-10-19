@@ -19,7 +19,7 @@ describe('wireGroups', () => {
   };
   const wire = {
     a: live(0, -0.5, 10, 'HUMN joins PACT-A'),
-    b: live(1, 0.5, 900, 'Assembly passes frontier disclosure rule', 'disclosure-on'),
+    b: live(1, 0.5, 900, 'Assembly passes platform transparency rule; researchers gain data access', 'disclosure-on'),
     c: live(1, 1, 1100, 'BTC withdraws from PACT-A', 'pact-left'),
     d: live(2, 1.5, 1500, 'ARCN joins PACT-A'),
   };
@@ -33,7 +33,7 @@ describe('wireGroups', () => {
   it('orders a quarter as it happened: open-phase events, the headlines, then reveal events', () => {
     const q1 = wireGroups(rounds, wire).find((x) => x.round === 1);
     expect(q1?.lines.map((l) => l.text)).toEqual([
-      'Assembly passes frontier disclosure rule',
+      'Assembly passes platform transparency rule; researchers gain data access',
       'Service outage traced to HUMN model',
       'Analysts revise forecasts',
       'BTC withdraws from PACT-A',

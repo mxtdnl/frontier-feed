@@ -66,9 +66,9 @@ describe('incidentLines', () => {
   });
 
   it('matches a ticker as a whole word, so ARC never takes the ARCN headline', () => {
-    const r = node({ incidents: 2, incidentFirms: ['f0', 'f1'], headlines: [{ kind: 'incident', text: 'ARCN model linked to fraud wave' }] });
+    const r = node({ incidents: 2, incidentFirms: ['f0', 'f1'], headlines: [{ kind: 'incident', text: 'Former ARCN engineer testifies on harm to teenagers' }] });
     const [arc, arcn] = incidentLines(2, r, FIRMS);
-    expect(arcn?.headline).toBe('ARCN model linked to fraud wave');
+    expect(arcn?.headline).toBe('Former ARCN engineer testifies on harm to teenagers');
     expect(arc?.headline).toBe((BANK.incident[0] ?? '').replace('{FIRM}', 'ARC'));
   });
 

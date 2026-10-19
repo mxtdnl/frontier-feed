@@ -8,6 +8,7 @@ export { emptyPactPrivate, nextPactName, breaches, auditWindow, fineFor } from '
 export {
   BANK,
   MORATORIUM_HEADLINE,
+  codeLabel,
   headline,
   fill,
   trustBand,

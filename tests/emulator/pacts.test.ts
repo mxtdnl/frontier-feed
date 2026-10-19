@@ -276,7 +276,7 @@ describe('disclosure on and off', () => {
   it('wrote both toggle headlines to the wire, readable by participants and never writable by them', async () => {
     const wire = await api.readWire(p1.db, g);
     const texts = Object.values(wire).map((e) => e.text);
-    expect(texts).toContain('Assembly passes frontier disclosure rule');
+    expect(texts).toContain('Assembly passes platform transparency rule; researchers gain data access');
     expect(texts).toContain('Disclosure rule suspended');
     await expect(set(ref(p1.db, paths.wire(g)), null)).rejects.toThrow();
   });

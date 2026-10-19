@@ -1,13 +1,14 @@
 /**
  * Wire headline template engine (spec §6.3 step 15, §15.4).
- * Fictional entities only: Office of Frontier Systems (OFS), the Assembly, Halden Research.
- * Every template must pass the copy rules; only the moratorium headline may say "collapse".
+ * Fictional entities only: Office of Platform Safety (OPS), the Assembly, Halden Research.
+ * Every template must pass the copy rules; only the crackdown (moratorium) headline may say "collapse".
+ * Harm stories are reported as leaks, testimony and investigations, never as established findings.
  */
 import type { Params } from './params';
 import type { Rng } from './rng';
 import type { AuditResult, Card, Headline, HeadlineKind } from './types';
 
-export const MORATORIUM_HEADLINE = 'OFS imposes moratorium on frontier deployments; markets collapse';
+export const MORATORIUM_HEADLINE = 'Assembly suspends under-16 accounts on every platform; ad market collapse follows';
 
 export type TemplateKey =
   | Exclude<HeadlineKind, 'trust-band' | 'breach' | 'pace4'>
@@ -23,57 +24,69 @@ export type TemplateKey =
   | 'pace4-named'
   | 'pace4-anon';
 
-/** Placeholders: {FIRM}, {FIRM2}, {TARGET}, {PACT}, {FIRMS}. */
+/**
+ * Display label for a stored pact name in headlines: `PACT-A` reads `YDC-A` (spec §5.0). The stored name
+ * never changes (§9.1). `pactLabel` in src/ui/vocab.ts uses this function.
+ */
+export function codeLabel(name: string): string {
+  return name.replace(/^PACT-/, 'YDC-');
+}
+
+/** Placeholders: {FIRM}, {FIRM2}, {TARGET}, {PACT}, {FIRMS}. {PACT} is filled with the stored name; `fill` shows its code label. */
 export const BANK: Readonly<Record<TemplateKey, ReadonlyArray<string>>> = {
-  band0: ['Halden poll: public broadly optimistic on AI products', 'Halden Research: consumer confidence in AI tools holds firm'],
-  band1: ['Consumer groups question pace of model releases', 'Halden poll: optimism on AI products edges lower'],
-  band2: ['Halden poll: majority now uneasy about frontier AI', 'Editorials call for slower model rollouts'],
-  band3: ['Assembly members table AI licensing bill', 'Halden poll: support for AI licensing reaches majority'],
-  band4: ['OFS signals review of emergency powers', 'Assembly fast-tracks hearings on frontier deployments'],
-  band5: ["OFS chair: 'all options on the table'", 'Halden poll: confidence in AI sector at record low'],
+  band0: ['Halden poll: parents broadly relaxed about teen screen time', 'Halden Research: confidence in social platforms holds firm'],
+  band1: ['Parent groups question late-night notifications', 'Halden poll: parents report more evening screen time'],
+  band2: ['Halden poll: majority now uneasy about social platforms', 'Schools ask platforms for quiet hours during term'],
+  band3: ['Assembly members table youth online safety bill', 'Halden poll: majority back age checks on social platforms'],
+  band4: ['OPS signals review of age-check powers', 'Assembly fast-tracks hearings on teen accounts'],
+  band5: ["OPS chair: 'all options on the table'", 'Halden poll: trust in social platforms at record low'],
   collapse: [MORATORIUM_HEADLINE],
-  moratorium: ['Moratorium extended; sector valuations slide', 'OFS keeps deployment freeze in place; investors retreat'],
+  moratorium: ['Under-16 suspension extended; platform valuations slide', 'OPS keeps under-16 suspension in place; advertisers pull back'],
   final: ['Markets close for the period'],
-  breach: ['Audit finds {FIRM} breached {PACT} terms; fine levied', '{FIRM} sanctioned after {PACT} audit'],
+  breach: ['Audit finds {FIRM} breached {PACT} terms; fine levied', '{FIRM} fined after {PACT} audit'],
   'breach-waived': ['Audit finds {FIRM} breached {PACT} terms; fine waived'],
   'breach-expelled': ['{FIRM} expelled from {PACT} after repeated breaches'],
   'audit-clean': ['Audit of {PACT} finds full compliance', '{PACT} members pass independent audit'],
   insolvency: ['{FIRM} enters administration talks', '{FIRM} misses debt payment; creditors convene'],
   incident: [
-    'Service outage traced to {FIRM} model',
-    '{FIRM} model linked to fraud wave',
-    'Data leak hits {FIRM} enterprise clients',
-    '{FIRM} pulls model update after misuse reports',
-    'Hospital network suspends {FIRM} assistant after errors',
+    'Leaked {FIRM} research on teen users circulates in the Assembly',
+    'Former {FIRM} engineer testifies on harm to teenagers',
+    'OPS opens investigation into {FIRM} over harm to teenagers',
+    'Internal {FIRM} documents on teen sleep loss reach reporters',
+    'Parents group files complaint over {FIRM} late-night alerts',
+    'Assembly committee calls {FIRM} executives over teen safety reports',
   ],
   rank: ['{FIRM} overtakes {FIRM2} on valuation', '{FIRM} passes {FIRM2} in market value'],
-  publish: ['{FIRM} publishes evaluation results', '{FIRM} releases red-team findings'],
-  lobby: ['{FIRM} expands policy team in capital', '{FIRM} hosts Assembly members at research campus'],
-  poach: ['{FIRM} hires senior researchers from {TARGET}', '{TARGET} loses research leads to {FIRM}'],
-  blitz: ['{FIRM} launches global ad campaign', '{FIRM} books prime-time slots for product launch'],
-  share: ['{FIRM} releases safety tooling to the industry', '{FIRM} opens its evaluation suite to rival labs'],
-  rush: ['{FIRM} ships model ahead of evaluation schedule', '{FIRM} cuts testing window to bring launch forward'],
-  'pace4-named': ['{FIRM} accelerates release schedule', '{FIRM} brings forward next model launch'],
-  'pace4-anon': ['Unnamed lab accelerates release schedule, sources say', 'Unnamed lab brings forward model launch, sources say'],
+  publish: ['{FIRM} publishes internal wellbeing research', '{FIRM} releases study of teen time on its feed'],
+  lobby: ['{FIRM} expands lobbying team at the Assembly', '{FIRM} hosts Assembly members at its headquarters'],
+  poach: ['{FIRM} copies {TARGET} feature', '{TARGET} feature appears on {FIRM} within weeks'],
+  blitz: ['{FIRM} signs influencers for global campaign', '{FIRM} pays creators to post on its feed'],
+  share: ['{FIRM} releases safety tooling to the industry', '{FIRM} opens its age-check system to rival platforms'],
+  rush: ['{FIRM} ships new engagement feature ahead of review', '{FIRM} rolls out feature before safety checks finish'],
+  'pace4-named': ['{FIRM} adds streaks and late-night notifications', '{FIRM} adds variable rewards to its feed'],
+  'pace4-anon': ['Unnamed platform adds streak rewards, sources say', 'Unnamed platform tests late-night alerts, sources say'],
   ambient: [
-    'OFS publishes quarterly sector bulletin',
-    'Halden Research: enterprise AI spending steady',
-    'Chip supply tight as labs expand data centres',
-    'Assembly committee hears testimony on model evaluations',
-    'Analysts revise frontier sector forecasts',
-    'Insurers review cover for AI-related losses',
+    'OPS publishes quarterly platform bulletin',
+    'Halden Research: ad spending on social platforms steady',
+    'Advertisers review brand-safety terms with platforms',
+    'Assembly committee hears testimony on age checks',
+    'Analysts revise ad market forecasts',
+    'Teachers report phones in class as term begins',
   ],
-  'pact-formed': ['{FIRMS} sign voluntary release accord {PACT}', '{FIRMS} announce joint release limits under {PACT}'],
+  'pact-formed': ['{FIRMS} sign voluntary youth design code {PACT}', '{FIRMS} announce joint limits on teen feeds under {PACT}'],
   'pact-joined': ['{FIRM} joins {PACT}', '{FIRM} signs on to {PACT}'],
   'pact-left': ['{FIRM} withdraws from {PACT}', '{FIRM} exits {PACT} terms'],
-  'disclosure-on': ['Assembly passes frontier disclosure rule'],
-  'disclosure-off': ['Disclosure rule suspended'],
+  'disclosure-on': ['Assembly passes platform transparency rule; researchers gain data access'],
+  'disclosure-off': ['Transparency rule suspended'],
 };
 
 export type Vars = Partial<Record<'FIRM' | 'FIRM2' | 'TARGET' | 'PACT' | 'FIRMS', string>>;
 
 export function fill(template: string, vars: Vars): string {
-  return template.replace(/\{(FIRM2|FIRMS|FIRM|TARGET|PACT)\}/g, (_, k: keyof Vars) => vars[k] ?? '');
+  return template.replace(/\{(FIRM2|FIRMS|FIRM|TARGET|PACT)\}/g, (_, k: keyof Vars) => {
+    const v = vars[k] ?? '';
+    return k === 'PACT' ? codeLabel(v) : v;
+  });
 }
 
 const KIND_OF: Record<TemplateKey, HeadlineKind> = {

@@ -56,7 +56,7 @@ describe('facilitator-only nodes', () => {
   });
 
   it('denies a participant forging, editing or deleting a wire headline', async () => {
-    const forged = { at: 5, round: ROUND, seq: ROUND, kind: 'moratorium', text: 'OFS imposes moratorium on frontier deployments; markets collapse' };
+    const forged = { at: 5, round: ROUND, seq: ROUND, kind: 'moratorium', text: 'Assembly suspends under-16 accounts on every platform; ad market collapse follows' };
     await assertFails(as('uA').ref(g('wire/forged')).set(forged));
     await assertFails(as('uA').ref(g('wire/d-1-on/text')).set('edited'));
     await assertFails(as('uA').ref(g('wire/d-1-on')).remove());

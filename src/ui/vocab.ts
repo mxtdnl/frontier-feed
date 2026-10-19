@@ -3,7 +3,7 @@
  * (pace, safety, capability, incident, pact, disclosure, moratorium, card IDs); everything people see
  * is mapped here. No Firebase and no React.
  */
-import type { Card } from '../engine';
+import { codeLabel, type Card } from '../engine';
 
 /** FEED 1–4 (internal: pace). Number and short label, as on the DESK segments. */
 export const FEED_OPTIONS = [
@@ -39,7 +39,7 @@ export function cardLabel(card: string): string {
  * changes (spec §9.1); only the display does.
  */
 export function pactLabel(name: string): string {
-  return name.replace(/^PACT-/, 'YDC-');
+  return codeLabel(name);
 }
 
 /** Replaces every stored pact name (`PACT-A`…) inside a sentence with its display label. */
