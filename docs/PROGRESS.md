@@ -1487,3 +1487,64 @@ A room like the four live classes (observed-human room), moratorium by quarter 1
 **Next steps**
 - Owner: review the screenshots and the copy. Decide whether F4 should move from Shift+P to Shift+Y.
 - R3: the headline bank (using `pactLabel` for `{PACT}`), the crackdown headline and its lint exemption, the debrief prompts, and the `PACT-A` wire check in `scripts/e2e.ts`.
+
+## 2026-10-19 — Session R3: wire and debrief
+
+**Done**
+- **Headline bank** (`src/engine/headlines.ts`, spec §15.4):
+  - 62 FEED templates replace the FRONTIER bank. Every §15.4 headline is included verbatim.
+  - Harm stories are written as leaks, testimony, investigations and complaints, never as findings.
+  - The crackdown headline is "Assembly suspends under-16 accounts on every platform; ad market collapse follows". The lint exemption (`MORATORIUM_HEADLINE` in `scripts/lib/copy-rules.ts`) holds the same text.
+  - `{PACT}` is filled with the code label, so the wire reads `YDC-A`. The label function `codeLabel` is in the engine; `pactLabel` in `src/ui/vocab.ts` now calls it, so the mapping is defined once. Stored pact names (`PACT-A`) are unchanged.
+  - Engine logic is unchanged. Each headline still takes one random draw, so every seeded value other than headline text is identical.
+- **Debrief prompts** (`src/screens/Results/model.ts`): the five §15.5 prompts, verbatim.
+- **Results-screen copy:** a sweep of the results panels, the own-results card and their headlines found no FRONTIER wording left after R2. Nothing else changed.
+- **Prompt 2 check:** new tool `tools/prompt2-check.ts`; report in `reports/prompt2-check.md`. The figures are recorded in spec §15.5.
+- **Spec:** §15.4 and §15.5 updated to describe the finished bank and the prompt 2 measurements.
+
+**Prompt 2 result** (200 seeds per cell; rooms of 6, 10, 20 and 40 firms; 10, 12 and 14 quarters)
+- The industry total finished below the alternative in every run.
+- In rooms that play like the observed human sessions, every firm finished below the per-firm alternative in 97–100% of runs. In half-greedy and all-greedy rooms the figure was 100%.
+- In the mixed bot field at 6 or 10 firms, every firm finished below in only 0–21% of runs, although about 80% of firms did. The firms above the alternative were the greedy bots: 98–100% of them at 6 firms, plus 7–33% of mimic-leader firms. No cautious or standard firm finished above. (I first assumed it was the cautious firms; a per-policy run showed the opposite, and the spec states the measured result.)
+- Implication for the facilitator: in a small room where most firms hold back, the one or two firms at FEED 3–4 can finish above the alternative. That is the case the prompt's question "why would no single firm hold back alone?" addresses. Check the COUNTERFACTUAL panel before reading the prompt aloud.
+
+**Tests**
+- `npm run typecheck` passes.
+- `npm test`: 710 passed (was 703).
+  - `tests/engine/headlines.test.ts` rewritten:
+    - at least 40 templates, no duplicates
+    - the copy rules pass, and only the crackdown says "collapse"
+    - every §15.4 headline is present
+    - no real platform names and no FRONTIER words
+    - harm-story wording
+    - the placeholders
+    - `YDC-A` from the engine and from live code headlines
+    - the anonymous FEED 4 headline whenever transparency is off
+    - the same seed gives the same headlines.
+  - `tests/ui/contribution-panel.test.ts`: the five prompts, verbatim.
+  - Unit tests that asserted the old headline text now assert the new text.
+- `npm run build` passes, including `lint:copy` and `lint:design`.
+- `npm run test:rules`: 166 passed. Four expectations in `tests/emulator/pacts.test.ts` moved to `YDC-` and the transparency wording.
+- End-to-end, against the emulators:
+  - `test:e2e`: 341 checks pass (was 340). The `PACT-A` WIRE-tab check now waits for a `YDC-A` headline and fails if `PACT-A` appears. The DEBRIEF check looks for the five prompt headings.
+  - `test:e2e:incidents`: 566 checks pass.
+  - `test:e2e:rehearsal`: 220 checks pass. The first run failed one check, "the moratorium headline is on the projector", because it looked for the word MORATORIUM, which was in the old headline. The check now looks for the crackdown headline; the rerun passed.
+  - `test:e2e:wire`: 25 checks pass.
+  - Not run: `test:e2e:scale`, `test:e2e:hardening` and `test:e2e:long`. None of them checks headline text (searched), and no layout changed except the DEBRIEF panel.
+- **DEBRIEF panel** checked by eye in the `test:e2e` screenshots at 1280×720 and 1920×1080: the five prompts fit without clipping.
+
+**Spec deviations and choices made (with reasons)**
+- **Headline text is engine code.** The bank lives in `src/engine/headlines.ts`, which spec §15.4 assigns to R3. Only strings, the label function and the `{PACT}` fill changed.
+- **Template counts per key changed.** Template choice is `floor(u × length)`, so the same seed can now pick a different variant. Every other seeded value is unchanged.
+- **Debrief prompts 1 and 2 say "level".** This is the owner's verbatim wording. "Level" is allowed on the results screen (§15.3).
+- **The DEBRIEF panel no longer mentions NET CONTRIBUTION.** The old prompt 3 referred to it; the owner's new prompts do not. The NET CONTRIBUTION panel itself is unchanged.
+- **Prompt 2 check method.** It uses fixed game lengths (10, 12, 14) rather than the hidden end quarter, with transparency off and no audits, and the observed trajectories come from FRONTIER live sessions. The engine is the same, but FEED rooms may play differently.
+
+**Open issues**
+- **Longer harm-story headlines are cut short in the HARM STORIES block** at 1280×720, for example "Leaked BTAG research on teen users circulates …". The block already truncated long headlines with an ellipsis; the FEED headlines are longer (up to 65 characters with a four-letter ticker, against 53 before). The full text is on the ticker, the wire and `HARM`. Three of the six harm-story headlines are fixed by spec §15.4. Shortening them or wrapping the line is the owner's call.
+- **The crackdown headline** is 81 characters (was 64). On the ticker it scrolls; no check failed.
+
+**Next steps**
+- Owner: merge. On the live site, run a short session with a youth design code and watch the wire read `YDC-A`. At the end, step to the DEBRIEF panel.
+- Owner: decide whether the cut-short harm-story headlines at 1280×720 need fixing.
+- R4: runbook, teaching notes and the facilitator guide. The guide should carry the prompt 2 caveat (spec §15.5).

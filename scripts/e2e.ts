@@ -680,7 +680,8 @@ async function participantScenario(
   await waitText(fac, /ALPH\s+CEDR|CEDR\s+ALPH/, 'the projector shows both members', 15_000, '.scr');
   await snapPlay(C, 'play-pacts-live');
   await A.getByRole('tab', { name: 'WIRE' }).click();
-  await waitText(A, /PACT-A/, 'the pact headlines reach the WIRE tab', 20_000);
+  await waitText(A, /(youth design code|joins|signs on to|under) YDC-A/, 'the code headlines reach the WIRE tab, labelled YDC-A', 20_000);
+  check(!/PACT-A/.test(await A.locator('body').innerText()), 'the WIRE tab never shows the stored name PACT-A');
   await A.getByRole('tab', { name: 'YDC' }).click();
   // Another pact attempt without terms is refused with an explanation.
   await A.getByRole('button', { name: 'PROPOSE A CODE' }).click();
@@ -839,7 +840,7 @@ async function participantScenario(
     [4, /ATTRIBUTION[\s\S]*SHARE OF DAMAGE[\s\S]*SHARE OF VALUE/, 'ATTRIBUTION'],
     [5, /NET CONTRIBUTION[\s\S]*Ranked by value created for the whole ad market[\s\S]*research credit, not money/, 'NET CONTRIBUTION'],
     [6, /YDC RECORD/, 'YDC RECORD'],
-    [7, /DEBRIEF[\s\S]*Ranked by net contribution[\s\S]*Ostrom/, 'DEBRIEF'],
+    [7, /DEBRIEF[\s\S]*Psychology:[\s\S]*Economics:[\s\S]*Politics:[\s\S]*Accountability:[\s\S]*Reality check:/, 'DEBRIEF'],
   ];
   for (const [n, re, name] of panels) {
     await key(fac, 'F9');

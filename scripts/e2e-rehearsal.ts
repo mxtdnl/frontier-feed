@@ -200,7 +200,7 @@ await runWithStack(async (browser) => {
         await fac.waitForTimeout(1700);
         const pub = await adminGet<{ collapsed: boolean; collapseRound: number | null }>(`games/${g}/public`);
         check(pub.collapsed && pub.collapseRound === model.collapseRound, `the forced collapse arrives in quarter ${model.collapseRound}`);
-        check(/MORATORIUM/i.test(await screenText(fac)), 'the moratorium headline is on the projector');
+        check(/Assembly suspends under-16 accounts/.test(await screenText(fac)), 'the crackdown headline is on the projector');
         await snapProjector(fac, 'rehearsal-collapse');
         events.push('collapse');
       }

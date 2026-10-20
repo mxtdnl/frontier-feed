@@ -616,7 +616,7 @@ describe('disclosure toggle (F7, spec §9.3)', () => {
     const w = world();
     expect((await toggleDisclosure(w.ctx)).ok).toBe(true);
     expect(w.pub().disclosure).toBe(true);
-    expect(Object.values(wireOf(w)).map((e) => [e.kind, e.text])).toEqual([['disclosure-on', 'Assembly passes frontier disclosure rule']]);
+    expect(Object.values(wireOf(w)).map((e) => [e.kind, e.text])).toEqual([['disclosure-on', 'Assembly passes platform transparency rule; researchers gain data access']]);
     w.clock.t += 1000;
     await toOpen(w);
     w.clock.t += 1000;
@@ -789,8 +789,8 @@ describe('live wire headlines (spec §5.3)', () => {
     setAt(w.db, 'pacts/p1/members/hum1', 1);
     expect(await publishWire(w.ctx, liveInput(w))).toBe(1);
     const texts = Object.values(wireOf(w)).map((e) => e.text);
-    expect(texts.some((t) => t.includes('HUMA') && t.includes('PACT-A'))).toBe(true);
-    expect(texts.some((t) => t.includes('HUMB') && t.includes('PACT-A'))).toBe(true);
+    expect(texts.some((t) => t.includes('HUMA') && t.includes('YDC-A'))).toBe(true);
+    expect(texts.some((t) => t.includes('HUMB') && t.includes('YDC-A'))).toBe(true);
     // A window with a stale copy of the wire writes the same keys, not new ones.
     const stale = { ...liveInput(w), wire: {} };
     await publishWire(w.ctx, stale);

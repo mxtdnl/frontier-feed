@@ -79,11 +79,19 @@ describe('the headline sentence', () => {
 });
 
 describe('the results model', () => {
-  it('is panel 5 of 7, before YDC RECORD and DEBRIEF, and the debrief refers to it', () => {
+  it('is panel 5 of 7, before YDC RECORD and DEBRIEF', () => {
     expect(RESULT_PANELS).toEqual(['FINAL BOARD', 'TRUST TRACE', 'COUNTERFACTUAL', 'ATTRIBUTION', 'NET CONTRIBUTION', 'YDC RECORD', 'DEBRIEF']);
-    expect(DEBRIEF_PROMPTS[2]).toBe(
-      'Compare your share of the damage with your share of the value. Ranked by net contribution, where does your firm fall? Is that outcome fair, and who should pay?',
-    );
+  });
+
+  it('holds the five §15.5 debrief prompts, verbatim', () => {
+    expect(DEBRIEF_PROMPTS).toEqual([
+      'Psychology: Which FEED level did you run, and what did that mean for a 14-year-old user? Did you choose it because of users or because of rivals?',
+      'Economics: If every platform had held level 2, each would have been worth more. Why would no single firm hold back alone? Compare your share of the damage with your share of the value.',
+      'Politics: The crackdown came only after damage built up past a hidden line. Why did the Assembly act late, and what did LOBBY buy you?',
+      'Accountability: Which codes held: audits, fines or reputation? Would transparency from quarter 1 have changed your decisions?',
+      'Reality check: Here the ad market tracked public trust every quarter. In the case discussed today, did it? If not, what replaces that signal: courts, regulation or design codes?',
+    ]);
+    for (const p of DEBRIEF_PROMPTS) expect(findViolations(p, { allowNonTelegraphing: true }), p).toEqual([]);
   });
 
   it('formats the conduct ledger, for the ad market then against it', () => {

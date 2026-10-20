@@ -77,8 +77,8 @@ export const REAL_PLATFORMS: ReadonlyArray<string> = [
 ];
 const REAL_PLATFORM_RES: ReadonlyArray<RegExp> = REAL_PLATFORMS.map((n) => new RegExp(`\\b(?:${n}|${n.toUpperCase()})\\b`));
 
-/** The single permitted use of "collapse" (spec §15.3). */
-export const MORATORIUM_HEADLINE = 'OFS imposes moratorium on frontier deployments; markets collapse';
+/** The single permitted use of "collapse" (spec §15.3): the crackdown headline (§15.4, approved 2026-10-16). */
+export const MORATORIUM_HEADLINE = 'Assembly suspends under-16 accounts on every platform; ad market collapse follows';
 
 const EMOJI = /\p{Extended_Pictographic}/u;
 

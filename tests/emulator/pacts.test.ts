@@ -188,7 +188,7 @@ describe('audit with graduated sanctions across three violations', () => {
       seen.push({ count: b?.count ?? 0, fine: b?.fine ?? 0, expelled: b?.expelled ?? false, cashBefore: own.cash + (b?.fine ?? 0) });
       const headline = node?.headlines.find((h) => h.kind === 'breach');
       expect(headline?.text).toMatch(/ALPH/);
-      expect(headline?.text).toMatch(/PACT-A/);
+      expect(headline?.text).toMatch(/YDC-A/);
     });
   }
 
@@ -276,8 +276,8 @@ describe('disclosure on and off', () => {
   it('wrote both toggle headlines to the wire, readable by participants and never writable by them', async () => {
     const wire = await api.readWire(p1.db, g);
     const texts = Object.values(wire).map((e) => e.text);
-    expect(texts).toContain('Assembly passes frontier disclosure rule');
-    expect(texts).toContain('Disclosure rule suspended');
+    expect(texts).toContain('Assembly passes platform transparency rule; researchers gain data access');
+    expect(texts).toContain('Transparency rule suspended');
     await expect(set(ref(p1.db, paths.wire(g)), null)).rejects.toThrow();
   });
 });
@@ -307,7 +307,7 @@ describe('live wire for pacts', () => {
     const entries = Object.values(await api.readWire(p2.db, g)).filter((e) => e.pact === pactC);
     expect(entries.map((e) => e.kind).sort()).toEqual(['pact-formed', 'pact-joined']);
     expect(entries.every((e) => e.seq === 5 && e.round === 5)).toBe(true); // after quarter 5 resolved
-    expect(entries.find((e) => e.kind === 'pact-formed')?.text).toMatch(/ALPH.*PACT-C|PACT-C.*ALPH/);
+    expect(entries.find((e) => e.kind === 'pact-formed')?.text).toMatch(/ALPH.*YDC-C|YDC-C.*ALPH/);
     expect(entries.find((e) => e.kind === 'pact-joined')?.text).toMatch(/BETA/);
     await api.leavePact(p2.db, g, pactC, firmB);
     expect(await publishWire(ctx, await input())).toBe(1);

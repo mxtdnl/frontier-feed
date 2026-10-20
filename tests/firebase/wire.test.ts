@@ -27,7 +27,7 @@ describe('pendingWire', () => {
     expect(Object.keys(got).sort()).toEqual(['f-p1', 'j-p1-b-2', 'j-p1-c-2']);
     expect(got['f-p1']).toMatchObject({ kind: 'pact-formed', round: 2, seq: 1.5, at: 500, pact: 'p1', firm: 'a', joined: 1 });
     expect(got['f-p1']?.text).toContain('AAA');
-    expect(got['f-p1']?.text).toContain('PACT-A');
+    expect(got['f-p1']?.text).toContain('YDC-A');
     expect(got['j-p1-b-2']?.text).toMatch(/BBB/);
   });
 
@@ -65,8 +65,8 @@ describe('pendingWire', () => {
 
 describe('disclosure headline', () => {
   it('uses the spec wording for on and off', () => {
-    expect(disclosureEntry(true, open, 1).text).toBe('Assembly passes frontier disclosure rule');
-    expect(disclosureEntry(false, open, 1).text).toBe('Disclosure rule suspended');
+    expect(disclosureEntry(true, open, 1).text).toBe('Assembly passes platform transparency rule; researchers gain data access');
+    expect(disclosureEntry(false, open, 1).text).toBe('Transparency rule suspended');
     expect(disclosureEntry(true, open, 1)).toMatchObject({ kind: 'disclosure-on', pact: null, firm: null, joined: null });
   });
 });
