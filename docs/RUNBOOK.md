@@ -66,7 +66,6 @@ The engine, the spec's §6 to §13 and the reports in `reports/` use FRONTIER's 
 | Disclosure | Transparency rule (`TRANSPARENCY ON` / `OFF`) |
 | Moratorium | Crackdown (`CRACKDOWN`) |
 | Card POACH; card RUSH | CLONE; LAUNCH (the other cards keep their names: PUBLISH, LOBBY, BLITZ, SHARE) |
-| OFS | OPS, the Office of Platform Safety |
 
 ### What not to say before the results screen
 
@@ -132,7 +131,7 @@ Do this the day before, then again 15 minutes before class.
 - [ ] Have your case notes ready for the debrief (prompt 5 asks about the case).
 - [ ] Browser: use a private window or a different browser for any device that will play as a firm. A browser signed in as the facilitator cannot also be a participant.
 
-**No briefing deck yet.** The participant briefing deck in the `mxtdnl/slides` repository is the FRONTIER deck: it describes AI firms, pace and four cards. Do not use it for FEED. Present the app's briefing screen instead (section 4, "Briefing").
+**No briefing deck yet.** The participant briefing deck in the `mxtdnl/slides` repository is the FRONTIER deck: it covers a different industry, uses the FRONTIER names and lists four cards. Do not use it for FEED. Present the app's briefing screen instead (section 4, "Briefing").
 
 ## 3. Create a session
 
