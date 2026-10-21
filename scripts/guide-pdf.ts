@@ -1,7 +1,7 @@
 /**
- * Renders the facilitator guide to PDF (Session 19 Part E). Usage: `npm run guide:pdf`.
+ * Renders the facilitator guide to PDF (Session 19 Part E; FEED since Session R4). Usage: `npm run guide:pdf`.
  *
- * docs/facilitator-guide/guide.html → docs/facilitator-guide/FRONTIER-facilitator-guide.pdf, A4, with Playwright's
+ * docs/facilitator-guide/guide.html → docs/facilitator-guide/FEED-facilitator-guide.pdf, A4, with Playwright's
  * Chromium. Only local files load: any other request is blocked and fails the run, as does any image or font that does
  * not load. Fails when the page count leaves GUIDE_PAGES or the PDF reaches 10 MB.
  */
@@ -13,7 +13,7 @@ import { GUIDE_MAX_BYTES, GUIDE_PAGES, pdfPageCount } from './lib/guide';
 
 const EXEC = process.env.CHROMIUM_PATH ?? '/opt/pw-browsers/chromium';
 const SRC = resolve('docs/facilitator-guide/guide.html');
-const OUT = resolve('docs/facilitator-guide/FRONTIER-facilitator-guide.pdf');
+const OUT = resolve('docs/facilitator-guide/FEED-facilitator-guide.pdf');
 
 const failures: string[] = [];
 const browser = await chromium.launch({ executablePath: EXEC, args: ['--no-sandbox'] });
