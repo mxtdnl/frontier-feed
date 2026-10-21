@@ -2,8 +2,9 @@
  * Screenshots for the facilitator guide (Session 19 Part E). Usage: `npm run guide:shots`.
  *
  * Stages a session against the emulators with the real screens: fixed seed, ten in-app bot firms (mixed policies) and
- * two scripted phone firms with fictional names (Quarry Labs QRRY, Talwen Systems TLWN). QRRY proposes PACT-A in a
- * summit, TLWN joins it, QRRY then breaks it and an F6 audit finds the breach. The session runs to a fixed end, then
+ * two scripted phone firms with fictional platform names (Halvey HLVY, Tarnell TRNL), not taken from the bot list. HLVY
+ * proposes a youth design code (stored PACT-A, shown YDC-A) in a summit, TRNL joins it, HLVY then breaks it and an F6
+ * audit finds the breach. The session runs to a fixed end, then
  * every results panel is captured. Images go to docs/facilitator-guide/img/ and are committed; the guide build
  * (`npm run guide:pdf`) needs no emulator.
  */
@@ -36,8 +37,8 @@ async function saveColumn(page: Page, name: string, height: number): Promise<voi
   await page.screenshot({ path: `${IMG}/${name}.png`, clip: { x, y: 0, width, height: h } });
 }
 
-/** QRRY's decisions from quarter 3 on: racing, with RUSH every other quarter. */
-const qrry = (r: number): Decision => ({ pace: r % 3 === 0 ? 3 : 4, safety: 0, card: r % 2 ? 'RUSH' : 'NONE', target: null });
+/** HLVY's decisions from quarter 3 on: FEED 3–4 with no safeguards, LAUNCH (RUSH) every other quarter. */
+const hlvy = (r: number): Decision => ({ pace: r % 3 === 0 ? 3 : 4, safety: 0, card: r % 2 ? 'RUSH' : 'NONE', target: null });
 
 await runWithStack(async (browser) => {
   mkdirSync(IMG, { recursive: true });
@@ -77,11 +78,11 @@ await runWithStack(async (browser) => {
     await h(p, 'signIn');
     return p;
   };
-  const q = await phone('QRRY');
-  const { firmId: qId } = await h(q, 'found', g, 'Quarry Labs', 'QRRY', 'QL');
-  const t = await phone('TLWN');
-  await h(t, 'found', g, 'Talwen Systems', 'TLWN', 'TS');
-  await waitText(fac, /TLWN/, 'the lobby lists both phone firms', 15_000, '.scr');
+  const q = await phone('HLVY');
+  const { firmId: qId } = await h(q, 'found', g, 'Halvey', 'HLVY', 'HV');
+  const t = await phone('TRNL');
+  await h(t, 'found', g, 'Tarnell', 'TRNL', 'TN');
+  await waitText(fac, /TRNL/, 'the lobby lists both phone firms', 15_000, '.scr');
   await save(fac, 'lobby');
 
   const control = watchPage(await ctx.newPage(), 'console', ignore);
@@ -100,11 +101,11 @@ await runWithStack(async (browser) => {
   await waitText(fac, new RegExp(`${label(1)}[\\s\\S]*OPEN`), 'quarter 1 opens', 15_000, '.scr');
   await q.goto(`${BASE}#/play/${g}`);
   await t.goto(`${BASE}#/play/${g}`);
-  await waitText(q, /T-\d\d:\d\d/, 'the QRRY phone shows the countdown', 15_000);
+  await waitText(q, /T-\d\d:\d\d/, 'the HLVY phone shows the countdown', 15_000);
   await save(q, 'phone-desk');
   await q.getByRole('radio', { name: /AUTOPLAY/ }).click();
   await q.getByRole('button', { name: /^COMMIT/ }).click();
-  await waitText(q, /COMMITTED/, 'QRRY commits quarter 1');
+  await waitText(q, /COMMITTED/, 'HLVY commits quarter 1');
   await fac.waitForTimeout(800);
   await save(fac, 'board-open');
   await control.bringToFront();
@@ -116,16 +117,16 @@ await runWithStack(async (browser) => {
   const resolveQuarter = async (r: number): Promise<void> => {
     await key('F9');
     await waitText(fac, /REVEAL/, `quarter ${r} resolves`, 20_000, '.scr');
-    // The INCIDENTS block appears when the 1.2 s reveal sequence ends.
+    // The HARM STORIES block appears when the 1.2 s reveal sequence ends.
     await fac.waitForTimeout(1800);
     const hit = Object.values((await adminGet<Record<string, string> | string[] | null>(`games/${g}/rounds/${r}/incidentFirms`)) ?? {});
     if (!incidentShot && hit.length > 0 && (await fac.locator('[data-incident-block]').count()) > 0) {
       incidentShot = true;
-      await save(fac, 'reveal-incidents');
+      await save(fac, 'reveal-harm');
     }
   };
   await resolveQuarter(1);
-  await waitText(q, /RESULT/, 'the QRRY phone shows the result card', 15_000);
+  await waitText(q, /RESULT/, 'the HLVY phone shows the result card', 15_000);
   await save(q, 'phone-result');
 
   // ── Quarter 2: summit, pact, the terms preview, the ticket notice ──────────
@@ -134,16 +135,16 @@ await runWithStack(async (browser) => {
   await key('F8');
   await waitText(fac, /Industry summit in session/, 'F8 enters the summit', 15_000, '.scr');
   await save(fac, 'summit');
-  await waitText(q, /PROPOSE A PACT/, 'the summit opens the PACTS tab on the phone', 15_000);
+  await waitText(q, /PROPOSE A CODE/, 'the summit opens the YDC tab on the phone', 15_000);
   await q.getByRole('button', { name: 'PROPOSE A CODE' }).click();
   await q.getByRole('checkbox', { name: 'Maximum feed' }).check();
   await q.locator('[data-pact-preview]').scrollIntoViewIfNeeded();
-  await save(q, 'phone-pact-preview');
+  await save(q, 'phone-code-preview');
   await q.getByRole('button', { name: 'SIGN YDC-A' }).click();
-  await waitText(t, /JOIN YDC-A/, 'TLWN sees YDC-A', 15_000);
+  await waitText(t, /JOIN YDC-A/, 'TRNL sees YDC-A', 15_000);
   await t.getByRole('button', { name: 'JOIN YDC-A' }).click();
-  await waitText(q, /YDC-A[\s\S]*TLWN|YDC-A[\s\S]*2 MBRS/, 'QRRY sees TLWN join', 15_000);
-  await save(q, 'phone-pacts');
+  await waitText(q, /YDC-A[\s\S]*TRNL|YDC-A[\s\S]*2 MBRS/, 'HLVY sees TRNL join', 15_000);
+  await save(q, 'phone-ydc');
   await key('F8');
   await waitText(fac, new RegExp(`${label(2)}[\\s\\S]*OPEN`), 'F8 returns to the open quarter', 15_000, '.scr');
   await q.getByRole('tab', { name: 'DESK' }).click();
@@ -151,12 +152,12 @@ await runWithStack(async (browser) => {
   await waitText(q, /Breaks YDC-A: feed 2 or lower/, 'the ticket warns that STREAKS breaks YDC-A');
   await save(q, 'phone-ticket-notice');
   await q.getByRole('button', { name: /COMMIT/ }).click();
-  await waitText(q, /COMMITTED/, 'QRRY commits quarter 2');
+  await waitText(q, /COMMITTED/, 'HLVY commits quarter 2');
   await resolveQuarter(2);
 
   // ── Quarters 3 to the end ──────────────────────────────────────────────────
-  // A harness tab in QRRY's browser context submits for it; the same anonymous user is restored there.
-  const qh = watchPage(await q.context().newPage(), 'QRRY harness', ignore);
+  // A harness tab in HLVY's browser context submits for it; the same anonymous user is restored there.
+  const qh = watchPage(await q.context().newPage(), 'HLVY harness', ignore);
   await qh.goto(`${BASE}tests/e2e/harness/participant.html`);
   await qh.waitForFunction(() => 'harness' in window);
   await h(qh, 'signIn');
@@ -164,7 +165,7 @@ await runWithStack(async (browser) => {
     await key('F9');
     await waitText(fac, new RegExp(`${label(r)}[\\s\\S]*OPEN`), `quarter ${r} opens`, 15_000, '.scr');
     if (r === 4) {
-      // F6 (Shift+F) then 1: audit PACT-A when this quarter resolves.
+      // F6 (Shift+F) then 1: audit YDC-A (stored PACT-A) when this quarter resolves.
       await key('Shift+F');
       await waitText(fac, /Press the number of the code/, 'Shift+F opens the audit picker', 5_000, '.scr');
       await fac.keyboard.press('1');
@@ -173,11 +174,11 @@ await runWithStack(async (browser) => {
     }
     if (r === 7) {
       await key('Shift+D');
-      await waitText(fac, /TRANSPARENCY ON/, 'Shift+D turns disclosure on', 15_000, '.scr');
+      await waitText(fac, /TRANSPARENCY ON/, 'Shift+D turns the transparency rule on', 15_000, '.scr');
     }
-    await h(qh, 'submit', g, r, qId, qrry(r));
+    await h(qh, 'submit', g, r, qId, hlvy(r));
     await resolveQuarter(r);
-    if (r === 7) await save(fac, 'reveal-disclosure');
+    if (r === 7) await save(fac, 'reveal-transparency');
     if (r === 4) {
       await q.getByRole('tab', { name: 'BOOK' }).click();
       await q.locator('[data-book-field] svg[data-chart="line"]').waitFor({ timeout: 10_000 }).catch(() => check(false, 'BOOK draws the field chart'));
@@ -195,7 +196,7 @@ await runWithStack(async (browser) => {
       await fac.bringToFront();
     }
   }
-  check(incidentShot, 'a reveal with the INCIDENTS block was captured');
+  check(incidentShot, 'a reveal with the HARM STORIES block was captured');
 
   // ── End and the seven results panels ───────────────────────────────────────
   await key('F9');
