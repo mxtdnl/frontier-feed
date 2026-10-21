@@ -1548,3 +1548,68 @@ A room like the four live classes (observed-human room), moratorium by quarter 1
 - Owner: merge. On the live site, run a short session with a youth design code and watch the wire read `YDC-A`. At the end, step to the DEBRIEF panel.
 - Owner: decide whether the cut-short harm-story headlines at 1280×720 need fixing.
 - R4: runbook, teaching notes and the facilitator guide. The guide should carry the prompt 2 caveat (spec §15.5).
+
+## 2026-10-21 — Session R4: facilitator materials
+
+**Done**
+- **`docs/RUNBOOK.md`: rewritten for FEED.**
+  - The teaching notes come first:
+    - the class and the case. Meta is named once, as allegations; the owner keeps separate case notes, so the runbook does not summarise the case.
+    - the four §1 objectives
+    - the §6.6 briefing lines against what the session is built to show
+    - a table from the internal names used in the reports to what the room sees
+    - the full §15.3 do-not-say list, including the R1 additions, "feed level" and real platform names
+    - why STREAKS firms lead the board
+    - the true statements, with every figure unchanged and checked against `params.ts` and the reports
+    - the prompt 2 caveat (spec §15.5)
+    - the results panels.
+  - The operating sections use project `frontier-feed-9759d`, the live site `https://mxtdnl.github.io/frontier-feed/` and the FEED vocabulary. Every key label, command, setting label, console label, panel name and phone string was checked against the code.
+  - New content:
+    - the bot policies, as coded in `src/engine/policies.ts`
+    - the code ticket notice and terms preview
+    - the export file names
+    - advice to keep real platform names out of the lobby
+    - the five new debrief prompts, with a note for each.
+- **Facilitator guide** (`docs/facilitator-guide/guide.html`): rewritten in the same seven parts.
+  - The PDF is now `docs/facilitator-guide/FEED-facilitator-guide.pdf` (33 pages, 2.21 MB, 22 images). The FRONTIER PDF was removed.
+  - The FRONTIER deck section was replaced by a warning. The deck in `mxtdnl/slides` is the FRONTIER deck (checked: it is the only one there), so the guide says to present the app's briefing screen instead.
+  - The five new debrief prompts each come with the answers to draw out.
+- **Screenshots:** all 22 were recaptured with `npm run guide:shots` against the emulators (seed 11, 14 quarters, crackdown in quarter 13).
+  - The two scripted phone firms are now Halvey (`HLVY`) and Tarnell (`TRNL`), not taken from the bot list.
+  - One selector left stale by R2 (`PROPOSE A PACT`) was fixed.
+  - Image files are renamed to the FEED vocabulary (`reveal-harm`, `reveal-transparency`, `phone-code-preview`, `phone-ydc`).
+- **`tests/ui/guide.test.ts`:**
+  - Commands come from `COMMAND_HELP`; the old hard-coded list still held `PACT` and `INCID`, which R2 removed.
+  - Every card is checked by its ID and its display label.
+  - The copy rules now apply to the runbook too.
+  - Meta may appear only on a line that says "allegation"; no other real platform may appear.
+  - FRONTIER-only names (OFS, `frontier-sim`, the `/frontier/` site, `INCID`, PACT RECORD, AI firms and others) fail the test.
+
+**Tests**
+- `npm run typecheck` passes.
+- `npm test`: 712 passed (was 710).
+- `npm run build` passes, including `lint:copy` and `lint:design`.
+- `npm run guide:shots`: all checks pass against the emulators.
+- `npm run guide:pdf`: passes (page count, size, every image and the font load, no network requests).
+- Visual check of the PDF:
+  - All 33 pages were checked at 75 dpi, four pages to a sheet. No text is clipped and nothing overlaps.
+  - Two layout faults were found and fixed: the `#/new` settings table split after one row, and the card table lost its header on the continued page. Table headers now repeat on every page.
+  - Pages 7–12 were checked again after the fix.
+- Not run: `test:rules` and the e2e suites. No app code, rules or layouts changed. `guide:shots` drives the full app against the emulators.
+
+**Spec deviations and choices made (with reasons)**
+- **The case is not summarised.** The owner keeps separate case notes and asked for no detailed mention.
+- **The FRONTIER deck is not used.** No FEED deck exists, and the FRONTIER deck names a different industry. Writing a FEED deck is outside R4.
+- **Report figures carry over.** The reports and the live-room observations come from FRONTIER. The engine and numbers are identical, so the figures apply; the runbook says where a figure comes from FRONTIER live rooms.
+- **The debrief answers are not based on live FEED data.** FEED has not been run with a class, and the guide says so.
+- **The OFS row was dropped** from the runbook's name table, so the stale-name test can fail on any mention of OFS.
+
+**Open issues**
+- **The live site address is not verified.** The container's proxy blocks `mxtdnl.github.io` (HTTP 403 on CONNECT). The address `https://mxtdnl.github.io/frontier-feed/` is GitHub Pages' standard address for this repository, but it has not been checked.
+- **There is no FEED briefing deck.**
+- **The Firebase connection limit is unverified** (carried over from FRONTIER Session 10).
+
+**Next steps**
+- Owner: open the live site at the address above and confirm it loads. If it does not, tell the next session the real address.
+- Owner: read the runbook teaching notes and the guide's debrief pages alongside your case notes.
+- Optional: a FEED briefing deck in `mxtdnl/slides`.
